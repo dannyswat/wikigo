@@ -2,7 +2,6 @@ package filedb
 
 import (
 	"errors"
-	"reflect"
 )
 
 type FileObject interface {
@@ -45,9 +44,7 @@ func (fileRepository *fileRepository[T]) Create(object T) error {
 }
 
 func newObj[T interface{}]() interface{} {
-	var zero [0]T
-	tType := reflect.TypeOf(zero).Elem()
-	return reflect.New(tType)
+	return new(T)
 }
 
 func getKey(o interface{}) string {
