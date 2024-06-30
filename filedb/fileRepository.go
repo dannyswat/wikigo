@@ -5,7 +5,8 @@ import (
 )
 
 type FileObject interface {
-	GetID() string
+	GetID() int
+	SetID(id int)
 	GetKey() string
 }
 
@@ -16,41 +17,23 @@ type FileRepository[T FileObject] interface {
 
 type fileRepository[T FileObject] struct {
 	Path  string
-	index FileIndex
+	index FileIndex[T]
 }
 
 func NewFileRepository[T FileObject](path string) FileRepository[T] {
-	return &fileRepository[T]{Path: path, index: NewFileIndex(path)}
+	return &fileRepository[T]{Path: path, index: NewFileIndex[T](path)}
 }
 
 func (fileRepository *fileRepository[T]) Init() error {
-	return fileRepository.index.EnsureFileIndexCreated(newObj[T], getKey, getId)
+	if err := fileRepository.index.EnsureFileIndexCreated(); err != nil {
+		return err
+	}
+	return fileRepository.index.LoadFileIndex()
 }
 
 func (fileRepository *fileRepository[T]) Create(object T) error {
-	index, err := fileRepository.index.LoadFileIndex()
-	if err != nil {
-		return err
-	}
-	if _, ok := index[object.GetKey()]; ok {
+	if _, err := fileRepository.index.GetEntry(object.GetKey()); err == nil {
 		return errors.New("object already exists")
 	}
-
-	err = fileRepository.index.AddEntry(object, getKey, getId)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func newObj[T interface{}]() interface{} {
-	return new(T)
-}
-
-func getKey(o interface{}) string {
-	return o.(FileObject).GetKey()
-}
-
-func getId(o interface{}) string {
-	return o.(FileObject).GetKey()
+	return fileRepository.index.AddEntry(object)
 }
