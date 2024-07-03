@@ -22,10 +22,6 @@ type FileIndex[T Entity] interface {
 	AddEntry(object T) error
 }
 
-type PropertySelector func(interface{}) string
-type IDSelector func(interface{}) int
-type ObjectCreator func() interface{}
-
 type fileIndex[T Entity] struct {
 	path       string
 	indexPath  string
@@ -108,10 +104,7 @@ func (fileIndex *fileIndex[T]) LoadFileIndex() error {
 
 func (fileIndex *fileIndex[T]) SaveFileIndex() error {
 	fileIndex.indexCache.Range(func(key, value interface{}) bool {
-		if strings.Contains(key.(string), "\t") {
-			return false
-		}
-		return true
+		return !strings.Contains(key.(string), "\t")
 	})
 
 	fileIndex.locker.Lock(fileIndex.indexPath)
