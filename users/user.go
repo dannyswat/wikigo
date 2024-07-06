@@ -1,7 +1,6 @@
 package users
 
 import (
-	"strconv"
 	"time"
 
 	"github.com/alexedwards/argon2id"
@@ -16,12 +15,22 @@ type User struct {
 	IsLockedOut bool      `json:"isLockedOut"`
 }
 
-func (e User) GetKey() string {
-	return e.UserName
+func (e *User) GetValue(field string) string {
+	switch field {
+	case "UserName":
+		return e.UserName
+	case "Email":
+		return e.Email
+	}
+	return ""
 }
 
-func (e User) GetID() string {
-	return strconv.Itoa(e.ID)
+func (e *User) GetID() int {
+	return e.ID
+}
+
+func (e *User) SetID(id int) {
+	e.ID = id
 }
 
 func (user *User) UpdatePassword(newPassword string) error {

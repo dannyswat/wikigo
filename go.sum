@@ -1,5 +1,9 @@
 github.com/alexedwards/argon2id v1.0.0 h1:wJzDx66hqWX7siL/SRUmgz3F8YMrd/nfX/xHHcQQP0w=
 github.com/alexedwards/argon2id v1.0.0/go.mod h1:tYKkqIjzXvZdzPvADMWOEZ+l6+BD6CtBXMj5fnJppiw=
+github.com/dannyswat/filedb v0.0.0-20240706020249-be029b8aa667 h1:qvu1+uoosVEhhyflrb6NoRyErHEitvbp8+ggmsunzwY=
+github.com/dannyswat/filedb v0.0.0-20240706020249-be029b8aa667/go.mod h1:b6XNcNRJX5D3He8hG+gR5d1PWU5rGSe0C+TVrj00BHw=
+github.com/dannyswat/filedb v0.0.1-alpha h1:HY6kVRyVhKWnt54R3k1Ye/510zu0rAkAW1zGXDMOtAE=
+github.com/dannyswat/filedb v0.0.1-alpha/go.mod h1:b6XNcNRJX5D3He8hG+gR5d1PWU5rGSe0C+TVrj00BHw=
 github.com/labstack/echo/v4 v4.12.0 h1:IKpw49IMryVB2p1a4dzwlhP1O2Tf2E0Ir/450lH+kI0=
 github.com/labstack/echo/v4 v4.12.0/go.mod h1:UP9Cr2DJXbOK3Kr9ONYzNowSh7HP0aG0ShAyycHSJvM=
 github.com/labstack/gommon v0.4.2 h1:F8qTUNXgG1+6WQmqoUWnz8WiEU60mXVVw0P4ht1WRA0=
