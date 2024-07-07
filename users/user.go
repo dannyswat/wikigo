@@ -8,9 +8,9 @@ import (
 
 type User struct {
 	ID          int       `json:"id"`
-	UserName    string    `json:"username"`
+	UserName    string    `json:"username" validate:"required,max=50,regexp=^[a-zA-Z0-9_]+$"`
 	Password    string    `json:"password"`
-	Email       string    `json:"email"`
+	Email       string    `json:"email" validate:"required,email,max=100"`
 	CreatedAt   time.Time `json:"createdAt"`
 	IsLockedOut bool      `json:"isLockedOut"`
 }
