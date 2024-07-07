@@ -5,6 +5,7 @@ import (
 
 	"github.com/dannyswat/wikigo/users"
 	"github.com/dannyswat/wikigo/wiki"
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
@@ -24,4 +25,8 @@ func main() {
 		adminUser.UpdatePassword("PleaseChange")
 		dbManager.Users().CreateUser(adminUser)
 	}
+
+	e := echo.New()
+
+	e.Logger.Fatal(e.Start(":8080"))
 }
