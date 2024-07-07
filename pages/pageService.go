@@ -23,13 +23,22 @@ func (s *PageService) GetPagesByAuthor(author string) ([]*Page, error) {
 	return s.DB.GetPagesByAuthor(author)
 }
 
-func (s *PageService) GetPagesByParentID(parentID int) ([]*Page, error) {
+func (s *PageService) GetPagesByParentID(parentID *int) ([]*Page, error) {
 	return s.DB.GetPagesByParentID(parentID)
 }
 
 func (s *PageService) CreatePage(page *Page, user string) error {
 	if err := ValidatePage(page, true); err != nil {
 		return err
+	}
+	if page.ParentID != nil {
+		parent, err := s.DB.GetPageByID(*page.ParentID)
+		if err != nil {
+			return err
+		}
+		if parent == nil {
+			return common.NewValidationError("parent page not found")
+		}
 	}
 	page.CreatedAt = time.Now()
 	page.CreatedBy = user

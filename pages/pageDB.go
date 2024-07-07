@@ -11,7 +11,7 @@ type PageDB interface {
 	GetPageByID(id int) (*Page, error)
 	GetPageByUrl(url string) (*Page, error)
 	GetPagesByAuthor(author string) ([]*Page, error)
-	GetPagesByParentID(parentID int) ([]*Page, error)
+	GetPagesByParentID(parentID *int) ([]*Page, error)
 	CreatePage(page *Page) error
 	UpdatePage(page *Page) error
 	DeletePage(id int) error
@@ -58,8 +58,12 @@ func (p *pageDB) GetPagesByAuthor(author string) ([]*Page, error) {
 	return p.db.List("CreatedBy", author)
 }
 
-func (p *pageDB) GetPagesByParentID(parentID int) ([]*Page, error) {
-	return p.db.List("ParentID", strconv.Itoa(parentID))
+func (p *pageDB) GetPagesByParentID(parentID *int) ([]*Page, error) {
+	idStr := ""
+	if parentID != nil {
+		idStr = strconv.Itoa(*parentID)
+	}
+	return p.db.List("ParentID", idStr)
 }
 
 func (p *pageDB) CreatePage(page *Page) error {

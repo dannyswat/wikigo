@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/dannyswat/filedb"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type KeyStore interface {
@@ -24,6 +25,8 @@ type KeyStore interface {
 	Verify(purpose string, data, signature []byte) (bool, error)
 	Encrypt(purpose string, data, remotePublicKey []byte) ([]byte, error)
 	Decrypt(purpose string, data, remotePublicKey []byte) ([]byte, error)
+	SignJWT(claims jwt.Claims, purpose string) (string, error)
+	VerifyJWT(tokenString, purpose string) (*jwt.Token, error)
 }
 
 type KeyPair struct {
@@ -222,6 +225,25 @@ func (k *keyStore) Decrypt(purpose string, data, remotePublicKey []byte) ([]byte
 	return plainText, nil
 }
 
+func (k *keyStore) SignJWT(claims jwt.Claims, purpose string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
+	privateKey, err := k.getPrivateKey(purpose)
+	if err != nil {
+		return "", err
+	}
+	return token.SignedString(privateKey)
+}
+
+func (k *keyStore) VerifyJWT(tokenString, purpose string) (*jwt.Token, error) {
+	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		publicBytes, err := k.GetPublicKey(purpose)
+		if err != nil {
+			return nil, err
+		}
+		return x509.ParsePKIXPublicKey(publicBytes)
+	})
+}
+
 func (k *keyStore) findLatestKeyPair(purpose string) (*KeyPair, error) {
 	keyPairs, err := k.db.List("Purpose", purpose)
 	if err != nil {
@@ -237,4 +259,20 @@ func (k *keyStore) findLatestKeyPair(purpose string) (*KeyPair, error) {
 		}
 	}
 	return keyPair, nil
+}
+
+func (k *keyStore) getPrivateKey(purpose string) (*ecdsa.PrivateKey, error) {
+	keyPair, err := k.findLatestKeyPair(purpose)
+	if err != nil {
+		return nil, err
+	}
+	privateBytes, err := base64.StdEncoding.DecodeString(keyPair.PrivateKey)
+	if err != nil {
+		return nil, err
+	}
+	privateKey, err := x509.ParseECPrivateKey(privateBytes)
+	if err != nil {
+		return nil, err
+	}
+	return privateKey, nil
 }

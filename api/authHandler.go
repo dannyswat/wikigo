@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/base64"
-	"encoding/json"
 	"time"
 
 	"github.com/dannyswat/wikigo/security"
@@ -52,20 +51,16 @@ func (h *AuthHandler) Login(e echo.Context) error {
 	if err != nil {
 		return e.JSON(401, err)
 	}
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
+	signedToken, err := h.KeyStore.SignJWT(jwt.MapClaims{
 		"uid": user.UserName,
 		"iat": time.Now().Unix(),
 		"exp": time.Now().Add(time.Hour * 24).Unix(),
-	})
-	jsonToken, err := json.Marshal(token)
+	}, "auth")
+
 	if err != nil {
 		return e.JSON(500, err)
 	}
-	signedToken, err := h.KeyStore.Sign("auth", jsonToken)
-	if err != nil {
-		return e.JSON(500, err)
-	}
-	return e.JSON(200, &LoginResponse{Token: base64.StdEncoding.EncodeToString(signedToken)})
+	return e.JSON(200, &LoginResponse{Token: signedToken})
 }
 
 type ChangePasswordRequest struct {
