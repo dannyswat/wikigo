@@ -92,3 +92,47 @@ func (h *PageHandler) CreatePage(e echo.Context) error {
 	}
 	return e.JSON(200, req)
 }
+
+type UpdatePageRequest struct {
+	ID        int      `json:"id" validate:"required"`
+	Url       string   `json:"url" validate:"required,max=100"`
+	Title     string   `json:"title" validate:"required,max=100"`
+	Content   string   `json:"content" validate:"required"`
+	ShortDesc string   `json:"shortDesc" validate:"max=300"`
+	ParentID  *int     `json:"parentId"`
+	Tags      []string `json:"tags" validate:"max=10"`
+}
+
+func (h *PageHandler) UpdatePage(e echo.Context) error {
+	req := new(UpdatePageRequest)
+	if err := e.Bind(req); err != nil {
+		return e.JSON(400, err)
+	}
+	if err := validator.New().Struct(req); err != nil {
+		return e.JSON(400, "invalid request")
+	}
+	page := new(pages.Page)
+	page.ID = req.ID
+	page.Url = req.Url
+	page.Title = req.Title
+	page.Content = h.HtmlPolicy.Sanitize(req.Content)
+	page.ShortDesc = req.ShortDesc
+	page.ParentID = req.ParentID
+	page.Tags = req.Tags
+	if err := h.PageService.UpdatePage(page, GetUserId(e)); err != nil {
+		return e.JSON(GetErrorStatus(err), err)
+	}
+	return e.JSON(200, req)
+}
+
+func (h *PageHandler) DeletePage(e echo.Context) error {
+	idStr := e.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return e.JSON(400, "invalid page id")
+	}
+	if err := h.PageService.DeletePage(id); err != nil {
+		return e.JSON(GetErrorStatus(err), err)
+	}
+	return e.JSON(200, "page deleted")
+}
