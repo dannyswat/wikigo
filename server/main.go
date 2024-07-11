@@ -3,11 +3,11 @@ package main
 import (
 	"time"
 
-	"github.com/dannyswat/wikigo/api"
 	"github.com/dannyswat/wikigo/pages"
 	"github.com/dannyswat/wikigo/security"
 	"github.com/dannyswat/wikigo/users"
 	"github.com/dannyswat/wikigo/wiki"
+	"github.com/dannyswat/wikigo/wiki/api"
 	"github.com/labstack/echo/v4"
 	"github.com/microcosm-cc/bluemonday"
 )
