@@ -30,7 +30,6 @@ interface UserTokens {
 interface LoginRequest {
     username: string;
     password: string;
-    key: string;
 }
 
 export const login = createAction<LoginRequest>('auth/login');
