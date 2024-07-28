@@ -1,28 +1,29 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { login, getPublicKey } from '../auth/slice'
-import { RootState } from '../store';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getPublicKeyApi, loginApi } from '../api/authApi';
 
 export default function Login() {
-    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { isLoggedIn } = useSelector((state: RootState) => state.auth);
-
-    if (isLoggedIn) {
-        navigate('/dashboard');
-    }
-
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+    const keyQuery = useQuery({
+        queryKey: ['publicKey'],
+        queryFn: () => getPublicKeyApi('login'),
+    });
+    const login = useMutation({
+        mutationFn: loginApi,
+        onSuccess: () => navigate('/'),
+    });
     const handleLogin = () => {
-        dispatch(login({ username, password }));
+        login.mutate({
+            username,
+            password,
+            publicKey: keyQuery.data?.publicKey || '',
+            timestamp: keyQuery.data?.timestamp || '',
+        })
     }
-
-    useEffect(() => {
-        dispatch(getPublicKey());
-    }, [dispatch]);
 
     return (
         <div className="flex items-center justify-center h-screen">
