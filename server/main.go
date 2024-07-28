@@ -38,7 +38,7 @@ func main() {
 	htmlPolicy := bluemonday.UGCPolicy()
 	authHandler := &api.AuthHandler{UserService: *userService, KeyStore: keyStore}
 	pageHandler := &api.PageHandler{PageService: *pageService, HtmlPolicy: *htmlPolicy}
-	e.GET("/admin/pages/:id", pageHandler.GetPageByID)
+	e.GET("/page/:id", pageHandler.GetPageByID)
 	e.POST("/admin/pages", pageHandler.CreatePage)
 	e.PATCH("/admin/pages/:id", pageHandler.UpdatePage)
 	e.DELETE("/admin/pages/:id", pageHandler.DeletePage)
