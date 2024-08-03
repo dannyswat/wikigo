@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/dannyswat/wikigo/common"
+	"github.com/dannyswat/wikigo/common/errors"
 	"github.com/dannyswat/wikigo/users"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
@@ -21,7 +21,9 @@ func GetErrorStatus(err error) int {
 	switch err.(type) {
 	case *users.UnauthorizedError:
 		return 401
-	case *common.ValidationError:
+	case *errors.ValidationError:
+		return 400
+	case *errors.AggregateValidationError:
 		return 400
 	default:
 		return 500

@@ -3,7 +3,7 @@ package pages
 import (
 	"time"
 
-	"github.com/dannyswat/wikigo/common"
+	"github.com/dannyswat/wikigo/common/errors"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -37,7 +37,7 @@ func (s *PageService) CreatePage(page *Page, user string) error {
 			return err
 		}
 		if parent == nil {
-			return common.NewValidationError("parent page not found")
+			return errors.NewValidationError("parent page not found", "ParentID")
 		}
 	}
 	page.CreatedAt = time.Now()
@@ -62,14 +62,20 @@ func (s *PageService) DeletePage(id int) error {
 
 func ValidatePage(page *Page, isNew bool) error {
 	if page == nil {
-		return common.NewValidationError("page is nil")
+		return errors.NewValidationError("page is nil", "")
 	}
 	if !isNew && page.ID == 0 {
-		return common.NewValidationError("page not found")
+		return errors.NewValidationError("page not found", "")
 	}
 	v := validator.New()
 	if err := v.Struct(page); err != nil {
-		return common.NewValidationError(err.Error())
+		validateError := err.(validator.ValidationErrors)
+
+		aggError := &errors.AggregateValidationError{}
+		for _, e := range validateError {
+			aggError.AddError(errors.NewValidationError(e.Error(), e.Field()))
+		}
+		return aggError
 	}
 	return nil
 }
