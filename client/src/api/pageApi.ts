@@ -1,9 +1,11 @@
+import { baseApiUrl } from "./baseApi";
+
 export interface PageResponse {
     content: string;
 }
 
 export function getPage(pageId: string) {
-    return fetch(`/page/${pageId}`).then((res) => res.json()).then((data: PageResponse) => data.content);
+    return fetch(baseApiUrl + `/page/${pageId}`).then((res) => res.json()).then((data: PageResponse) => data.content);
 }
 
 export interface PageRequest {
@@ -16,7 +18,7 @@ export interface PageRequest {
 }
 
 export function createPage(page: PageRequest) {
-    return fetch(`/admin/pages`, {
+    return fetch(baseApiUrl + `/admin/pages`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -26,7 +28,7 @@ export function createPage(page: PageRequest) {
 }
 
 export function updatePage(page: PageRequest) {
-    return fetch(`/admin/pages/${page.id}`, {
+    return fetch(baseApiUrl + `/admin/pages/${page.id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -36,7 +38,7 @@ export function updatePage(page: PageRequest) {
 }
 
 export function deletePage(id: number) {
-    return fetch(`/admin/pages/${id}`, {
+    return fetch(baseApiUrl + `/admin/pages/${id}`, {
         method: 'DELETE',
     }).then((res) => res.json());
 }

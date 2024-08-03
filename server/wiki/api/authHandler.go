@@ -16,6 +16,21 @@ type AuthHandler struct {
 	KeyStore    security.KeyStore
 }
 
+func (h *AuthHandler) GetPublicKey(e echo.Context) error {
+	purpose := e.Param("id")
+	if purpose == "" {
+		return e.JSON(400, "invalid request")
+	}
+	if purpose != "login" && purpose != "changepassword" {
+		return e.JSON(400, "invalid request")
+	}
+	key, err := h.KeyStore.GetPublicKey(purpose)
+	if err != nil {
+		return e.JSON(500, err)
+	}
+	return e.JSON(200, key)
+}
+
 type LoginRequest struct {
 	UserName string `json:"userName" validate:"required,max=50"`
 	Password string `json:"password" validate:"required"`

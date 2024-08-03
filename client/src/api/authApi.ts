@@ -1,4 +1,5 @@
 import { base64, fromBase64 } from "../common/base64";
+import { baseApiUrl } from "./baseApi";
 
 export interface LoginRequest {
     username: string;
@@ -10,7 +11,7 @@ export interface LoginRequest {
 export async function loginApi(request: LoginRequest) {
     const { cipher, key } = await encryptPassword(request.password, request.publicKey, request.timestamp);
 
-    return await fetch('/login', {
+    return await fetch(baseApiUrl + '/auth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -24,7 +25,7 @@ export async function loginApi(request: LoginRequest) {
 }
 
 export async function getPublicKeyApi(purpose: string) {
-    return await fetch(`/auth/publicKey/${purpose}`).then((res) => res.json());
+    return await fetch(baseApiUrl + `/auth/publickey/${purpose}`).then((res) => res.json());
 }
 
 export interface ChangePasswordRequest {
@@ -38,7 +39,7 @@ export async function changePasswordApi(request: ChangePasswordRequest) {
     const { cipher, key } = await encryptPassword(request.oldPassword, request.publicKey, request.timestamp);
     const { cipher: newCipher, key: newKey } = await encryptPassword(request.newPassword, request.publicKey, request.timestamp);
 
-    return await fetch('/user/changePassword', {
+    return await fetch(baseApiUrl + '/user/changepassword', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
