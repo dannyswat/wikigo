@@ -8,7 +8,7 @@ import (
 )
 
 type PageService struct {
-	DB PageDB
+	DB PageRepository
 }
 
 func (s *PageService) GetPageByID(id int) (*Page, error) {

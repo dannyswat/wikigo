@@ -1,5 +1,11 @@
 package apihelper
 
+import (
+	"github.com/dannyswat/wikigo/common/errors"
+	"github.com/dannyswat/wikigo/users"
+	"github.com/labstack/echo/v4"
+)
+
 type ErrorResponse struct {
 	Message string    `json:"message"`
 	Code    ErrorCode `json:"code"`
@@ -38,4 +44,30 @@ func NewNotFoundError(message string) ErrorResponse {
 
 func NewUnauthorizedError(message string) ErrorResponse {
 	return ErrorResponse{Message: message, Code: ErrCodeUnauthorized}
+}
+
+func GetErrorStatus(err error) int {
+	switch err.(type) {
+	case *users.UnauthorizedError:
+		return 401
+	case *errors.ValidationError:
+		return 400
+	case *errors.AggregateValidationError:
+		return 400
+	default:
+		return 500
+	}
+}
+
+func ReturnErrorResponse(e echo.Context, err error) error {
+	switch err := err.(type) {
+	case *users.UnauthorizedError:
+		return e.JSON(401, NewUnauthorizedError(err.Error()))
+	case *errors.ValidationError:
+		return e.JSON(400, NewInvalidRequestError(err.Error()))
+	case *errors.AggregateValidationError:
+		return e.JSON(400, NewInvalidResponseErrorWithDetails(err.Error(), err.Errors))
+	default:
+		return e.JSON(500, NewInternalError("Internal server error"))
+	}
 }

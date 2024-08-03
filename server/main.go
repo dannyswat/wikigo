@@ -8,7 +8,8 @@ import (
 	"github.com/dannyswat/wikigo/security"
 	"github.com/dannyswat/wikigo/users"
 	"github.com/dannyswat/wikigo/wiki"
-	"github.com/dannyswat/wikigo/wiki/api"
+	"github.com/dannyswat/wikigo/wiki/handlers"
+	"github.com/dannyswat/wikigo/wiki/middlewares"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/microcosm-cc/bluemonday"
@@ -32,15 +33,6 @@ func main() {
 		dbManager.Users().CreateUser(adminUser)
 	}
 
-	e := echo.New()
-
-	e.Use(middleware.Logger())
-	e.Use(middleware.Gzip())
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000"},
-	}))
-	e.Use(middleware.Recover())
-
 	userService := &users.UserService{DB: dbManager.Users()}
 	pageService := &pages.PageService{DB: dbManager.Pages()}
 	keyStore := security.NewKeyStore("data/keys")
@@ -49,13 +41,25 @@ func main() {
 	keyStore.GenerateECKeyPair("changepassword")
 	htmlPolicy := bluemonday.UGCPolicy()
 
-	pageHandler := &api.PageHandler{PageService: *pageService, HtmlPolicy: *htmlPolicy}
+	e := echo.New()
+
+	e.Use(middleware.Logger())
+	e.Use(middleware.Gzip())
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:3000"},
+	}))
+	e.Use(middlewares.ErrorMiddleware())
+
+	jwt := middlewares.JWT{KeyStore: keyStore}
+	e.Use(jwt.AuthMiddleware())
+
+	pageHandler := &handlers.PageHandler{PageService: *pageService, HtmlPolicy: *htmlPolicy}
 	e.GET("/page/:id", pageHandler.GetPageByID)
 	e.POST("/admin/pages", pageHandler.CreatePage)
 	e.PATCH("/admin/pages/:id", pageHandler.UpdatePage)
 	e.DELETE("/admin/pages/:id", pageHandler.DeletePage)
 
-	authHandler := &api.AuthHandler{UserService: *userService, KeyStore: keyStore}
+	authHandler := &handlers.AuthHandler{UserService: *userService, KeyStore: keyStore}
 	e.GET("/auth/publickey/:id", authHandler.GetPublicKey)
 	e.POST("/auth/login", authHandler.Login)
 	e.POST("/user/changepassword", authHandler.ChangePassword)

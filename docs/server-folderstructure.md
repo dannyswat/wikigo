@@ -14,6 +14,8 @@
   - utils
 - data
   - Application data
+- media
+  - Uploaded files
 - users
   - repositories
   - domain
