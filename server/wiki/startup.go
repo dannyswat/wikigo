@@ -3,8 +3,8 @@ package wiki
 import (
 	"time"
 
+	"github.com/dannyswat/wikigo/keymgmt"
 	"github.com/dannyswat/wikigo/pages"
-	"github.com/dannyswat/wikigo/security"
 	"github.com/dannyswat/wikigo/users"
 	"github.com/dannyswat/wikigo/wiki/handlers"
 	"github.com/dannyswat/wikigo/wiki/middlewares"
@@ -19,7 +19,7 @@ type WikiStartUp struct {
 	dbManager   DBManager
 	userService *users.UserService
 	pageService *pages.PageService
-	keyStore    security.KeyStore
+	keyStore    *keymgmt.KeyMgmtService
 	htmlPolicy  *bluemonday.Policy
 	pageHandler *handlers.PageHandler
 	authHandler *handlers.AuthHandler
@@ -47,7 +47,7 @@ func (s *WikiStartUp) Setup() error {
 
 	s.userService = &users.UserService{DB: s.dbManager.Users()}
 	s.pageService = &pages.PageService{DB: s.dbManager.Pages()}
-	s.keyStore = security.NewKeyStore(s.DataPath + "/keys")
+	s.keyStore = &keymgmt.KeyMgmtService{DB: s.dbManager.Keys()}
 	s.keyStore.Init()
 	s.keyStore.GenerateECKeyPair("login")
 	s.keyStore.GenerateECKeyPair("changepassword")
@@ -57,7 +57,7 @@ func (s *WikiStartUp) Setup() error {
 }
 
 func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
-	s.pageHandler = &handlers.PageHandler{PageService: s.pageService, HtmlPolicy: *s.htmlPolicy}
+	s.pageHandler = &handlers.PageHandler{PageService: s.pageService, HtmlPolicy: s.htmlPolicy}
 	s.authHandler = &handlers.AuthHandler{UserService: s.userService, KeyStore: s.keyStore}
 
 	jwt := middlewares.JWT{KeyStore: s.keyStore}

@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"time"
 
-	"github.com/dannyswat/wikigo/security"
+	"github.com/dannyswat/wikigo/keymgmt"
 	"github.com/dannyswat/wikigo/users"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
@@ -13,7 +13,7 @@ import (
 
 type AuthHandler struct {
 	UserService *users.UserService
-	KeyStore    security.KeyStore
+	KeyStore    *keymgmt.KeyMgmtService
 }
 
 func (h *AuthHandler) GetPublicKey(e echo.Context) error {

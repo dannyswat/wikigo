@@ -12,7 +12,7 @@ import (
 
 type PageHandler struct {
 	PageService *pages.PageService
-	HtmlPolicy  bluemonday.Policy
+	HtmlPolicy  *bluemonday.Policy
 }
 
 func (h *PageHandler) GetPageByID(e echo.Context) error {

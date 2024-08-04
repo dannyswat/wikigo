@@ -2,13 +2,13 @@ package middlewares
 
 import (
 	"github.com/dannyswat/wikigo/common/apihelper"
-	"github.com/dannyswat/wikigo/security"
+	"github.com/dannyswat/wikigo/keymgmt"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 )
 
 type JWT struct {
-	KeyStore security.KeyStore
+	KeyStore *keymgmt.KeyMgmtService
 }
 
 func (j *JWT) AuthMiddleware() echo.MiddlewareFunc {

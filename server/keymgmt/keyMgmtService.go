@@ -1,4 +1,4 @@
-package security
+package keymgmt
 
 import (
 	"crypto/aes"
@@ -10,67 +10,19 @@ import (
 	"crypto/sha256"
 	"crypto/x509"
 	"encoding/base64"
-	"errors"
-	"time"
 
-	"github.com/dannyswat/filedb"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type KeyStore interface {
-	Init() error
-	GenerateECKeyPair(purpose string) ([]byte, error)
-	GetPublicKey(purpose string) ([]byte, error)
-	Sign(purpose string, data []byte) ([]byte, error)
-	Verify(purpose string, data, signature []byte) (bool, error)
-	Encrypt(purpose string, data, remotePublicKey []byte) ([]byte, error)
-	Decrypt(purpose string, data, remotePublicKey []byte) ([]byte, error)
-	SignJWT(claims jwt.Claims, purpose string) (string, error)
-	VerifyJWT(tokenString, purpose string) (*jwt.Token, error)
+type KeyMgmtService struct {
+	DB KeyRepository
 }
 
-type KeyPair struct {
-	ID         int       `json:"id"`
-	Purpose    string    `json:"purpose"`
-	PublicKey  string    `json:"publicKey"`
-	PrivateKey string    `json:"privateKey"`
-	CreatedAt  time.Time `json:"createdAt"`
-	ExpiresAt  time.Time `json:"expiresAt"`
+func (k *KeyMgmtService) Init() error {
+	return k.DB.Init()
 }
 
-func (e *KeyPair) GetValue(field string) string {
-	switch field {
-	case "Purpose":
-		return e.Purpose
-	}
-	return ""
-}
-
-func (e *KeyPair) GetID() int {
-	return e.ID
-}
-
-func (e *KeyPair) SetID(id int) {
-	e.ID = id
-}
-
-type keyStore struct {
-	db filedb.FileDB[*KeyPair]
-}
-
-func NewKeyStore(path string) KeyStore {
-	return &keyStore{
-		db: filedb.NewFileDB[*KeyPair](path, []filedb.FileIndexConfig{
-			{Field: "Purpose", Unique: true},
-		}),
-	}
-}
-
-func (k *keyStore) Init() error {
-	return k.db.Init()
-}
-
-func (k *keyStore) GenerateECKeyPair(purpose string) ([]byte, error) {
+func (k *KeyMgmtService) GenerateECKeyPair(purpose string) ([]byte, error) {
 	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
 		return nil, err
@@ -90,31 +42,22 @@ func (k *keyStore) GenerateECKeyPair(purpose string) ([]byte, error) {
 		PublicKey:  base64.StdEncoding.EncodeToString(publicBytes),
 		PrivateKey: base64.StdEncoding.EncodeToString(privateBytes),
 	}
-	err = k.db.Insert(keyPair)
+	err = k.DB.CreateKeyPair(keyPair)
 	if err != nil {
 		return nil, err
 	}
 	return publicBytes, nil
 }
 
-func (k *keyStore) GetPublicKey(purpose string) ([]byte, error) {
-	keyPairs, err := k.db.List("Purpose", purpose)
+func (k *KeyMgmtService) GetPublicKey(purpose string) ([]byte, error) {
+	keyPair, err := k.DB.GetKeyPairByPurpose(purpose)
 	if err != nil {
 		return nil, err
-	}
-	if len(keyPairs) == 0 {
-		return nil, errors.New("key pair not found")
-	}
-	keyPair := keyPairs[0]
-	for _, kp := range keyPairs {
-		if kp.ExpiresAt.After(keyPair.ExpiresAt) {
-			keyPair = kp
-		}
 	}
 	return base64.StdEncoding.DecodeString(keyPair.PublicKey)
 }
 
-func (k *keyStore) Sign(purpose string, data []byte) ([]byte, error) {
+func (k *KeyMgmtService) Sign(purpose string, data []byte) ([]byte, error) {
 	keyPair, err := k.findLatestKeyPair(purpose)
 	if err != nil {
 		return nil, err
@@ -131,7 +74,7 @@ func (k *keyStore) Sign(purpose string, data []byte) ([]byte, error) {
 	return ecdsa.SignASN1(rand.Reader, privateKey, hash[:])
 }
 
-func (k *keyStore) Verify(purpose string, data, signature []byte) (bool, error) {
+func (k *KeyMgmtService) Verify(purpose string, data, signature []byte) (bool, error) {
 	keyPair, err := k.findLatestKeyPair(purpose)
 	if err != nil {
 		return false, err
@@ -149,7 +92,7 @@ func (k *keyStore) Verify(purpose string, data, signature []byte) (bool, error) 
 	return verified, nil
 }
 
-func (k *keyStore) Encrypt(purpose string, data, remotePublicKey []byte) ([]byte, error) {
+func (k *KeyMgmtService) Encrypt(purpose string, data, remotePublicKey []byte) ([]byte, error) {
 	keyPair, err := k.findLatestKeyPair(purpose)
 	if err != nil {
 		return nil, err
@@ -187,7 +130,7 @@ func (k *keyStore) Encrypt(purpose string, data, remotePublicKey []byte) ([]byte
 	return cipherText, nil
 }
 
-func (k *keyStore) Decrypt(purpose string, data, remotePublicKey []byte) ([]byte, error) {
+func (k *KeyMgmtService) Decrypt(purpose string, data, remotePublicKey []byte) ([]byte, error) {
 	keyPair, err := k.findLatestKeyPair(purpose)
 	if err != nil {
 		return nil, err
@@ -225,7 +168,7 @@ func (k *keyStore) Decrypt(purpose string, data, remotePublicKey []byte) ([]byte
 	return plainText, nil
 }
 
-func (k *keyStore) SignJWT(claims jwt.Claims, purpose string) (string, error) {
+func (k *KeyMgmtService) SignJWT(claims jwt.Claims, purpose string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
 	privateKey, err := k.getPrivateKey(purpose)
 	if err != nil {
@@ -234,7 +177,7 @@ func (k *keyStore) SignJWT(claims jwt.Claims, purpose string) (string, error) {
 	return token.SignedString(privateKey)
 }
 
-func (k *keyStore) VerifyJWT(tokenString, purpose string) (*jwt.Token, error) {
+func (k *KeyMgmtService) VerifyJWT(tokenString, purpose string) (*jwt.Token, error) {
 	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		publicBytes, err := k.GetPublicKey(purpose)
 		if err != nil {
@@ -244,24 +187,11 @@ func (k *keyStore) VerifyJWT(tokenString, purpose string) (*jwt.Token, error) {
 	})
 }
 
-func (k *keyStore) findLatestKeyPair(purpose string) (*KeyPair, error) {
-	keyPairs, err := k.db.List("Purpose", purpose)
-	if err != nil {
-		return nil, err
-	}
-	if len(keyPairs) == 0 {
-		return nil, errors.New("key pair not found")
-	}
-	keyPair := keyPairs[0]
-	for _, kp := range keyPairs {
-		if kp.ExpiresAt.After(keyPair.ExpiresAt) {
-			keyPair = kp
-		}
-	}
-	return keyPair, nil
+func (k *KeyMgmtService) findLatestKeyPair(purpose string) (*KeyPair, error) {
+	return k.DB.GetKeyPairByPurpose(purpose)
 }
 
-func (k *keyStore) getPrivateKey(purpose string) (*ecdsa.PrivateKey, error) {
+func (k *KeyMgmtService) getPrivateKey(purpose string) (*ecdsa.PrivateKey, error) {
 	keyPair, err := k.findLatestKeyPair(purpose)
 	if err != nil {
 		return nil, err
