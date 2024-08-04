@@ -11,7 +11,7 @@ import (
 )
 
 type PageHandler struct {
-	PageService pages.PageService
+	PageService *pages.PageService
 	HtmlPolicy  bluemonday.Policy
 }
 

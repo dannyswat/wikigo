@@ -12,7 +12,7 @@ import (
 )
 
 type AuthHandler struct {
-	UserService users.UserService
+	UserService *users.UserService
 	KeyStore    security.KeyStore
 }
 
