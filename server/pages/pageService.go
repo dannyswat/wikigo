@@ -19,11 +19,11 @@ func (s *PageService) GetPageByUrl(url string) (*Page, error) {
 	return s.DB.GetPageByUrl(url)
 }
 
-func (s *PageService) GetPagesByAuthor(author string) ([]*Page, error) {
+func (s *PageService) GetPagesByAuthor(author string) ([]*PageMeta, error) {
 	return s.DB.GetPagesByAuthor(author)
 }
 
-func (s *PageService) GetPagesByParentID(parentID *int) ([]*Page, error) {
+func (s *PageService) GetPagesByParentID(parentID *int) ([]*PageMeta, error) {
 	return s.DB.GetPagesByParentID(parentID)
 }
 
