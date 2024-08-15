@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getPublicKeyApi, loginApi } from '../api/authApi';
+import { getPublicKeyApi, loginApi } from '../../api/authApi';
 
 export default function Login() {
     const navigate = useNavigate();

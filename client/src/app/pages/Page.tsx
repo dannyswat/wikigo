@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 
-import { getPage } from "../api/pageApi";
+import { getPage } from "../../api/pageApi";
 
 export default function Page() {
     const { id } = useParams();
