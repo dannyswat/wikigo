@@ -8,7 +8,6 @@ import (
 )
 
 type UploadHandler struct {
-	MediaPath   string
 	FileManager filemanager.FileManager
 }
 
