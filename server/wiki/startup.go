@@ -3,6 +3,7 @@ package wiki
 import (
 	"time"
 
+	"github.com/dannyswat/wikigo/filemanager"
 	"github.com/dannyswat/wikigo/keymgmt"
 	"github.com/dannyswat/wikigo/pages"
 	"github.com/dannyswat/wikigo/users"
@@ -14,15 +15,18 @@ import (
 
 type WikiStartUp struct {
 	DataPath  string
+	MediaPath string
 	BaseRoute string
 
-	dbManager   DBManager
-	userService *users.UserService
-	pageService *pages.PageService
-	keyStore    *keymgmt.KeyMgmtService
-	htmlPolicy  *bluemonday.Policy
-	pageHandler *handlers.PageHandler
-	authHandler *handlers.AuthHandler
+	dbManager     DBManager
+	userService   *users.UserService
+	pageService   *pages.PageService
+	keyStore      *keymgmt.KeyMgmtService
+	htmlPolicy    *bluemonday.Policy
+	fileManager   filemanager.FileManager
+	pageHandler   *handlers.PageHandler
+	authHandler   *handlers.AuthHandler
+	uploadHandler *handlers.UploadHandler
 }
 
 func (s *WikiStartUp) Setup() error {
@@ -52,6 +56,11 @@ func (s *WikiStartUp) Setup() error {
 	s.keyStore.GenerateECKeyPair("login")
 	s.keyStore.GenerateECKeyPair("changepassword")
 	s.htmlPolicy = bluemonday.UGCPolicy()
+	s.fileManager, err = filemanager.NewFileManager(s.MediaPath, []string{".exe", ".bat", ".sh"}, "5MB")
+	if err != nil {
+		return err
+	}
+	s.fileManager.Init()
 
 	return nil
 }
@@ -59,6 +68,7 @@ func (s *WikiStartUp) Setup() error {
 func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	s.pageHandler = &handlers.PageHandler{PageService: s.pageService, HtmlPolicy: s.htmlPolicy}
 	s.authHandler = &handlers.AuthHandler{UserService: s.userService, KeyStore: s.keyStore}
+	s.uploadHandler = &handlers.UploadHandler{FileManager: s.fileManager}
 
 	jwt := middlewares.JWT{KeyStore: s.keyStore}
 	e.Use(jwt.AuthMiddleware())
@@ -71,5 +81,8 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	e.POST(s.BaseRoute+"/auth/login", s.authHandler.Login)
 	e.GET(s.BaseRoute+"/auth/publickey/:id", s.authHandler.GetPublicKey)
 	e.POST(s.BaseRoute+"/user/changepassword", s.authHandler.ChangePassword)
+
+	e.POST(s.BaseRoute+"/upload", s.uploadHandler.UploadFile)
+	e.POST(s.BaseRoute+"/createpath", s.uploadHandler.CreatePath)
 
 }

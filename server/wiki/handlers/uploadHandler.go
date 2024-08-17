@@ -35,3 +35,12 @@ func (uh *UploadHandler) UploadFile(e echo.Context) error {
 
 	return e.JSON(200, "File uploaded successfully")
 }
+
+func (uh *UploadHandler) CreatePath(e echo.Context) error {
+	path := e.QueryParam("path")
+	err := uh.FileManager.CreatePath(path)
+	if err != nil {
+		return e.JSON(400, err)
+	}
+	return e.JSON(200, "Path created successfully")
+}
