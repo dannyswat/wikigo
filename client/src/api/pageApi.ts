@@ -1,16 +1,25 @@
 import { baseApiUrl } from "./baseApi";
 
 export interface PageResponse {
+    id: number;
+    parentID: number;
+    url: string;
+    title: string;
+    shortDesc: string;
     content: string;
 }
 
-export function getPage(pageId: string) {
+export function getPage(pageId: string): Promise<PageResponse> {
+    return fetch(baseApiUrl + `/page/${pageId}`).then((res) => res.json());
+}
+
+export function getPageContent(pageId: string) {
     return fetch(baseApiUrl + `/page/${pageId}`).then((res) => res.json()).then((data: PageResponse) => data.content);
 }
 
 export interface PageRequest {
     id: number;
-    parentID: number;
+    parentID?: number;
     url: string;
     title: string;
     shortDesc: string;
