@@ -1,0 +1,4 @@
+.ck-editor__editable_inline {
+    height: 500px;
+    overflow-y: auto;
+}
