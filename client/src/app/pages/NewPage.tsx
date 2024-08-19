@@ -1,9 +1,8 @@
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import { BlockQuote, Bold, ClassicEditor, Code, CodeBlock, Essentials, Heading, Image, Italic, Link, List, Paragraph, Strikethrough, Undo } from "ckeditor5";
 import { useState } from "react";
 import { PageRequest } from "../../api/pageApi";
 
 import 'ckeditor5/ckeditor5.css';
+import { HtmlEditor } from "../../components/HtmlEditor";
 
 export default function NewPage() {
     const [data, setData] = useState<PageRequest>({
@@ -33,12 +32,7 @@ export default function NewPage() {
             />
         </section>
         <section>
-            <CKEditor editor={ClassicEditor} data={data.content}
-                config={{
-                    toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'strikethrough', 'code', 'codeBlock', 'undo'],
-                    plugins: [Essentials, Bold, Italic, Paragraph, Undo, Heading, Link, List, Image, BlockQuote, Strikethrough, Code, CodeBlock]
-                }}
-                onChange={(_, editor) => setData((prev) => ({ ...prev, content: editor.data.get() }))} />
+            <HtmlEditor content={data.content} onChange={(content) => setData((prev) => ({ ...prev, content }))} />
         </section>
         <section className="flex flex-row justify-items-end">
             <button className="basis-1/6 bg-amber-800 text-white rounded-md py-2 px-5">Create Page</button>
