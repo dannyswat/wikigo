@@ -9,6 +9,12 @@ export interface PageResponse {
     content: string;
 }
 
+export interface PageMeta {
+    id: number;
+    url: string;
+    title: string;
+}
+
 export function getPage(pageId: string): Promise<PageResponse> {
     return fetch(baseApiUrl + `/page/${pageId}`).then((res) => res.json());
 }

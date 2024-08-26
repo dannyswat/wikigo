@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { PageRequest } from "../../api/pageApi";
+import { HtmlEditor } from "../../components/HtmlEditor";
 
 import 'ckeditor5/ckeditor5.css';
-import { HtmlEditor } from "../../components/HtmlEditor";
 
 export default function NewPage() {
     const [data, setData] = useState<PageRequest>({
