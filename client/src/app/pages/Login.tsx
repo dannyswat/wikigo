@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getPublicKeyApi, loginApi } from '../../api/authApi';
 
@@ -16,11 +16,12 @@ export default function Login() {
         mutationFn: loginApi,
         onSuccess: () => navigate('/'),
     });
-    const handleLogin = () => {
+    function handleLoginClick(e: MouseEvent<HTMLButtonElement>) {
+        e.preventDefault();
         login.mutate({
             username,
             password,
-            publicKey: keyQuery.data?.publicKey || '',
+            publicKey: keyQuery.data?.key || '',
             timestamp: keyQuery.data?.timestamp || '',
         })
     }
@@ -44,7 +45,7 @@ export default function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                 />
                 <button className="w-full bg-blue-500 text-white p-2 rounded"
-                    onClick={handleLogin}>
+                    onClick={handleLoginClick}>
                     Login
                 </button>
             </div>

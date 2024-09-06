@@ -16,6 +16,11 @@ type AuthHandler struct {
 	KeyStore    *keymgmt.KeyMgmtService
 }
 
+type PublicKeyResponse struct {
+	Key       string `json:"key"`
+	Timestamp string `json:"timestamp"`
+}
+
 func (h *AuthHandler) GetPublicKey(e echo.Context) error {
 	purpose := e.Param("id")
 	if purpose == "" {
@@ -28,7 +33,10 @@ func (h *AuthHandler) GetPublicKey(e echo.Context) error {
 	if err != nil {
 		return e.JSON(500, err)
 	}
-	return e.JSON(200, key)
+	return e.JSON(200, &PublicKeyResponse{
+		Key:       base64.StdEncoding.EncodeToString(key),
+		Timestamp: time.Now().Format("20060102150405"),
+	})
 }
 
 type LoginRequest struct {

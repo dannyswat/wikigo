@@ -75,7 +75,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 
 	e.GET(s.BaseRoute+"/page/:id", s.pageHandler.GetPageByID)
 	e.POST(s.BaseRoute+"/admin/pages", s.pageHandler.CreatePage)
-	e.PATCH(s.BaseRoute+"/admin/pages/:id", s.pageHandler.UpdatePage)
+	e.PUT(s.BaseRoute+"/admin/pages/:id", s.pageHandler.UpdatePage)
 	e.DELETE(s.BaseRoute+"/admin/pages/:id", s.pageHandler.DeletePage)
 
 	e.POST(s.BaseRoute+"/auth/login", s.authHandler.Login)
