@@ -18,7 +18,7 @@ export default function NewPage() {
     });
     const createPageApi = useMutation({
         mutationFn: (page: PageRequest) => createPage(page),
-        onSuccess: () => { navigate(data.url); }
+        onSuccess: () => { navigate('/p' + data.url); }
     })
 
     function handleSubmitClick(e: MouseEvent<HTMLButtonElement>) {

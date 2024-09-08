@@ -76,6 +76,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	e.Use(s.jwt.AuthMiddleware())
 
 	e.GET(s.BaseRoute+"/page/:id", s.pageHandler.GetPageByID)
+	e.GET(s.BaseRoute+"/page/url/:url", s.pageHandler.GetPageByUrl)
 	e.POST(s.BaseRoute+"/admin/pages", s.pageHandler.CreatePage)
 	e.PUT(s.BaseRoute+"/admin/pages/:id", s.pageHandler.UpdatePage)
 	e.DELETE(s.BaseRoute+"/admin/pages/:id", s.pageHandler.DeletePage)

@@ -14,9 +14,10 @@ interface LoginResponse {
 
 export async function loginApi(request: LoginRequest): Promise<LoginResponse> {
     const { cipher, key } = await encryptPassword(request.password, request.publicKey, request.timestamp);
-    console.log('encrypted');
+
     return await fetch(baseApiUrl + '/auth/login', {
         method: 'POST',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
         },

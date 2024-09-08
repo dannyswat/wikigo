@@ -30,7 +30,7 @@ func (h *PageHandler) GetPageByID(e echo.Context) error {
 
 func (h *PageHandler) GetPageByUrl(e echo.Context) error {
 	url := e.Param("url")
-	page, err := h.PageService.GetPageByUrl(url)
+	page, err := h.PageService.GetPageByUrl("/" + url)
 	if err != nil {
 		return e.JSON(404, err)
 	}

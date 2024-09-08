@@ -9,11 +9,11 @@ import (
 type Page struct {
 	ID             int       `json:"id"`
 	ParentID       *int      `json:"parentId"`
-	Url            string    `json:"url" validate:"required,max=100,regexp=^((\\/)|((\\/[a-zA-Z0-9-]+)+))$"`
+	Url            string    `json:"url" validate:"required,max=100"`
 	Title          string    `json:"title" validate:"required,max=100"`
 	ShortDesc      string    `json:"shortDesc" validate:"max=300"`
 	Content        string    `json:"content"`
-	Tags           []string  `json:"tags" validate:"max=10"`
+	Tags           []string  `json:"tags"`
 	CreatedAt      time.Time `json:"createdAt"`
 	CreatedBy      string    `json:"createdBy"`
 	LastModifiedAt time.Time `json:"lastModifiedAt"`

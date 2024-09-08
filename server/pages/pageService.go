@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"regexp"
 	"time"
 
 	"github.com/dannyswat/wikigo/common/errors"
@@ -76,6 +77,9 @@ func ValidatePage(page *Page, isNew bool) error {
 			aggError.AddError(errors.NewValidationError(e.Error(), e.Field()))
 		}
 		return aggError
+	}
+	if matched, err := regexp.Match(`^(([/])|(([/][a-zA-Z0-9-]+)+))$`, []byte(page.Url)); !matched || err != nil {
+		return errors.NewValidationError("invalid url", "Url")
 	}
 	return nil
 }
