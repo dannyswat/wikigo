@@ -29,7 +29,7 @@ func (h *AuthHandler) GetPublicKey(e echo.Context) error {
 	if purpose != "login" && purpose != "changepassword" {
 		return e.JSON(400, "invalid request")
 	}
-	key, err := h.KeyStore.GetPublicKey(purpose)
+	key, err := h.KeyStore.GetPublicKeyForEncryption(purpose)
 	if err != nil {
 		return e.JSON(500, err)
 	}
@@ -65,12 +65,17 @@ func (h *AuthHandler) Login(e echo.Context) error {
 	if err != nil {
 		return e.JSON(401, "invalid username or password")
 	}
-	password, err := h.KeyStore.Decrypt("login", pwdBytes, keyBytes)
+	passwordWithTime, err := h.KeyStore.Decrypt("login", pwdBytes, keyBytes)
 	if err != nil {
 		return e.JSON(401, "invalid username or password")
 	}
+	timestamp, password := string(passwordWithTime[:14]), string(passwordWithTime[14:])
+	pwdTime, err := time.Parse("20060102150405", timestamp)
+	if err != nil || pwdTime.Add(time.Minute*5).Before(time.Now()) {
+		return e.JSON(401, "invalid username or password")
+	}
 
-	user, err := h.UserService.Login(req.UserName, string(password))
+	user, err := h.UserService.Login(req.UserName, password)
 	if err != nil {
 		return e.JSON(401, err)
 	}

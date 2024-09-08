@@ -63,24 +63,19 @@ export async function changePasswordApi(request: ChangePasswordRequest) {
 }
 
 async function encryptPassword(password: string, publicKey: string, timestamp: string) {
-    console.log('1');
     const oneTimeKey = await crypto.subtle.generateKey(
         { name: 'ECDH', namedCurve: "P-256" }, false,
         ['deriveBits', 'deriveKey']);
-    console.log('2');
     const oneTimePublic = await crypto.subtle.exportKey('raw', oneTimeKey.publicKey);
-    console.log('3');
     const serverPublicKey = await crypto.subtle.importKey(
         'raw', fromBase64(publicKey),
         { name: 'ECDH', namedCurve: 'P-256' },
         false, []);
-    console.log('4');
     const sharedKey = await crypto.subtle.deriveKey(
         { name: 'ECDH', public: serverPublicKey },
         oneTimeKey.privateKey,
         { name: 'AES-GCM', length: 256 },
         false, ['encrypt', 'decrypt']);
-    console.log('5');
     const iv = getRandomArrayBuffer(12);
     const cipherBuffer = await crypto.subtle.encrypt(
         { name: 'AES-GCM', iv }, sharedKey,

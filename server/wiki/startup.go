@@ -38,7 +38,7 @@ func (s *WikiStartUp) Setup() error {
 	if err != nil {
 		panic(err)
 	}
-	if adminUser != nil {
+	if adminUser == nil {
 		adminUser = &users.User{
 			UserName:    "admin",
 			Email:       "dhlwat@live.com",
@@ -55,6 +55,7 @@ func (s *WikiStartUp) Setup() error {
 	s.keyStore.Init()
 	s.keyStore.GenerateECKeyPair("login")
 	s.keyStore.GenerateECKeyPair("changepassword")
+	s.keyStore.GenerateECKeyPair("auth")
 	s.htmlPolicy = bluemonday.UGCPolicy()
 	s.fileManager, err = filemanager.NewFileManager(s.MediaPath, []string{".exe", ".bat", ".sh"}, "5MB")
 	if err != nil {
