@@ -27,6 +27,7 @@ type WikiStartUp struct {
 	pageHandler   *handlers.PageHandler
 	authHandler   *handlers.AuthHandler
 	uploadHandler *handlers.UploadHandler
+	jwt           *middlewares.JWT
 }
 
 func (s *WikiStartUp) Setup() error {
@@ -71,8 +72,8 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	s.authHandler = &handlers.AuthHandler{UserService: s.userService, KeyStore: s.keyStore}
 	s.uploadHandler = &handlers.UploadHandler{FileManager: s.fileManager}
 
-	jwt := middlewares.JWT{KeyStore: s.keyStore}
-	e.Use(jwt.AuthMiddleware())
+	s.jwt = &middlewares.JWT{KeyStore: s.keyStore}
+	e.Use(s.jwt.AuthMiddleware())
 
 	e.GET(s.BaseRoute+"/page/:id", s.pageHandler.GetPageByID)
 	e.POST(s.BaseRoute+"/admin/pages", s.pageHandler.CreatePage)

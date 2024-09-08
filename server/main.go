@@ -24,7 +24,9 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Gzip())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000"},
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowCredentials: true,
+		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderSetCookie},
 	}))
 	e.Use(middlewares.ErrorMiddleware())
 
@@ -34,5 +36,5 @@ func main() {
 	if os.Getenv("PORT") != "" {
 		port = ":" + os.Getenv("PORT")
 	}
-	e.Logger.Fatal(e.Start(port))
+	e.Logger.Fatal(e.StartTLS(port, "data\\localhost.crt", "data\\localhost.key"))
 }

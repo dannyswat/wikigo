@@ -6,11 +6,22 @@ import (
 )
 
 func GetUserId(e echo.Context) string {
-	token := e.Get("token").(*jwt.Token)
+	tokenObj := e.Get("token")
+	if tokenObj == nil {
+		return ""
+	}
+	token := tokenObj.(*jwt.Token)
+	if token == nil {
+		return ""
+	}
 	return GetUserIdFromToken(token)
 }
 
 func GetUserIdFromToken(token *jwt.Token) string {
 	claims := token.Claims.(jwt.MapClaims)
-	return claims["uid"].(string)
+	uid := claims["uid"]
+	if uid == nil {
+		return ""
+	}
+	return uid.(string)
 }

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/base64"
+	"net/http"
 	"time"
 
 	"github.com/dannyswat/wikigo/keymgmt"
@@ -79,15 +80,31 @@ func (h *AuthHandler) Login(e echo.Context) error {
 	if err != nil {
 		return e.JSON(401, err)
 	}
+	tokenExpiry := time.Now().Add(time.Hour * 24)
 	signedToken, err := h.KeyStore.SignJWT(jwt.MapClaims{
 		"uid": user.UserName,
 		"iat": time.Now().Unix(),
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"exp": tokenExpiry.Unix(),
 	}, "auth")
 
 	if err != nil {
 		return e.JSON(500, err)
 	}
+	e.SetCookie(&http.Cookie{
+		Name:     "user",
+		Value:    user.UserName,
+		Expires:  tokenExpiry,
+		SameSite: http.SameSiteNoneMode,
+		Secure:   true,
+	})
+	e.SetCookie(&http.Cookie{
+		Name:     "token",
+		Value:    signedToken,
+		Expires:  tokenExpiry,
+		SameSite: http.SameSiteNoneMode,
+		HttpOnly: true,
+		Secure:   true,
+	})
 	return e.JSON(200, &LoginResponse{Token: signedToken})
 }
 
