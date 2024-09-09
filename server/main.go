@@ -13,7 +13,7 @@ func main() {
 
 	wiki := &wiki.WikiStartUp{
 		DataPath:  "data",
-		BaseRoute: "",
+		BaseRoute: "/api",
 	}
 	if err := wiki.Setup(); err != nil {
 		panic(err)
@@ -32,9 +32,9 @@ func main() {
 
 	wiki.RegisterHandlers(e)
 
-	port := ":3001"
+	port := "localhost:3001"
 	if os.Getenv("PORT") != "" {
 		port = ":" + os.Getenv("PORT")
 	}
-	e.Logger.Fatal(e.StartTLS(port, "data\\localhost.crt", "data\\localhost.key"))
+	e.Logger.Fatal(e.Start(port))
 }

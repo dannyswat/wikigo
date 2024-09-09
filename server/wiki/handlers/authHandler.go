@@ -94,16 +94,16 @@ func (h *AuthHandler) Login(e echo.Context) error {
 		Name:     "user",
 		Value:    user.UserName,
 		Expires:  tokenExpiry,
-		SameSite: http.SameSiteNoneMode,
-		Secure:   true,
+		SameSite: http.SameSiteDefaultMode,
+		Path:     "/",
 	})
 	e.SetCookie(&http.Cookie{
 		Name:     "token",
 		Value:    signedToken,
 		Expires:  tokenExpiry,
-		SameSite: http.SameSiteNoneMode,
+		SameSite: http.SameSiteDefaultMode,
 		HttpOnly: true,
-		Secure:   true,
+		Path:     "/",
 	})
 	return e.JSON(200, &LoginResponse{Token: signedToken})
 }
