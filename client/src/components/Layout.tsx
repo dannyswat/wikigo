@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import SideNav from './SideNav';
 
 export default function Layout({ children }: { children: ReactNode }) {
     return (
@@ -10,15 +11,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
             <main className="container mx-auto px-4 py-6">
                 <div className="flex">
-                    <nav className="w-1/4">
-                        <ul className="space-y-2">
-                            <li><a href="#" className="text-blue-500 hover:underline">Home</a></li>
-                            <li><a href="#" className="text-blue-500 hover:underline">About</a></li>
-                            <li><a href="#" className="text-blue-500 hover:underline">Documentation</a></li>
-                            <li><a href="#" className="text-blue-500 hover:underline">Design AI</a></li>
-                        </ul>
-                    </nav>
-
+                    <SideNav />
                     <article className="w-3/4">
                         {children}
                     </article>

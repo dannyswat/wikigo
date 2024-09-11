@@ -28,6 +28,8 @@ func (p *Page) GetValue(field string) string {
 		return p.LastModifiedBy
 	case "Url":
 		return p.Url
+	case "Title":
+		return p.Title
 	case "ParentID":
 		if p.ParentID != nil {
 			return strconv.Itoa(*p.ParentID)
@@ -36,6 +38,7 @@ func (p *Page) GetValue(field string) string {
 	return ""
 }
 
+// Not support yet
 func (p *Page) GetValues(field string) []string {
 	switch field {
 	case "Tags":

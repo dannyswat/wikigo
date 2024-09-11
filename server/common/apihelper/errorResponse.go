@@ -1,6 +1,8 @@
 package apihelper
 
 import (
+	"log"
+
 	"github.com/dannyswat/wikigo/common/errors"
 	"github.com/dannyswat/wikigo/users"
 	"github.com/labstack/echo/v4"
@@ -68,6 +70,7 @@ func ReturnErrorResponse(e echo.Context, err error) error {
 	case *errors.AggregateValidationError:
 		return e.JSON(400, NewInvalidResponseErrorWithDetails(err.Error(), err.Errors))
 	default:
+		log.Println(err)
 		return e.JSON(500, NewInternalError("Internal server error"))
 	}
 }
