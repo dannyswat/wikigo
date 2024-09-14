@@ -83,17 +83,19 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	e.GET(s.BaseRoute+"/page/url/:url", s.pageHandler.GetPageByUrl)
 	e.GET(s.BaseRoute+"/pages/list", s.pageHandler.GetPagesByParentID)
 	e.GET(s.BaseRoute+"/pages/list/:id", s.pageHandler.GetPagesByParentID)
-	e.POST(s.BaseRoute+"/admin/pages", s.pageHandler.CreatePage)
-	e.PUT(s.BaseRoute+"/admin/pages/:id", s.pageHandler.UpdatePage)
-	e.DELETE(s.BaseRoute+"/admin/pages/:id", s.pageHandler.DeletePage)
+
+	admin := e.Group(s.BaseRoute + "/admin")
+	admin.Use(middlewares.AuthorizeMiddleware())
+	admin.POST("/pages", s.pageHandler.CreatePage)
+	admin.PUT("/pages/:id", s.pageHandler.UpdatePage)
+	admin.DELETE("/pages/:id", s.pageHandler.DeletePage)
+	admin.POST("/upload", s.uploadHandler.UploadFile)
+	admin.POST("/ckeditor/upload", s.uploadHandler.CKEditorUpload)
+	admin.POST("/createpath", s.uploadHandler.CreatePath)
+	admin.POST("/user/changepassword", s.authHandler.ChangePassword)
 
 	e.POST(s.BaseRoute+"/auth/login", s.authHandler.Login)
 	e.GET(s.BaseRoute+"/auth/publickey/:id", s.authHandler.GetPublicKey)
-	e.POST(s.BaseRoute+"/user/changepassword", s.authHandler.ChangePassword)
-
-	e.POST(s.BaseRoute+"/upload", s.uploadHandler.UploadFile)
-	e.POST(s.BaseRoute+"/ckeditor/upload", s.uploadHandler.CKEditorUpload)
-	e.POST(s.BaseRoute+"/createpath", s.uploadHandler.CreatePath)
 
 }
 

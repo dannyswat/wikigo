@@ -20,7 +20,7 @@ export function HtmlEditor({ content, onChange }: Props) {
                 Strikethrough, Code, CodeBlock, SimpleUploadAdapter
             ],
             simpleUpload: {
-                uploadUrl: '/api/ckeditor/upload',
+                uploadUrl: '/api/admin/ckeditor/upload',
                 withCredentials: true,
             },
         }}
