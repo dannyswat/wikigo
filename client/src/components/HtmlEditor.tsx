@@ -2,7 +2,7 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import {
     BlockQuote, Bold, ClassicEditor, Code, CodeBlock,
     Essentials, Heading, Italic, Link, List, Paragraph,
-    Strikethrough, Undo, Image
+    Strikethrough, Undo, Image, ImageUpload, SimpleUploadAdapter
 } from "ckeditor5";
 
 interface Props {
@@ -13,12 +13,16 @@ interface Props {
 export function HtmlEditor({ content, onChange }: Props) {
     return <CKEditor editor={ClassicEditor} data={content}
         config={{
-            toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'strikethrough', 'code', 'codeBlock', 'undo'],
+            toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote', 'strikethrough', 'code', 'codeBlock', 'undo', 'image', 'imageupload'],
             plugins: [
                 Essentials, Bold, Italic, Paragraph, Undo,
-                Heading, Link, List, Image, BlockQuote,
-                Strikethrough, Code, CodeBlock
-            ]
+                Heading, Link, List, Image, ImageUpload, BlockQuote,
+                Strikethrough, Code, CodeBlock, SimpleUploadAdapter
+            ],
+            simpleUpload: {
+                uploadUrl: '/api/ckeditor/upload',
+                withCredentials: true,
+            },
         }}
         onChange={(_, editor) => onChange(editor.data.get())} />;
 }

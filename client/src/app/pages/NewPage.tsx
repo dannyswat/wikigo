@@ -5,6 +5,7 @@ import { HtmlEditor } from "../../components/HtmlEditor";
 import 'ckeditor5/ckeditor5.css';
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { queryClient } from "../../common/query";
 
 export default function NewPage() {
     const navigate = useNavigate();
@@ -18,12 +19,12 @@ export default function NewPage() {
     });
     const createPageApi = useMutation({
         mutationFn: (page: PageRequest) => createPage(page),
-        onSuccess: () => { navigate('/p' + data.url); }
+        onSuccess: () => { queryClient.removeQueries({ queryKey: ['rootPages'] }); navigate('/p' + data.url); }
     })
 
     function handleSubmitClick(e: MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
-        createPageApi.mutate(data);
+        createPageApi.mutate({ ...data, id: 0 });
     }
 
     return <div className="w-full flex flex-col gap-4">

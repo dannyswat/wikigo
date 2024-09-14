@@ -14,6 +14,7 @@ func main() {
 	wiki := &wiki.WikiStartUp{
 		DataPath:  "data",
 		BaseRoute: "/api",
+		MediaPath: "media",
 	}
 	if err := wiki.Setup(); err != nil {
 		panic(err)
@@ -30,6 +31,7 @@ func main() {
 	}))
 	e.Use(middlewares.ErrorMiddleware())
 
+	e.Static("/media", wiki.MediaPath)
 	wiki.RegisterHandlers(e)
 
 	port := "localhost:3001"

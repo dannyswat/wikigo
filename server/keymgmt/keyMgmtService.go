@@ -23,6 +23,20 @@ func (k *KeyMgmtService) Init() error {
 	return k.DB.Init()
 }
 
+func (k *KeyMgmtService) GenerateECKeyPairIfNotExist(purpose string) error {
+	keyPair, err := k.DB.GetKeyPairByPurpose(purpose)
+	if err != nil {
+		return err
+	}
+	if keyPair == nil {
+		_, err = k.GenerateECKeyPair(purpose)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (k *KeyMgmtService) GenerateECKeyPair(purpose string) (*ecdsa.PublicKey, error) {
 	privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {

@@ -1,6 +1,7 @@
 package wiki
 
 import (
+	"log"
 	"time"
 
 	"github.com/dannyswat/wikigo/filemanager"
@@ -53,10 +54,13 @@ func (s *WikiStartUp) Setup() error {
 	s.userService = &users.UserService{DB: s.dbManager.Users()}
 	s.pageService = &pages.PageService{DB: s.dbManager.Pages()}
 	s.keyStore = &keymgmt.KeyMgmtService{DB: s.dbManager.Keys()}
-	s.keyStore.Init()
-	s.keyStore.GenerateECKeyPair("login")
-	s.keyStore.GenerateECKeyPair("changepassword")
-	s.keyStore.GenerateECKeyPair("auth")
+	err = s.keyStore.Init()
+	if err != nil {
+		return err
+	}
+	logIfError(s.keyStore.GenerateECKeyPairIfNotExist("login"))
+	logIfError(s.keyStore.GenerateECKeyPairIfNotExist("changepassword"))
+	logIfError(s.keyStore.GenerateECKeyPairIfNotExist("auth"))
 	s.htmlPolicy = bluemonday.UGCPolicy()
 	s.fileManager, err = filemanager.NewFileManager(s.MediaPath, []string{".exe", ".bat", ".sh"}, "5MB")
 	if err != nil {
@@ -88,6 +92,13 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	e.POST(s.BaseRoute+"/user/changepassword", s.authHandler.ChangePassword)
 
 	e.POST(s.BaseRoute+"/upload", s.uploadHandler.UploadFile)
+	e.POST(s.BaseRoute+"/ckeditor/upload", s.uploadHandler.CKEditorUpload)
 	e.POST(s.BaseRoute+"/createpath", s.uploadHandler.CreatePath)
 
+}
+
+func logIfError(err error) {
+	if err != nil {
+		log.Println(err)
+	}
 }
