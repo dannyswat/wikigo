@@ -7,7 +7,7 @@ interface Layout2Props {
     children: React.ReactNode;
 }
 
-const Layout2: React.FC<Layout2Props> = ({ children }) => {
+export default function Layout2({ children }: Layout2Props) {
     const { isLoggedIn } = useContext(UserContext);
 
     return (
@@ -30,6 +30,4 @@ const Layout2: React.FC<Layout2Props> = ({ children }) => {
             </footer>
         </div>
     );
-};
-
-export default Layout2;
+}
