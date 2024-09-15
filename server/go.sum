@@ -6,6 +6,8 @@ github.com/dannyswat/filedb v0.0.1-alpha h1:HY6kVRyVhKWnt54R3k1Ye/510zu0rAkAW1zG
 github.com/dannyswat/filedb v0.0.1-alpha/go.mod h1:b6XNcNRJX5D3He8hG+gR5d1PWU5rGSe0C+TVrj00BHw=
 github.com/dannyswat/filedb v0.1.2-alpha h1:WYv1q7iNZc0ve4vkcabz+NwChFe5s1/2JA8dVTOwZrk=
 github.com/dannyswat/filedb v0.1.2-alpha/go.mod h1:b6XNcNRJX5D3He8hG+gR5d1PWU5rGSe0C+TVrj00BHw=
+github.com/dannyswat/filedb v0.2.0-alpha h1:LlGgN5DiJOq10H+vIrp5jYLyY6D3WG7k5u0Ngp0FYOQ=
+github.com/dannyswat/filedb v0.2.0-alpha/go.mod h1:b6XNcNRJX5D3He8hG+gR5d1PWU5rGSe0C+TVrj00BHw=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/gabriel-vasile/mimetype v1.4.3 h1:in2uUcidCuFcDKtdcBxlR0rJ1+fsokWf+uqxgUFjbI0=

@@ -64,6 +64,14 @@ func (h *PageHandler) GetPagesByParentID(e echo.Context) error {
 	return e.JSON(200, pages)
 }
 
+func (h *PageHandler) GetAllPages(e echo.Context) error {
+	pages, err := h.PageService.GetAllPages()
+	if err != nil {
+		return e.JSON(500, err)
+	}
+	return e.JSON(200, pages)
+}
+
 type CreatePageRequest struct {
 	Url       string   `json:"url" validate:"required,max=100"`
 	Title     string   `json:"title" validate:"required,max=100"`

@@ -23,6 +23,10 @@ export function getPageByUrl(url: string): Promise<PageResponse> {
     return fetch(baseApiUrl + `/page/url/${url}`).then((res) => res.json());
 }
 
+export function getAllPages(): Promise<PageMeta[]> {
+    return fetch(baseApiUrl + `/pages/listall`).then((res) => res.json());
+}
+
 export function getRootPages(): Promise<PageMeta[]> {
     return fetch(baseApiUrl + `/pages/list`).then((res) => res.json());
 }

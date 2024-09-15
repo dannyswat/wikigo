@@ -66,6 +66,15 @@ func (p *pageDB) GetPagesByParentID(parentID *int) ([]*pages.PageMeta, error) {
 	return pagesResult, nil
 }
 
+func (p *pageDB) GetAllPages() ([]*pages.PageMeta, error) {
+	entries, err := p.db.ListAllIndexFields("CreatedBy")
+	if err != nil {
+		return nil, err
+	}
+	pagesResult := GetPageMetasFromIndexEntries(entries, "CreatedBy")
+	return pagesResult, nil
+}
+
 func (p *pageDB) CreatePage(page *pages.Page) error {
 	return p.db.Insert(page)
 }

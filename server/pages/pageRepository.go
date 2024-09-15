@@ -6,6 +6,7 @@ type PageRepository interface {
 	GetPageByUrl(url string) (*Page, error)
 	GetPagesByAuthor(author string) ([]*PageMeta, error)
 	GetPagesByParentID(parentID *int) ([]*PageMeta, error)
+	GetAllPages() ([]*PageMeta, error)
 	CreatePage(page *Page) error
 	UpdatePage(page *Page) error
 	DeletePage(id int) error

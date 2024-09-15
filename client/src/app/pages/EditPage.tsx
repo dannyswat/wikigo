@@ -4,6 +4,7 @@ import { getPageByUrl, PageRequest, updatePage } from "../../api/pageApi";
 import { HtmlEditor } from "../../components/HtmlEditor";
 import { queryClient } from "../../common/query";
 import { useEffect, useState, MouseEvent } from "react";
+import { clearCache, PageDropDown } from "../../components/PageDropDown";
 
 export default function EditPage() {
     const { id } = useParams();
@@ -27,6 +28,7 @@ export default function EditPage() {
         onSuccess: () => {
             queryClient.removeQueries({ queryKey: ['rootPages'] });
             queryClient.removeQueries({ queryKey: ['page', id] });
+            clearCache();
             navigate('/p' + data.url);
         }
     })
@@ -50,6 +52,11 @@ export default function EditPage() {
             <label className="basis-1/4">Title</label>
             <input className="basis-3/4 border-2 rounded-md p-2" type="text" placeholder="Title" value={data.title}
                 onChange={(e) => setData((prev) => ({ ...prev, title: e.target.value }))} />
+        </section>
+        <section className="flex flex-row items-center">
+            <label className="basis-1/4">Parent Page</label>
+            <PageDropDown className="basis-3/4 border-2 rounded-md p-2"
+                value={data.parentID} onChange={(value) => setData((prev) => ({ ...prev, parentID: value }))} />
         </section>
         <section className="flex flex-row items-center">
             <label className="basis-1/4">URL</label>

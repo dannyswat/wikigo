@@ -6,6 +6,7 @@ import 'ckeditor5/ckeditor5.css';
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { queryClient } from "../../common/query";
+import { clearCache, PageDropDown } from "../../components/PageDropDown";
 
 export default function NewPage() {
     const navigate = useNavigate();
@@ -19,7 +20,11 @@ export default function NewPage() {
     });
     const createPageApi = useMutation({
         mutationFn: (page: PageRequest) => createPage(page),
-        onSuccess: () => { queryClient.removeQueries({ queryKey: ['rootPages'] }); navigate('/p' + data.url); }
+        onSuccess: () => {
+            queryClient.removeQueries({ queryKey: ['rootPages'] });
+            clearCache();
+            navigate('/p' + data.url);
+        }
     })
 
     function handleSubmitClick(e: MouseEvent<HTMLButtonElement>) {
@@ -32,6 +37,11 @@ export default function NewPage() {
             <label className="basis-1/4">Title</label>
             <input className="basis-3/4 border-2 rounded-md p-2" type="text" placeholder="Title" value={data.title}
                 onChange={(e) => setData((prev) => ({ ...prev, title: e.target.value }))} />
+        </section>
+        <section className="flex flex-row items-center">
+            <label className="basis-1/4">Parent Page</label>
+            <PageDropDown className="basis-3/4 border-2 rounded-md p-2"
+                value={data.parentID} onChange={(value) => setData((prev) => ({ ...prev, parentID: value }))} />
         </section>
         <section className="flex flex-row items-center">
             <label className="basis-1/4">URL</label>

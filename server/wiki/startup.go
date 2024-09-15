@@ -83,6 +83,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	e.GET(s.BaseRoute+"/page/url/:url", s.pageHandler.GetPageByUrl)
 	e.GET(s.BaseRoute+"/pages/list", s.pageHandler.GetPagesByParentID)
 	e.GET(s.BaseRoute+"/pages/list/:id", s.pageHandler.GetPagesByParentID)
+	e.GET(s.BaseRoute+"/pages/listall", s.pageHandler.GetAllPages)
 
 	admin := e.Group(s.BaseRoute + "/admin")
 	admin.Use(middlewares.AuthorizeMiddleware())
