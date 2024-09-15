@@ -27,14 +27,6 @@ export function getRootPages(): Promise<PageMeta[]> {
     return fetch(baseApiUrl + `/pages/list`).then((res) => res.json());
 }
 
-export function getPageContent(pageId: string) {
-    return fetch(baseApiUrl + `/page/${pageId}`).then((res) => res.json()).then((data: PageResponse) => data.content);
-}
-
-export function getPageContentByUrl(url: string) {
-    return fetch(baseApiUrl + `/page/url/${url}`).then((res) => res.json()).then((data: PageResponse) => data.content);
-}
-
 export interface PageRequest {
     id: number;
     parentID?: number;

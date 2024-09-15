@@ -18,7 +18,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     const [username, setUsername] = useState(Cookies.get('user'));
 
     useEffect(() => {
-        const timer = window.setTimeout(() => {
+        const timer = window.setInterval(() => {
             const user = Cookies.get('user');
             if (user !== username) {
                 setUsername(user);
@@ -26,7 +26,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         }, 1000);
 
         return () => {
-            window.clearTimeout(timer);
+            window.clearInterval(timer);
         };
     }, [username]);
 

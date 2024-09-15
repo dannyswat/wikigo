@@ -1,10 +1,12 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { MouseEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { MouseEvent, useContext, useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { getPublicKeyApi, loginApi } from '../../api/authApi';
+import { UserContext } from '../../providers/UserProvider';
 
 export default function Login() {
     const navigate = useNavigate();
+    const { isLoggedIn } = useContext(UserContext);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
@@ -16,6 +18,11 @@ export default function Login() {
         mutationFn: loginApi,
         onSuccess: () => navigate('/'),
     });
+
+    if (isLoggedIn) {
+        return <Navigate to="/" />;
+    }
+
     function handleLoginClick(e: MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
         login.mutate({
