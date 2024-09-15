@@ -40,9 +40,17 @@ func main() {
 	e.GET("*", func(c echo.Context) error {
 		return c.File("public/index.html")
 	})
-	port := "localhost:3001"
-	if os.Getenv("PORT") != "" {
-		port = ":" + os.Getenv("PORT")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = os.Getenv("SERVER_PORT")
 	}
-	e.Logger.Fatal(e.Start(port))
+	if port == "" {
+		port = os.Getenv("HTTP_PLATFORM_PORT")
+	}
+	if port == "" {
+		port = "8080"
+	}
+
+	e.Logger.Printf("Server started at port %s", port)
+	e.Logger.Fatal(e.Start(":" + port))
 }
