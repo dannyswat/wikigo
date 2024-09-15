@@ -160,3 +160,22 @@ func (h *AuthHandler) ChangePassword(e echo.Context) error {
 	}
 	return e.JSON(200, "password updated")
 }
+
+func (h *AuthHandler) Logout(e echo.Context) error {
+	e.SetCookie(&http.Cookie{
+		Name:     "user",
+		Value:    "",
+		Expires:  time.Now(),
+		SameSite: http.SameSiteDefaultMode,
+		Path:     "/",
+	})
+	e.SetCookie(&http.Cookie{
+		Name:     "token",
+		Value:    "",
+		Expires:  time.Now(),
+		SameSite: http.SameSiteDefaultMode,
+		HttpOnly: true,
+		Path:     "/",
+	})
+	return e.JSON(200, "success")
+}

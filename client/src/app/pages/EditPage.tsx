@@ -73,7 +73,10 @@ export default function EditPage() {
             <HtmlEditor content={data.content} onChange={(content) => setData((prev) => ({ ...prev, content }))} />
         </section>
         <section className="flex flex-row justify-items-end">
-            <button onClick={handleSubmitClick} className="basis-1/6 bg-amber-800 text-white rounded-md py-2 px-5">Update Page</button>
+            <button onClick={handleSubmitClick}
+                className="basis-1/3 sm:basis-1/6 bg-amber-800 text-white rounded-md py-2 px-5">Update Page</button>
+            <button onClick={() => navigate(initialData ? '/p' + initialData.url : '/')}
+                className="basis-1/3 sm:basis-1/6 bg-gray-700 text-white rounded-md py-2 px-5 ms-4">Cancel</button>
         </section>
     </div>;
 }

@@ -1,27 +1,33 @@
-import { ReactNode } from 'react';
-import SideNav from './SideNav';
+import { ReactNode, useContext } from 'react';
+import { UserContext } from '../providers/UserProvider';
+import Logo from '../assets/logo-no-background.svg';
+import { IconSettings } from '@tabler/icons-react';
 
-export default function Layout({ children }: { children: ReactNode }) {
+interface LayoutProps {
+    children: ReactNode;
+}
+
+export default function Layout({ children }: LayoutProps) {
+    const { isLoggedIn } = useContext(UserContext);
+
     return (
-        <><header className="bg-white shadow">
-            <div className="container mx-auto px-4 py-6">
-                <h1 className="text-2xl font-bold text-gray-800">WikiGo</h1>
+        <div className="flex flex-col min-h-screen">
+            <header className="flex justify-between items-center p-4 bg-gray-800 text-white">
+                <div className="text-xl font-bold">
+                    <img src={Logo} alt="Wiki GO" className="h-8" />
+                </div>
+                <div className="space-x-4 text-right">
+                    {isLoggedIn && <IconSettings size={24} className="inline" />}
+                </div>
+            </header>
+            <div className="flex-1">
+                <div className="box-border p-4">
+                    {children}
+                </div>
             </div>
-        </header>
-
-            <main className="container mx-auto px-4 py-6">
-                <div className="flex">
-                    <SideNav />
-                    <article className="w-3/4">
-                        {children}
-                    </article>
-                </div>
-            </main>
-
-            <footer className="bg-gray-200 py-4">
-                <div className="container mx-auto px-4">
-                    <p className="text-center text-gray-600">© 2024 WikiGo. All rights reserved.</p>
-                </div>
-            </footer></>
+            <footer className="bg-gray-800 text-white text-center p-4">
+                &copy; {new Date().getFullYear()} Wiki GO. All rights reserved.
+            </footer>
+        </div>
     );
 }

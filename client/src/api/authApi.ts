@@ -38,6 +38,13 @@ export async function getPublicKeyApi(purpose: string): Promise<PublicKeyRespons
     return await fetch(baseApiUrl + `/auth/publickey/${purpose}`).then((res) => res.json());
 }
 
+export async function logoutApi() {
+    return await fetch(baseApiUrl + '/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+    }).then((res) => res.json());
+}
+
 export interface ChangePasswordRequest {
     oldPassword: string;
     newPassword: string;
