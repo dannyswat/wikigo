@@ -6,6 +6,7 @@ import (
 	"io"
 	"mime"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"strings"
 	"time"
@@ -48,7 +49,8 @@ type CKEditorUploadRequest struct {
 }
 
 var (
-	allowedExtensions = []string{".jpg", ".jpeg", ".png", ".gif", ".svg"}
+	allowedExtensions    = []string{".jpg", ".jpeg", ".png", ".gif", ".svg"}
+	invalidFileNameChars = `[ \/:*?"<>|]`
 )
 
 func (uh *UploadHandler) CKEditorUpload(e echo.Context) error {
@@ -71,10 +73,13 @@ func (uh *UploadHandler) CKEditorUpload(e echo.Context) error {
 	if err != nil {
 		return e.JSON(400, err)
 	}
-	fileName := fmt.Sprintf("%d_%s", time.Now().Unix(), mediaParams["filename"])
+	ext := filepath.Ext(mediaParams["filename"])
+	onlyFileName := strings.TrimSuffix(filepath.Base(mediaParams["filename"]), ext)
+	cleanFileName := regexp.MustCompile(invalidFileNameChars).ReplaceAllString(onlyFileName, "")
+	fileName := fmt.Sprintf("%d_%s%s", time.Now().Unix(), cleanFileName, ext)
 	path := "/uploads"
 
-	if !slices.Contains(allowedExtensions, strings.ToLower(filepath.Ext(fileName))) {
+	if !slices.Contains(allowedExtensions, ext) {
 		return e.JSON(400, "file extension not allowed")
 	}
 
