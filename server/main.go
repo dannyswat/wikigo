@@ -24,16 +24,22 @@ func main() {
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Gzip())
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{"http://localhost:3000"},
-		AllowCredentials: true,
-		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderSetCookie},
+	e.Use(middleware.Recover())
+	e.Static("/media", wiki.MediaPath)
+	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
+		Root:       "public",
+		Skipper:    nil,
+		Index:      "index.html",
+		Browse:     false,
+		HTML5:      true,
+		IgnoreBase: false,
+		Filesystem: nil,
 	}))
 	e.Use(middlewares.ErrorMiddleware())
-
-	e.Static("/media", wiki.MediaPath)
 	wiki.RegisterHandlers(e)
-
+	e.GET("*", func(c echo.Context) error {
+		return c.File("public/index.html")
+	})
 	port := "localhost:3001"
 	if os.Getenv("PORT") != "" {
 		port = ":" + os.Getenv("PORT")

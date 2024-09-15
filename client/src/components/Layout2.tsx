@@ -16,7 +16,7 @@ export default function Layout2({ children, isPage }: Layout2Props) {
     return (
         <div className="flex flex-col min-h-screen">
             <header className="flex justify-between items-center p-4 bg-gray-800 text-white">
-                <div className="text-xl font-bold">Wiki GO</div>
+                <div className="text-xl font-bold"><NavLink to="/">Wiki GO</NavLink></div>
                 <div className="space-x-4">
                     {!isLoggedIn && <NavLink to="/login" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</NavLink>}
                     {isLoggedIn && <NavLink to="/create" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Create</NavLink>}

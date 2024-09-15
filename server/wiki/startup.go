@@ -79,13 +79,14 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	s.jwt = &middlewares.JWT{KeyStore: s.keyStore}
 	e.Use(s.jwt.AuthMiddleware())
 
-	e.GET(s.BaseRoute+"/page/:id", s.pageHandler.GetPageByID)
-	e.GET(s.BaseRoute+"/page/url/:url", s.pageHandler.GetPageByUrl)
-	e.GET(s.BaseRoute+"/pages/list", s.pageHandler.GetPagesByParentID)
-	e.GET(s.BaseRoute+"/pages/list/:id", s.pageHandler.GetPagesByParentID)
-	e.GET(s.BaseRoute+"/pages/listall", s.pageHandler.GetAllPages)
+	api := e.Group(s.BaseRoute)
+	api.GET("/page/:id", s.pageHandler.GetPageByID)
+	api.GET("/page/url/:url", s.pageHandler.GetPageByUrl)
+	api.GET("/pages/list", s.pageHandler.GetPagesByParentID)
+	api.GET("/pages/list/:id", s.pageHandler.GetPagesByParentID)
+	api.GET("/pages/listall", s.pageHandler.GetAllPages)
 
-	admin := e.Group(s.BaseRoute + "/admin")
+	admin := api.Group("/admin")
 	admin.Use(middlewares.AuthorizeMiddleware())
 	admin.POST("/pages", s.pageHandler.CreatePage)
 	admin.PUT("/pages/:id", s.pageHandler.UpdatePage)
@@ -95,8 +96,8 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	admin.POST("/createpath", s.uploadHandler.CreatePath)
 	admin.POST("/user/changepassword", s.authHandler.ChangePassword)
 
-	e.POST(s.BaseRoute+"/auth/login", s.authHandler.Login)
-	e.GET(s.BaseRoute+"/auth/publickey/:id", s.authHandler.GetPublicKey)
+	api.POST("/auth/login", s.authHandler.Login)
+	api.GET("/auth/publickey/:id", s.authHandler.GetPublicKey)
 
 }
 
