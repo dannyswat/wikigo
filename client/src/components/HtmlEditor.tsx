@@ -23,6 +23,9 @@ export function HtmlEditor({ content, onChange }: Props) {
                 uploadUrl: '/api/admin/ckeditor/upload',
                 withCredentials: true,
             },
+            link: {
+                addTargetToExternalLinks: true,
+            }
         }}
         onChange={(_, editor) => onChange(editor.data.get())} />;
 }
