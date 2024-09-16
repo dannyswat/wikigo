@@ -30,6 +30,15 @@ export function HtmlEditor({ content, onChange }: Props) {
             },
             link: {
                 addTargetToExternalLinks: true,
+                decorators: {
+                    openInNewTab: {
+                        attributes: {
+                            "target": "_blank"
+                        },
+                        label: "Open in a new tab",
+                        mode: "manual"
+                    }
+                }
             },
             table: {
                 contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'],
