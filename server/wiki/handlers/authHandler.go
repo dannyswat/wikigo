@@ -112,9 +112,10 @@ func (h *AuthHandler) Login(e echo.Context) error {
 }
 
 type ChangePasswordRequest struct {
-	CurrentPassword string `json:"currentPassword" validate:"required"`
+	CurrentPassword string `json:"oldPassword" validate:"required"`
 	NewPassword     string `json:"newPassword" validate:"required"`
 	Key             string `json:"key" validate:"required"`
+	NewKey          string `json:"newKey" validate:"required"`
 }
 
 func (h *AuthHandler) ChangePassword(e echo.Context) error {
@@ -133,22 +134,24 @@ func (h *AuthHandler) ChangePassword(e echo.Context) error {
 	if err != nil {
 		return &users.UnauthorizedError{Message: "invalid password"}
 	}
-	password, err := h.KeyStore.Decrypt("login", pwdBytes, keyBytes)
+	passwordWithTime, err := h.KeyStore.Decrypt("login", pwdBytes, keyBytes)
 	if err != nil {
 		return &users.UnauthorizedError{Message: "invalid password"}
 	}
+	password := passwordWithTime[14:]
 	newPwdBytes, err := base64.StdEncoding.DecodeString(req.NewPassword)
 	if err != nil {
 		return &users.UnauthorizedError{Message: "invalid new password"}
 	}
-	keyBytes, err = base64.StdEncoding.DecodeString(req.Key)
+	keyBytes, err = base64.StdEncoding.DecodeString(req.NewKey)
 	if err != nil {
 		return &users.UnauthorizedError{Message: "invalid new password"}
 	}
-	newPassword, err := h.KeyStore.Decrypt("changepassword", newPwdBytes, keyBytes)
+	newPasswordWithTime, err := h.KeyStore.Decrypt("changepassword", newPwdBytes, keyBytes)
 	if err != nil {
 		return errors.NewValidationError("invalid new password", "newPassword")
 	}
+	newPassword := newPasswordWithTime[14:]
 
 	token := e.Get("token").(*jwt.Token)
 	claims := token.Claims.(jwt.MapClaims)

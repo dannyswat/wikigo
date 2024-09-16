@@ -66,4 +66,81 @@
         @apply my-2;
         @apply rounded-lg;
     }
+
+    .ck-content figure.table {
+        @apply w-full;
+        @apply sm:w-3/4;
+        @apply md:w-1/2;
+        @apply my-4;
+        @apply mx-auto;
+    }
+    .ck-content table {
+        @apply w-full;
+        @apply sm:w-3/4;
+        @apply md:w-1/2;
+        @apply my-4;
+        @apply mx-auto;
+        @apply border-collapse;
+    }
+
+    .ck-content th {
+        @apply bg-[#EAEAEA];
+        @apply text-center;
+        @apply font-bold;
+        @apply border;
+        @apply p-2;
+    }
+
+    .ck-content td {
+        @apply border;
+        @apply text-center;
+        @apply p-2;
+    }
+
+    .ck-content code {
+        @apply bg-gray-200;
+        @apply text-sm;
+        @apply p-1;
+        @apply rounded;
+    }
+
+    .ck-content pre {
+        @apply bg-gray-200;
+        @apply p-2;
+        @apply rounded;
+        @apply overflow-x-auto;
+    }
+
+    .ck-content pre code {
+        @apply bg-transparent;
+        @apply p-0;
+    }
+
+    .ck-content hr {
+        @apply my-4;
+        @apply border-t-2;
+        @apply border-gray-200;
+    }
+
+    .ck-content .ck-content__page-break {
+        @apply my-4;
+        @apply border-t-2;
+        @apply border-gray-200;
+    }
+
+    .ck-content .ck-content__page-break::after {
+        @apply block;
+        @apply text-center;
+        @apply text-xs;
+        @apply text-gray-500;
+        content: 'Page Break';
+    }
+
+    .ck-content .ck-content__page-break::before {
+        @apply block;
+        @apply text-center;
+        @apply text-xs;
+        @apply text-gray-500;
+        content: 'Page Break';
+    }
 }

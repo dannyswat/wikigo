@@ -49,14 +49,15 @@ export interface ChangePasswordRequest {
     oldPassword: string;
     newPassword: string;
     publicKey: string;
+    newPublicKey: string;
     timestamp: string;
 }
 
 export async function changePasswordApi(request: ChangePasswordRequest) {
     const { cipher, key } = await encryptPassword(request.oldPassword, request.publicKey, request.timestamp);
-    const { cipher: newCipher, key: newKey } = await encryptPassword(request.newPassword, request.publicKey, request.timestamp);
+    const { cipher: newCipher, key: newKey } = await encryptPassword(request.newPassword, request.newPublicKey, request.timestamp);
 
-    return await fetch(baseApiUrl + '/user/changepassword', {
+    return await fetch(baseApiUrl + '/admin/user/changepassword', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

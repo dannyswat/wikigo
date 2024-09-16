@@ -61,7 +61,7 @@ func (s *WikiStartUp) Setup() error {
 	logIfError(s.keyStore.GenerateECKeyPairIfNotExist("login"))
 	logIfError(s.keyStore.GenerateECKeyPairIfNotExist("changepassword"))
 	logIfError(s.keyStore.GenerateECKeyPairIfNotExist("auth"))
-	s.htmlPolicy = bluemonday.UGCPolicy()
+	s.htmlPolicy = pages.CreateHtmlPolicy()
 	s.fileManager, err = filemanager.NewFileManager(s.MediaPath, []string{".exe", ".bat", ".sh"}, "5MB")
 	if err != nil {
 		return err

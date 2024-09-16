@@ -74,9 +74,9 @@ export default function EditPage() {
         </section>
         <section className="flex flex-row justify-items-end">
             <button onClick={handleSubmitClick}
-                className="basis-1/3 sm:basis-1/6 bg-amber-800 text-white rounded-md py-2 px-5">Update Page</button>
+                className="basis-1/2 sm:basis-1/6 bg-amber-800 text-white rounded-md py-2 px-5">Save</button>
             <button onClick={() => navigate(initialData ? '/p' + initialData.url : '/')}
-                className="basis-1/3 sm:basis-1/6 bg-gray-700 text-white rounded-md py-2 px-5 ms-4">Cancel</button>
+                className="basis-1/2 sm:basis-1/6 bg-gray-700 text-white rounded-md py-2 px-5 ms-4">Cancel</button>
         </section>
     </div>;
 }
