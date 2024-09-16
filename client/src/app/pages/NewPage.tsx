@@ -22,6 +22,7 @@ export default function NewPage() {
         mutationFn: (page: PageRequest) => createPage(page),
         onSuccess: () => {
             queryClient.removeQueries({ queryKey: ['rootPages'] });
+            queryClient.removeQueries({ queryKey: ['page', data.url] });
             clearCache();
             navigate('/p' + data.url);
         }
