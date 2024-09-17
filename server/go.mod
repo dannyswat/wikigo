@@ -4,7 +4,7 @@ go 1.21.5
 
 require (
 	github.com/alexedwards/argon2id v1.0.0
-	github.com/dannyswat/filedb v0.2.1-alpha
+	github.com/dannyswat/filedb v0.2.2-alpha
 	github.com/go-playground/validator/v10 v10.22.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/labstack/echo/v4 v4.12.0
