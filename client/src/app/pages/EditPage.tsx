@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { getPageByUrl, PageRequest, updatePage } from "../../api/pageApi";
+import { deletePage, getPageByUrl, PageRequest, updatePage } from "../../api/pageApi";
 import { HtmlEditor } from "../../components/HtmlEditor";
 import { queryClient } from "../../common/query";
 import { useEffect, useState, MouseEvent } from "react";
@@ -27,12 +27,20 @@ export default function EditPage() {
     const updatePageApi = useMutation({
         mutationFn: (page: PageRequest) => updatePage(page),
         onSuccess: () => {
-            queryClient.removeQueries({ queryKey: ['rootPages'] });
             queryClient.removeQueries({ queryKey: ['page', pageId] });
             clearCache();
             navigate('/p' + data.url);
         }
-    })
+    });
+
+    const deletePageApi = useMutation({
+        mutationFn: (page: PageRequest) => deletePage(page.id),
+        onSuccess: () => {
+            queryClient.removeQueries({ queryKey: ['page', pageId] });
+            clearCache();
+            navigate('/');
+        }
+    });
 
     useEffect(() => {
         if (initialData) {
@@ -76,8 +84,13 @@ export default function EditPage() {
         <section className="flex flex-row justify-items-end">
             <button onClick={handleSubmitClick}
                 className="basis-1/2 sm:basis-1/6 bg-amber-800 text-white rounded-md py-2 px-5">Save</button>
-            <button onClick={() => navigate(initialData ? '/p' + initialData.url : '/')}
+            <button onClick={() => {
+                if (data.content === initialData?.content || confirm('Are you sure to leave? Unsaved content will be lost.'))
+                    navigate(initialData ? '/p' + initialData.url : '/')
+            }}
                 className="basis-1/2 sm:basis-1/6 bg-gray-700 text-white rounded-md py-2 px-5 ms-4">Cancel</button>
+            <button onClick={() => { if (confirm('Are you sure to delete the page?')) deletePageApi.mutate(data) }}
+                className="basis-1/4 sm:basis-1/12 bg-red-700 self-end text-white rounded-md py-2 px-5 ms-4">Delete</button>
         </section>
     </div>;
 }

@@ -11,7 +11,7 @@ export default function Page() {
 
     useEffect(() => {
         if (data?.title)
-            document.title = data.title;
+            document.title = data.title + ' - Wiki GO';
     }, [data?.title]);
 
     if (isLoading) return <div>Loading...</div>;

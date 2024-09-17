@@ -32,7 +32,7 @@ function buildTree(pages: PageMeta[]): PageMetaObject[] {
 
 export default function SideNav({ className, headerComponent, footerComponent, navigate, ...props }: SideNavProps) {
     const { data, isLoading } = useQuery({
-        queryKey: ['rootPages'],
+        queryKey: ['pages'],
         queryFn: getAllPages,
     })
     const menu = useMemo(() => data ? buildTree(data) : [], [data]);
@@ -60,7 +60,7 @@ export default function SideNav({ className, headerComponent, footerComponent, n
                     </button>
                 </li>
                     <li key={root.id}>
-                        <button onClick={() => navigate('/p' + root.url)} className="w-full text-left box-border hover:bg-gray-300 py-2 px-5 rounded">
+                        <button onClick={() => navigate('/p' + root.url)} className="w-full text-left box-border font-bold hover:bg-gray-300 py-2 px-5 rounded">
                             {root.title}
                         </button>
                     </li>
