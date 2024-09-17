@@ -17,7 +17,7 @@ export default function Layout2({ children, isPage }: Layout2Props) {
     const { isLoggedIn } = useContext(UserContext);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { id } = useParams();
-    const pageId = id ?? 'main';
+    const pageId = id ?? 'home';
 
     function navigateTo(path: string) {
         setIsMenuOpen(false);

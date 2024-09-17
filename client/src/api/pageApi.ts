@@ -2,7 +2,7 @@ import { baseApiUrl } from "./baseApi";
 
 export interface PageResponse {
     id: number;
-    parentID: number;
+    parentId: number;
     url: string;
     title: string;
     shortDesc: string;
@@ -11,6 +11,7 @@ export interface PageResponse {
 
 export interface PageMeta {
     id: number;
+    parentId: number;
     url: string;
     title: string;
 }
@@ -23,8 +24,9 @@ export function getPageByUrl(url: string): Promise<PageResponse> {
     return fetch(baseApiUrl + `/page/url/${url}`).then((res) => res.json());
 }
 
-export function getAllPages(): Promise<PageMeta[]> {
-    return fetch(baseApiUrl + `/pages/listall`).then((res) => res.json());
+export async function getAllPages(): Promise<PageMeta[]> {
+    const res = await fetch(baseApiUrl + `/pages/listall`);
+    return await res.json();
 }
 
 export function getRootPages(): Promise<PageMeta[]> {
@@ -40,28 +42,42 @@ export interface PageRequest {
     content: string;
 }
 
-export function createPage(page: PageRequest) {
-    return fetch(baseApiUrl + `/admin/pages`, {
+export async function createPage(page: PageRequest) {
+    const res = await fetch(baseApiUrl + `/admin/pages`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(page),
-    }).then((res) => res.json());
+    });
+
+    if (res.status !== 201) {
+        throw new Error(await res.text());
+    }
+
+    return await res.json();
 }
 
-export function updatePage(page: PageRequest) {
-    return fetch(baseApiUrl + `/admin/pages/${page.id}`, {
+export async function updatePage(page: PageRequest) {
+    const res = await fetch(baseApiUrl + `/admin/pages/${page.id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(page),
-    }).then((res) => res.json());
+    });
+    if (res.status !== 200) {
+        throw new Error(await res.text());
+    }
+    return await res.json();
 }
 
-export function deletePage(id: number) {
-    return fetch(baseApiUrl + `/admin/pages/${id}`, {
+export async function deletePage(id: number) {
+    const res = await fetch(baseApiUrl + `/admin/pages/${id}`, {
         method: 'DELETE',
-    }).then((res) => res.json());
+    });
+    if (res.status !== 200) {
+        throw new Error(await res.text());
+    }
+    return await res.json();
 }

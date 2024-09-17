@@ -15,10 +15,10 @@ export function WikiGoRoutes() {
             <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/" element={<Layout2 isPage><Page /></Layout2>} />
-                <Route path="/p/:id" element={<Layout2 isPage><Page /></Layout2>} />
+                <Route path="/p/:id/:id2?/:id3?/:id4?/:id5?" element={<Layout2 isPage><Page /></Layout2>} />
                 <Route element={<GuardedRoute />}>
                     <Route path="create" element={<Layout><NewPage /></Layout>} />
-                    <Route path="edit/:id" element={<Layout><EditPage /></Layout>} />
+                    <Route path="edit/:id/:id2?/:id3?/:id4?/:id5?" element={<Layout><EditPage /></Layout>} />
                     <Route path="/change-password" element={<ChangePassword />} />
                 </Route>
             </Routes>

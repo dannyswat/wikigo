@@ -35,14 +35,19 @@ interface PublicKeyResponse {
 }
 
 export async function getPublicKeyApi(purpose: string): Promise<PublicKeyResponse> {
-    return await fetch(baseApiUrl + `/auth/publickey/${purpose}`).then((res) => res.json());
+    const resp = await fetch(baseApiUrl + `/auth/publickey/${purpose}`);
+    return await resp.json();
 }
 
 export async function logoutApi() {
-    return await fetch(baseApiUrl + '/auth/logout', {
+    const resp = await fetch(baseApiUrl + '/auth/logout', {
         method: 'POST',
         credentials: 'include',
-    }).then((res) => res.json());
+    });
+    if (resp.status !== 200) {
+        throw new Error(await resp.text());
+    }
+    return await resp.json();
 }
 
 export interface ChangePasswordRequest {
@@ -57,7 +62,7 @@ export async function changePasswordApi(request: ChangePasswordRequest) {
     const { cipher, key } = await encryptPassword(request.oldPassword, request.publicKey, request.timestamp);
     const { cipher: newCipher, key: newKey } = await encryptPassword(request.newPassword, request.newPublicKey, request.timestamp);
 
-    return await fetch(baseApiUrl + '/admin/user/changepassword', {
+    const resp = await fetch(baseApiUrl + '/admin/user/changepassword', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -68,7 +73,11 @@ export async function changePasswordApi(request: ChangePasswordRequest) {
             key: key,
             newKey: newKey,
         }),
-    }).then((res) => res.json());
+    });
+    if (resp.status !== 200) {
+        throw new Error(await resp.text());
+    }
+    return await resp.json();
 }
 
 async function encryptPassword(password: string, publicKey: string, timestamp: string) {

@@ -8,6 +8,7 @@ import { clearCache, PageDropDown } from "../../components/PageDropDown";
 
 export default function EditPage() {
     const { id } = useParams();
+    const pageId = id ? window.location.pathname.substring(6) : 'home';
     const navigate = useNavigate();
     const [data, setData] = useState<PageRequest>({
         id: 0,
@@ -18,16 +19,16 @@ export default function EditPage() {
         content: '',
     });
     const { data: initialData, isLoading, isError } = useQuery({
-        enabled: !!id,
-        queryKey: ['page', id],
-        queryFn: () => getPageByUrl(id!)
+        enabled: !!pageId,
+        queryKey: ['page', pageId],
+        queryFn: () => getPageByUrl(pageId)
     });
 
     const updatePageApi = useMutation({
         mutationFn: (page: PageRequest) => updatePage(page),
         onSuccess: () => {
             queryClient.removeQueries({ queryKey: ['rootPages'] });
-            queryClient.removeQueries({ queryKey: ['page', id] });
+            queryClient.removeQueries({ queryKey: ['page', pageId] });
             clearCache();
             navigate('/p' + data.url);
         }
