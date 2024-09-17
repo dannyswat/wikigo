@@ -10,6 +10,7 @@ interface Props extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'onC
     value?: number;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const pagesQueryKey = ['pages'];
 
 // eslint-disable-next-line react-refresh/only-export-components
