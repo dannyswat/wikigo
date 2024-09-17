@@ -5,7 +5,10 @@ import {
     Strikethrough, Undo, Image, ImageUpload, SimpleUploadAdapter,
     Table,
     TableProperties,
-    TableToolbar
+    TableToolbar,
+    FontColor,
+    ImageInsertViaUrl,
+    ImageInsert
 } from "ckeditor5";
 
 interface Props {
@@ -16,13 +19,13 @@ interface Props {
 export function HtmlEditor({ content, onChange }: Props) {
     return <CKEditor editor={ClassicEditor} data={content}
         config={{
-            toolbar: ['heading', '|', 'bold', 'italic', 'strikethrough', 'link', '|',
-                'bulletedList', 'numberedList', 'insertTable', '|', 'blockQuote', 'code', 'codeBlock', 'undo', 'image', 'imageupload'],
+            toolbar: ['heading', '|', 'fontcolor', 'bold', 'italic', 'strikethrough', 'link', '|',
+                'bulletedList', 'numberedList', 'insertTable', '|', 'blockQuote', 'code', 'codeBlock', 'undo', 'insertImage'],
             plugins: [
                 Essentials, Bold, Italic, Paragraph, Undo,
                 Heading, Link, List, Image, ImageUpload, BlockQuote,
                 Strikethrough, Code, CodeBlock, SimpleUploadAdapter,
-                Table, TableProperties, TableToolbar
+                Table, TableProperties, TableToolbar, FontColor, ImageInsertViaUrl, ImageInsert
             ],
             simpleUpload: {
                 uploadUrl: '/api/admin/ckeditor/upload',
