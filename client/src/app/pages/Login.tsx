@@ -34,7 +34,7 @@ export default function Login() {
     }
 
     return (
-        <div className="flex items-center justify-center h-screen">
+        <div className="flex items-center justify-center h-screen bg-cover" style={{ backgroundImage: 'url(1726537215_sheep-flock-of-sheep-series-standing-on-85683.jpeg)' }}>
             <div className="w-96 bg-white p-4 rounded shadow-lg">
                 <h1 className="text-2xl font-bold mb-4">Login</h1>
                 <input

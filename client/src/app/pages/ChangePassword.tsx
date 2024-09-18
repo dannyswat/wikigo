@@ -50,7 +50,7 @@ export function ChangePassword() {
     }
 
     return (
-        <div className="flex items-center justify-center h-screen">
+        <div className="flex items-center justify-center h-screen bg-cover" style={{ backgroundImage: 'url(1726537215_sheep-flock-of-sheep-series-standing-on-85683.jpeg)' }}>
             <div className="w-96 bg-white p-4 rounded shadow-lg">
                 <h1 className="text-2xl font-bold mb-4">Change Password</h1>
                 <input className="w-full p-2 border border-gray-300 rounded mb-4" placeholder="Your password" name="oldPassword" type="password" onChange={handleChange} />
