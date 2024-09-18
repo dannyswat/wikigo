@@ -15,7 +15,7 @@ interface LoginResponse {
 export async function loginApi(request: LoginRequest): Promise<LoginResponse> {
     const { cipher, key } = await encryptPassword(request.password, request.publicKey, request.timestamp);
 
-    return await fetch(baseApiUrl + '/auth/login', {
+    const res = await fetch(baseApiUrl + '/auth/login', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -26,7 +26,8 @@ export async function loginApi(request: LoginRequest): Promise<LoginResponse> {
             password: cipher,
             key: key,
         }),
-    }).then((res) => res.json());
+    });
+    return await res.json();
 }
 
 interface PublicKeyResponse {
@@ -44,7 +45,7 @@ export async function logoutApi() {
         method: 'POST',
         credentials: 'include',
     });
-    if (resp.status !== 200) {
+    if (resp.status >= 400) {
         throw new Error(await resp.text());
     }
     return await resp.json();
@@ -74,7 +75,7 @@ export async function changePasswordApi(request: ChangePasswordRequest) {
             newKey: newKey,
         }),
     });
-    if (resp.status !== 200) {
+    if (resp.status >= 400) {
         throw new Error(await resp.text());
     }
     return await resp.json();

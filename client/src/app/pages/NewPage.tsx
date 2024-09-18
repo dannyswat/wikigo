@@ -28,6 +28,10 @@ export default function NewPage() {
             queryClient.removeQueries({ queryKey: ['page', data.url] });
             clearCache();
             navigate('/p' + data.url);
+        },
+        onError: (err, ...args) => {
+            alert(err);
+            console.log(args);
         }
     })
 
@@ -68,7 +72,8 @@ export default function NewPage() {
             <HtmlEditor content={data.content} onChange={(content) => setData((prev) => ({ ...prev, content }))} />
         </section>
         <section className="flex flex-row justify-items-end">
-            <button onClick={handleSubmitClick} className="basis-1/2 sm:basis-1/6 bg-amber-800 text-white rounded-md py-2 px-5">Create</button>
+            <button disabled={createPageApi.isPending} onClick={handleSubmitClick}
+                className="basis-1/2 sm:basis-1/6 bg-amber-800 text-white rounded-md py-2 px-5">Create</button>
             <button onClick={() => {
                 if (!data.content || confirm('Are you sure to leave?'))
                     navigate('/')

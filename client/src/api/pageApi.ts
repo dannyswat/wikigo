@@ -51,7 +51,7 @@ export async function createPage(page: PageRequest) {
         body: JSON.stringify(page),
     });
 
-    if (res.status !== 201) {
+    if (res.status >= 400) {
         throw new Error(await res.text());
     }
 
@@ -66,7 +66,7 @@ export async function updatePage(page: PageRequest) {
         },
         body: JSON.stringify(page),
     });
-    if (res.status !== 200) {
+    if (res.status >= 400) {
         throw new Error(await res.text());
     }
     return await res.json();
@@ -76,7 +76,7 @@ export async function deletePage(id: number) {
     const res = await fetch(baseApiUrl + `/admin/pages/${id}`, {
         method: 'DELETE',
     });
-    if (res.status !== 200) {
+    if (res.status >= 400) {
         throw new Error(await res.text());
     }
     return await res.json();
