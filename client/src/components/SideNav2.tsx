@@ -55,7 +55,7 @@ export default function SideNav({ className, headerComponent, footerComponent, n
     return (
         <nav className={'w-1/4 bg-gray-200 p-4' + (className ? ' ' + className : '')} {...props}>
             {headerComponent}
-            {root && <ul className="space-t-2">
+            {root && <ul className="space-t-2 mt-4 sm:mt-0">
                 <li>
                     <button onClick={() => setRoot(undefined)} className="w-full text-left box-border hover:bg-gray-300 py-2 px-5 rounded">
                         <i className="mr-2">&larr;</i>
@@ -68,7 +68,7 @@ export default function SideNav({ className, headerComponent, footerComponent, n
                     </button>
                 </li>
             </ul>}
-            <ul className="space-b-2">
+            <ul className={'space-b-2' + (root ? '' : 'mt-4 sm:mt-0')}>
                 {(root ? root.children : menu).map((page) => (
                     <li key={page.id}>
                         <button onClick={() => handleMenuItemClick(page)} className="w-full text-left box-border hover:bg-gray-300 py-2 px-5 rounded">
