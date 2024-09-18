@@ -49,7 +49,7 @@ type CKEditorUploadRequest struct {
 }
 
 var (
-	allowedExtensions    = []string{".jpg", ".jpeg", ".png", ".gif", ".svg"}
+	allowedExtensions    = []string{".jpg", ".jpeg", ".png", ".gif"}
 	invalidFileNameChars = `[ \/:*?"<>|]`
 )
 

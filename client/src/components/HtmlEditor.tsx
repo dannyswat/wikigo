@@ -20,7 +20,7 @@ export function HtmlEditor({ content, onChange }: Props) {
     return <CKEditor editor={ClassicEditor} data={content}
         config={{
             toolbar: ['heading', '|', 'fontcolor', 'bold', 'italic', 'strikethrough', 'link', '|',
-                'bulletedList', 'numberedList', 'insertTable', '|', 'blockQuote', 'code', 'codeBlock', 'undo', 'insertImage'],
+                'bulletedList', 'numberedList', 'insertTable', '|', 'blockQuote', 'code', 'codeBlock', 'undo', 'imageUpload'],
             plugins: [
                 Essentials, Bold, Italic, Paragraph, Undo,
                 Heading, Link, List, Image, ImageUpload, BlockQuote,

@@ -14,6 +14,8 @@ github.com/dannyswat/filedb v0.2.2-alpha h1:3m7N0DopImMOER9UljvxIECUEf83F8IJ3pIx
 github.com/dannyswat/filedb v0.2.2-alpha/go.mod h1:b6XNcNRJX5D3He8hG+gR5d1PWU5rGSe0C+TVrj00BHw=
 github.com/dannyswat/filedb v0.2.3-alpha h1:6JkMvnBx55ssIfieHvhs8/Pdy2On+3PG2fXDcScUbsg=
 github.com/dannyswat/filedb v0.2.3-alpha/go.mod h1:b6XNcNRJX5D3He8hG+gR5d1PWU5rGSe0C+TVrj00BHw=
+github.com/dannyswat/filedb v0.2.4-alpha h1:/naTiZnQd5WQzpt83LuHsxssPCY+vefeutYK5ALIVyI=
+github.com/dannyswat/filedb v0.2.4-alpha/go.mod h1:b6XNcNRJX5D3He8hG+gR5d1PWU5rGSe0C+TVrj00BHw=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/gabriel-vasile/mimetype v1.4.3 h1:in2uUcidCuFcDKtdcBxlR0rJ1+fsokWf+uqxgUFjbI0=
