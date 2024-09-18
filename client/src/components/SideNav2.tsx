@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getAllPages, PageMeta } from "../api/pageApi";
 import React, { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface SideNavProps extends React.HTMLAttributes<HTMLDivElement> {
     headerComponent?: React.ReactNode;
@@ -31,6 +32,7 @@ function buildTree(pages: PageMeta[]): PageMetaObject[] {
 }
 
 export default function SideNav({ className, headerComponent, footerComponent, navigate, ...props }: SideNavProps) {
+    const justNavigate = useNavigate();
     const { data, isLoading } = useQuery({
         queryKey: ['pages'],
         queryFn: getAllPages,
@@ -43,22 +45,25 @@ export default function SideNav({ className, headerComponent, footerComponent, n
     }
 
     function handleMenuItemClick(page: PageMetaObject) {
-        if (page.children && page.children.length > 0) {
-            setRoot(page);
+        if (!page.children?.length) {
+            navigate('/p' + page.url);
+            return;
         }
-        navigate('/p' + page.url);
+        setRoot(page);
+        justNavigate('/p' + page.url);
     }
 
     return (
         <nav className={'w-1/4 bg-gray-200 p-4' + (className ? ' ' + className : '')} {...props}>
             {headerComponent}
             <ul className="space-y-2 mt-6">
-                {root && <><li key="back">
-                    <button onClick={() => setRoot(undefined)} className="w-full text-left box-border hover:bg-gray-300 py-2 px-5 rounded">
-                        <i className="mr-2">&larr;</i>
-                        Back
-                    </button>
-                </li>
+                {root && <>
+                    <li key="back">
+                        <button onClick={() => setRoot(undefined)} className="w-full text-left box-border hover:bg-gray-300 py-2 px-5 rounded">
+                            <i className="mr-2">&larr;</i>
+                            Back
+                        </button>
+                    </li>
                     <li key={root.id}>
                         <button onClick={() => navigate('/p' + root.url)} className="w-full text-left box-border font-bold hover:bg-gray-300 py-2 px-5 rounded">
                             {root.title}
