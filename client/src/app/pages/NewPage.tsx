@@ -73,7 +73,7 @@ export default function NewPage() {
         </section>
         <section className="flex flex-row justify-items-end">
             <button disabled={createPageApi.isPending} onClick={handleSubmitClick}
-                className="basis-1/2 sm:basis-1/6 bg-amber-800 text-white rounded-md py-2 px-5">Create</button>
+                className="basis-1/2 sm:basis-1/6 bg-green-800 text-white rounded-md py-2 px-5">Create</button>
             <button onClick={() => {
                 if (!data.content || confirm('Are you sure to leave?'))
                     navigate('/')

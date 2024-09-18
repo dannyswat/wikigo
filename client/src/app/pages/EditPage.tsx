@@ -83,10 +83,14 @@ export default function EditPage() {
         </section>
         <section className="flex flex-row justify-items-end">
             <button onClick={handleSubmitClick}
-                className="basis-1/2 sm:basis-1/6 bg-amber-800 text-white rounded-md py-2 px-5">Save</button>
+                className="basis-1/2 sm:basis-1/6 bg-green-800 text-white rounded-md py-2 px-5">Save</button>
             <button onClick={() => {
                 if (data.content === initialData?.content || confirm('Are you sure to leave? Unsaved content will be lost.'))
-                    navigate(initialData ? '/p' + initialData.url : '/')
+                    navigate(initialData ? '/p' + initialData.url : '/');
+                else {
+                    console.log(data);
+                    console.log(initialData);
+                }
             }}
                 className="basis-1/2 sm:basis-1/6 bg-gray-700 text-white rounded-md py-2 px-5 ms-4">Cancel</button>
             <button onClick={() => { if (confirm('Are you sure to delete the page?')) deletePageApi.mutate(data) }}

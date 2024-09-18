@@ -29,7 +29,7 @@ export default function Layout2({ children, isPage }: Layout2Props) {
             <header className="flex justify-between items-center p-4 bg-gray-800 text-white">
                 <div className="text-xl font-bold">
                     <button className="p-2 sm:hidden" onClick={() => setIsMenuOpen((p) => !p)}>
-                        <IconMenu2 size={24} />
+                        <IconMenu2 className="hover:text-gray-200" size={24} />
                     </button>
                     <NavLink className="hidden sm:inline" to="/">
                         <img src={Logo} alt="Wiki GO" className="h-8" />
@@ -47,7 +47,7 @@ export default function Layout2({ children, isPage }: Layout2Props) {
                 <SideNav
                     navigate={navigateTo}
                     className={`fixed inset-0 w-full ${isMenuOpen ? 'block' : 'hidden'} sm:block sm:relative sm:w-1/4 z-20`}
-                    headerComponent={<button className="absolute right-4 top-4 sm:hidden" onClick={() => setIsMenuOpen(false)}><IconClearAll height={24} /></button>}
+                    headerComponent={<button className="absolute right-4 top-4 sm:hidden hover:text-gray-700" onClick={() => setIsMenuOpen(false)}><IconClearAll height={24} /></button>}
                 />
                 <div className="flex-1 p-4">
                     {children}

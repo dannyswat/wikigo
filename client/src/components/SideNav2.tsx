@@ -27,7 +27,6 @@ function buildTree(pages: PageMeta[]): PageMetaObject[] {
             page.children!.push({ ...child, children: [] });
         });
     });
-
     return rootPages;
 }
 
@@ -56,20 +55,20 @@ export default function SideNav({ className, headerComponent, footerComponent, n
     return (
         <nav className={'w-1/4 bg-gray-200 p-4' + (className ? ' ' + className : '')} {...props}>
             {headerComponent}
-            <ul className="space-y-2 mt-6">
-                {root && <>
-                    <li key="back">
-                        <button onClick={() => setRoot(undefined)} className="w-full text-left box-border hover:bg-gray-300 py-2 px-5 rounded">
-                            <i className="mr-2">&larr;</i>
-                            Back
-                        </button>
-                    </li>
-                    <li key={root.id}>
-                        <button onClick={() => navigate('/p' + root.url)} className="w-full text-left box-border font-bold hover:bg-gray-300 py-2 px-5 rounded">
-                            {root.title}
-                        </button>
-                    </li>
-                </>}
+            {root && <ul className="space-t-2">
+                <li>
+                    <button onClick={() => setRoot(undefined)} className="w-full text-left box-border hover:bg-gray-300 py-2 px-5 rounded">
+                        <i className="mr-2">&larr;</i>
+                        Back
+                    </button>
+                </li>
+                <li>
+                    <button onClick={() => navigate('/p' + root.url)} className="w-full text-left box-border font-bold hover:bg-gray-300 py-2 px-5 rounded">
+                        {root.title}
+                    </button>
+                </li>
+            </ul>}
+            <ul className="space-b-2">
                 {(root ? root.children : menu).map((page) => (
                     <li key={page.id}>
                         <button onClick={() => handleMenuItemClick(page)} className="w-full text-left box-border hover:bg-gray-300 py-2 px-5 rounded">
