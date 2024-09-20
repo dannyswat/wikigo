@@ -57,7 +57,7 @@ export default function SideNav({ className, headerComponent, footerComponent, n
     }
 
     return (
-        <nav className={'w-1/4 bg-gray-200 p-4' + (className ? ' ' + className : '')} {...props}>
+        <nav className={'w-1/4 bg-gray-200 p-4 overflow-y-auto' + (className ? ' ' + className : '')} {...props}>
             {headerComponent}
             {root && <ul className="space-t-2 mt-4 sm:mt-0">
                 <li>
