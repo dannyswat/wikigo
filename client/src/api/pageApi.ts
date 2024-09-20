@@ -2,7 +2,7 @@ import { baseApiUrl } from "./baseApi";
 
 export interface PageResponse {
     id: number;
-    parentId: number;
+    parentId: number | null;
     url: string;
     title: string;
     shortDesc: string;
@@ -11,7 +11,7 @@ export interface PageResponse {
 
 export interface PageMeta {
     id: number;
-    parentId: number;
+    parentId: number | null;
     url: string;
     title: string;
 }
