@@ -1,6 +1,6 @@
-import { ReactNode, useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import SideNav from './SideNav2';
-import { NavLink, useNavigate, useParams } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { UserContext } from '../providers/UserProvider';
 import Logo from '../assets/logo-no-background.svg';
 import { IconClearAll, IconMenu2 } from '@tabler/icons-react';
@@ -8,11 +8,10 @@ import { Footer } from './Footer';
 import { SettingMenu } from './SettingMenu';
 
 interface Layout2Props {
-    children: ReactNode;
     isPage?: boolean;
 }
 
-export default function Layout2({ children, isPage }: Layout2Props) {
+export default function Layout2({ isPage }: Layout2Props) {
     const navigate = useNavigate();
     const { isLoggedIn } = useContext(UserContext);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -50,7 +49,7 @@ export default function Layout2({ children, isPage }: Layout2Props) {
                     headerComponent={<button className="absolute right-4 top-4 sm:hidden hover:text-gray-700" onClick={() => setIsMenuOpen(false)}><IconClearAll height={24} /></button>}
                 />
                 <div className="flex-1 p-4">
-                    {children}
+                    <Outlet />
                 </div>
             </div>
             <Footer />

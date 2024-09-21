@@ -1,13 +1,15 @@
 import { ReactNode, useContext } from 'react';
-import { UserContext } from '../providers/UserProvider';
-import Logo from '../assets/logo-no-background.svg';
+import { Outlet } from 'react-router-dom';
 import { IconSettings } from '@tabler/icons-react';
 
+import { UserContext } from '../providers/UserProvider';
+import Logo from '../assets/logo-no-background.svg';
+
 interface LayoutProps {
-    children: ReactNode;
+    customMenu?: ReactNode;
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ customMenu }: LayoutProps) {
     const { isLoggedIn } = useContext(UserContext);
 
     return (
@@ -17,12 +19,12 @@ export default function Layout({ children }: LayoutProps) {
                     <img src={Logo} alt="Wiki GO" className="h-8" />
                 </div>
                 <div className="space-x-4 text-right">
-                    {isLoggedIn && <IconSettings size={24} className="inline" />}
+                    {isLoggedIn && (customMenu ?? <IconSettings size={24} className="inline" />)}
                 </div>
             </header>
             <div className="flex-1">
                 <div className="box-border p-4">
-                    {children}
+                    <Outlet />
                 </div>
             </div>
             <footer className="bg-gray-800 text-white text-center p-4">

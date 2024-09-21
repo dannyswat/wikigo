@@ -7,6 +7,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { queryClient } from "../../common/query";
 import { clearCache, PageDropDown, pagesQueryKey } from "../../components/PageDropDown";
+import { IconFidgetSpinner } from "@tabler/icons-react";
 
 export default function NewPage() {
     const navigate = useNavigate();
@@ -73,7 +74,9 @@ export default function NewPage() {
         </section>
         <section className="flex flex-row justify-items-end">
             <button disabled={createPageApi.isPending} onClick={handleSubmitClick}
-                className="basis-1/2 sm:basis-1/6 bg-green-800 text-white rounded-md py-2 px-5">Create</button>
+                className="basis-1/2 sm:basis-1/6 bg-lime-700 text-white rounded-md py-2 px-5">
+                {createPageApi.isPending ? <IconFidgetSpinner className="animate-spin mx-auto" /> : 'Create'}
+            </button>
             <button onClick={() => {
                 if (!data.content || confirm('Are you sure to leave?'))
                     navigate('/')

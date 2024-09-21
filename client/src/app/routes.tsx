@@ -14,11 +14,15 @@ export function WikiGoRoutes() {
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<Login />} />
-                <Route path="/" element={<Layout2 isPage><Page /></Layout2>} />
-                <Route path="/p/:id/:id2?/:id3?/:id4?/:id5?" element={<Layout2 isPage><Page /></Layout2>} />
+                <Route element={<Layout2 isPage />}>
+                    <Route path="/" element={<Page />} />
+                    <Route path="/p/:id/:id2?/:id3?/:id4?/:id5?" element={<Page />} />
+                </Route>
                 <Route element={<GuardedRoute />}>
-                    <Route path="create" element={<Layout><NewPage /></Layout>} />
-                    <Route path="edit/:id/:id2?/:id3?/:id4?/:id5?" element={<Layout><EditPage /></Layout>} />
+                    <Route element={<Layout />}>
+                        <Route path="create" element={<NewPage />} />
+                        <Route path="edit/:id/:id2?/:id3?/:id4?/:id5?" element={<EditPage />} />
+                    </Route>
                     <Route path="/change-password" element={<ChangePassword />} />
                 </Route>
             </Routes>
