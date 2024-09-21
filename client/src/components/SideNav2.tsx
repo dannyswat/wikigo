@@ -78,7 +78,7 @@ export default function SideNav({ className, headerComponent, footerComponent, n
                     </button>
                 </li>
             </ul>}
-            <ul className={'space-b-2' + (root ? '' : 'mt-4 sm:mt-0')}>
+            <ul className={'space-b-2' + (root ? '' : ' mt-4 sm:mt-0')}>
                 {(root ? root.children : menu).map((page) => (
                     <li key={page.id}>
                         <button onClick={() => handleMenuItemClick(page)} className="w-full text-left box-border hover:bg-gray-300 py-2 px-5 rounded">
