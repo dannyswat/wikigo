@@ -6,7 +6,7 @@ import 'ckeditor5/ckeditor5.css';
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { queryClient } from "../../common/query";
-import { clearCache, PageDropDown, pagesQueryKey } from "../../components/PageDropDown";
+import { clearCache, PageDropDown } from "../../components/PageDropDown";
 import { IconFidgetSpinner } from "@tabler/icons-react";
 import ToggleButton from "../../components/ToggleButton";
 
@@ -23,7 +23,7 @@ export default function NewPage() {
         isPinned: false,
     });
     const { data: pageList } = useQuery({
-        queryKey: pagesQueryKey,
+        queryKey: ['pages', true],
         queryFn: getAllPages,
     });
     const createPageApi = useMutation({

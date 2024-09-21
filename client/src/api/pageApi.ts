@@ -16,6 +16,8 @@ export interface PageMeta {
     parentId: number | null;
     url: string;
     title: string;
+    isPinned: boolean;
+    isProtected: boolean;
 }
 
 export function getPage(pageId: string): Promise<PageResponse> {

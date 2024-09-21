@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { getAllPages, PageMeta } from "../api/pageApi";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useContext, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../providers/UserProvider";
 
 interface SideNavProps extends React.HTMLAttributes<HTMLDivElement> {
     headerComponent?: React.ReactNode;
@@ -16,6 +17,8 @@ interface PageMetaObject extends PageMeta {
 
 function buildTree(pages: PageMeta[]): PageMetaObject[] {
     pages.sort(function (a, b) {
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
         return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
     });
     const allPages: PageMetaObject[] = pages.map((page) => ({ ...page, children: [] }));
@@ -33,9 +36,10 @@ function buildTreeInternal(allPages: PageMetaObject[], parent?: PageMetaObject):
 }
 
 export default function SideNav({ className, headerComponent, footerComponent, navigate, ...props }: SideNavProps) {
+    const { isLoggedIn } = useContext(UserContext);
     const justNavigate = useNavigate();
     const { data, isLoading } = useQuery({
-        queryKey: ['pages'],
+        queryKey: ['pages', isLoggedIn],
         queryFn: getAllPages,
     })
     const menu = useMemo(() => data ? buildTree(data) : [], [data]);

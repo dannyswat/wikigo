@@ -1,8 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { getAllPages, PageMeta } from "../api/pageApi";
 import { queryClient } from "../common/query";
+import { UserContext } from "../providers/UserProvider";
 
 interface Props extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'onChange' | 'value'> {
     readonly?: boolean;
@@ -11,16 +12,15 @@ interface Props extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'onC
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const pagesQueryKey = ['pages'];
-
-// eslint-disable-next-line react-refresh/only-export-components
 export function clearCache() {
-    queryClient.removeQueries({ queryKey: pagesQueryKey });
+    queryClient.removeQueries({ queryKey: ['pages', true] });
+    queryClient.removeQueries({ queryKey: ['pages', false] })
 }
 
 export function PageDropDown({ readonly, value, onChange, ...props }: Props) {
+    const { isLoggedIn } = useContext(UserContext);
     const { data, isLoading, isError } = useQuery({
-        queryKey: pagesQueryKey,
+        queryKey: ['pages', isLoggedIn],
         queryFn: getAllPages,
     });
     const listItems = useMemo(() => [{ id: 0, title: 'None' } as PageMeta, ...(data || [])], [data]);
