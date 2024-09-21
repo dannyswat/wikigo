@@ -28,8 +28,8 @@ func (s *PageService) GetPagesByParentID(parentID *int) ([]*PageMeta, error) {
 	return s.DB.GetPagesByParentID(parentID)
 }
 
-func (s *PageService) GetAllPages() ([]*PageMeta, error) {
-	return s.DB.GetAllPages()
+func (s *PageService) GetAllPages(includeProtected bool) ([]*PageMeta, error) {
+	return s.DB.GetAllPages(includeProtected)
 }
 
 func (s *PageService) CreatePage(page *Page, user string) error {

@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { queryClient } from "../../common/query";
 import { clearCache, PageDropDown, pagesQueryKey } from "../../components/PageDropDown";
 import { IconFidgetSpinner } from "@tabler/icons-react";
+import ToggleButton from "../../components/ToggleButton";
 
 export default function NewPage() {
     const navigate = useNavigate();
@@ -18,6 +19,8 @@ export default function NewPage() {
         title: '',
         shortDesc: '',
         content: '',
+        isProtected: false,
+        isPinned: false,
     });
     const { data: pageList } = useQuery({
         queryKey: pagesQueryKey,
@@ -71,6 +74,15 @@ export default function NewPage() {
         </section>
         <section>
             <HtmlEditor content={data.content} onChange={(content) => setData((prev) => ({ ...prev, content }))} />
+        </section>
+        <section>
+            <ToggleButton label="Protected"
+                checked={data.isProtected}
+                onChange={(value) => setData((prev) => ({ ...prev, isProtected: value }))} />
+            <ToggleButton label="Pinned"
+                checked={data.isPinned}
+                className="ms-4"
+                onChange={(value) => setData((prev) => ({ ...prev, isPinned: value }))} />
         </section>
         <section className="flex flex-row justify-items-end">
             <button disabled={createPageApi.isPending} onClick={handleSubmitClick}

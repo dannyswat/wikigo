@@ -18,6 +18,8 @@ type Page struct {
 	CreatedBy      string    `json:"createdBy"`
 	LastModifiedAt time.Time `json:"lastModifiedAt"`
 	LastModifiedBy string    `json:"lastModifiedBy"`
+	IsProtected    bool      `json:"isProtected"`
+	IsPinned       bool      `json:"isPinned"`
 }
 
 func (p *Page) GetValue(field string) string {
@@ -34,6 +36,10 @@ func (p *Page) GetValue(field string) string {
 		if p.ParentID != nil {
 			return strconv.Itoa(*p.ParentID)
 		}
+	case "IsProtected":
+		return strconv.FormatBool(p.IsProtected)
+	case "IsPinned":
+		return strconv.FormatBool(p.IsPinned)
 	}
 	return ""
 }

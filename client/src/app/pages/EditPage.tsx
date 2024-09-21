@@ -6,6 +6,7 @@ import { queryClient } from "../../common/query";
 import { useEffect, useState, MouseEvent } from "react";
 import { clearCache, PageDropDown } from "../../components/PageDropDown";
 import { IconFidgetSpinner } from "@tabler/icons-react";
+import ToggleButton from "../../components/ToggleButton";
 
 export default function EditPage() {
     const { id } = useParams();
@@ -18,6 +19,8 @@ export default function EditPage() {
         title: '',
         shortDesc: '',
         content: '',
+        isProtected: false,
+        isPinned: false,
     });
     const { data: initialData, isLoading, isError } = useQuery({
         enabled: !!pageId,
@@ -81,6 +84,15 @@ export default function EditPage() {
         </section>
         <section>
             <HtmlEditor content={data.content} onChange={(content) => setData((prev) => ({ ...prev, content }))} />
+        </section>
+        <section>
+            <ToggleButton label="Protected"
+                checked={data.isProtected}
+                onChange={(value) => setData((prev) => ({ ...prev, isProtected: value }))} />
+            <ToggleButton label="Pinned"
+                checked={data.isPinned}
+                className="ms-4"
+                onChange={(value) => setData((prev) => ({ ...prev, isPinned: value }))} />
         </section>
         <section className="flex flex-row justify-items-end">
             <button onClick={handleSubmitClick}

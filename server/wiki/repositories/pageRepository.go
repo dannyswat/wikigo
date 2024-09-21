@@ -15,8 +15,8 @@ func NewPageDB(path string) pages.PageRepository {
 	return &pageDB{
 		db: filedb.NewFileDB[*pages.Page](path, []filedb.FileIndexConfig{
 			{Field: "Url", Unique: true},
-			{Field: "CreatedBy", Unique: false, Include: []string{"Url", "ParentID", "Title"}},
-			{Field: "ParentID", Unique: false, Include: []string{"Url", "Title"}},
+			{Field: "CreatedBy", Unique: false, Include: []string{"Url", "ParentID", "Title", "IsPinned", "IsProtected"}},
+			{Field: "ParentID", Unique: false, Include: []string{"Url", "Title", "IsPinned", "IsProtected"}},
 		}),
 	}
 }
@@ -66,13 +66,22 @@ func (p *pageDB) GetPagesByParentID(parentID *int) ([]*pages.PageMeta, error) {
 	return pagesResult, nil
 }
 
-func (p *pageDB) GetAllPages() ([]*pages.PageMeta, error) {
+func (p *pageDB) GetAllPages(includeProtected bool) ([]*pages.PageMeta, error) {
 	entries, err := p.db.ListAllIndexFields("CreatedBy")
 	if err != nil {
 		return nil, err
 	}
 	pagesResult := GetPageMetasFromIndexEntries(entries, "CreatedBy")
-	return pagesResult, nil
+	if includeProtected {
+		return pagesResult, nil
+	}
+	var result []*pages.PageMeta
+	for _, page := range pagesResult {
+		if !page.IsProtected {
+			result = append(result, page)
+		}
+	}
+	return result, nil
 }
 
 func (p *pageDB) CreatePage(page *pages.Page) error {
@@ -106,10 +115,20 @@ func GetPageMetaFromIndexEntry(entry *filedb.IndexEntry, field string) *pages.Pa
 	if pid, err := strconv.Atoi(parentIdStr); err == nil {
 		parentId = &pid
 	}
+	var isPinned bool
+	if pinned, err := strconv.ParseBool(entry.Others["IsPinned"]); err == nil {
+		isPinned = pinned
+	}
+	var isProtected bool
+	if protected, err := strconv.ParseBool(entry.Others["IsProtected"]); err == nil {
+		isProtected = protected
+	}
 	return &pages.PageMeta{
-		ID:       entry.ID,
-		ParentID: parentId,
-		Url:      entry.Others["Url"],
-		Title:    entry.Others["Title"],
+		ID:          entry.ID,
+		ParentID:    parentId,
+		Url:         entry.Others["Url"],
+		Title:       entry.Others["Title"],
+		IsPinned:    isPinned,
+		IsProtected: isProtected,
 	}
 }

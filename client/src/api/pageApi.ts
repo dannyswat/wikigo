@@ -7,6 +7,8 @@ export interface PageResponse {
     title: string;
     shortDesc: string;
     content: string;
+    isPinned: boolean;
+    isProtected: boolean;
 }
 
 export interface PageMeta {
@@ -20,12 +22,17 @@ export function getPage(pageId: string): Promise<PageResponse> {
     return fetch(baseApiUrl + `/page/${pageId}`).then((res) => res.json());
 }
 
-export function getPageByUrl(url: string): Promise<PageResponse> {
-    return fetch(baseApiUrl + `/page/url/${url}`).then((res) => res.json());
+export async function getPageByUrl(url: string): Promise<PageResponse> {
+    const res = await fetch(baseApiUrl + `/page/url/${url}`,
+        { credentials: 'include' }
+    );
+    return await res.json();
 }
 
 export async function getAllPages(): Promise<PageMeta[]> {
-    const res = await fetch(baseApiUrl + `/pages/listall`);
+    const res = await fetch(baseApiUrl + `/pages/listall`, {
+        credentials: 'include',
+    });
     return await res.json();
 }
 
@@ -40,6 +47,8 @@ export interface PageRequest {
     title: string;
     shortDesc: string;
     content: string;
+    isPinned: boolean;
+    isProtected: boolean;
 }
 
 export async function createPage(page: PageRequest) {
