@@ -11,6 +11,13 @@ export interface PageResponse {
     isProtected: boolean;
 }
 
+interface RevisionPageResponse {
+    id: number;
+    recordId: number;
+    insertDate: string;
+    record: PageResponse;
+}
+
 export interface PageMeta {
     id: number;
     parentId: number | null;
@@ -26,6 +33,13 @@ export function getPage(pageId: string): Promise<PageResponse> {
 
 export async function getPageByUrl(url: string): Promise<PageResponse> {
     const res = await fetch(baseApiUrl + `/page/url/${url}`,
+        { credentials: 'include' }
+    );
+    return await res.json();
+}
+
+export async function getLatestPageRevisionByUrl(id: number): Promise<RevisionPageResponse> {
+    const res = await fetch(baseApiUrl + `/admin/pagerevision/${id}`,
         { credentials: 'include' }
     );
     return await res.json();

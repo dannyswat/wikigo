@@ -5,14 +5,16 @@ import (
 
 	"github.com/dannyswat/wikigo/common/apihelper"
 	"github.com/dannyswat/wikigo/pages"
+	"github.com/dannyswat/wikigo/revisions"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/microcosm-cc/bluemonday"
 )
 
 type PageHandler struct {
-	PageService *pages.PageService
-	HtmlPolicy  *bluemonday.Policy
+	PageService         *pages.PageService
+	PageRevisionService *revisions.RevisionService[*pages.Page]
+	HtmlPolicy          *bluemonday.Policy
 }
 
 func (h *PageHandler) GetPageByID(e echo.Context) error {
@@ -74,6 +76,19 @@ func (h *PageHandler) GetAllPages(e echo.Context) error {
 		return e.JSON(500, err)
 	}
 	return e.JSON(200, pages)
+}
+
+func (h *PageHandler) GetLatestRevision(e echo.Context) error {
+	idStr := e.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return e.JSON(400, "invalid page id")
+	}
+	revision, err := h.PageRevisionService.GetLatestRevision(id)
+	if err != nil {
+		return e.JSON(404, err)
+	}
+	return e.JSON(200, revision)
 }
 
 type CreatePageRequest struct {

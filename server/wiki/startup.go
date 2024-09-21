@@ -7,6 +7,7 @@ import (
 	"github.com/dannyswat/wikigo/filemanager"
 	"github.com/dannyswat/wikigo/keymgmt"
 	"github.com/dannyswat/wikigo/pages"
+	"github.com/dannyswat/wikigo/revisions"
 	"github.com/dannyswat/wikigo/users"
 	"github.com/dannyswat/wikigo/wiki/handlers"
 	"github.com/dannyswat/wikigo/wiki/middlewares"
@@ -19,16 +20,17 @@ type WikiStartUp struct {
 	MediaPath string
 	BaseRoute string
 
-	dbManager     DBManager
-	userService   *users.UserService
-	pageService   *pages.PageService
-	keyStore      *keymgmt.KeyMgmtService
-	htmlPolicy    *bluemonday.Policy
-	fileManager   filemanager.FileManager
-	pageHandler   *handlers.PageHandler
-	authHandler   *handlers.AuthHandler
-	uploadHandler *handlers.UploadHandler
-	jwt           *middlewares.JWT
+	dbManager           DBManager
+	userService         *users.UserService
+	pageService         *pages.PageService
+	keyStore            *keymgmt.KeyMgmtService
+	pageRevisionService *revisions.RevisionService[*pages.Page]
+	htmlPolicy          *bluemonday.Policy
+	fileManager         filemanager.FileManager
+	pageHandler         *handlers.PageHandler
+	authHandler         *handlers.AuthHandler
+	uploadHandler       *handlers.UploadHandler
+	jwt                 *middlewares.JWT
 }
 
 func (s *WikiStartUp) Setup() error {
@@ -52,8 +54,9 @@ func (s *WikiStartUp) Setup() error {
 	}
 
 	s.userService = &users.UserService{DB: s.dbManager.Users()}
-	s.pageService = &pages.PageService{DB: s.dbManager.Pages()}
 	s.keyStore = &keymgmt.KeyMgmtService{DB: s.dbManager.Keys()}
+	s.pageRevisionService = &revisions.RevisionService[*pages.Page]{Repository: s.dbManager.PageRevisions()}
+	s.pageService = &pages.PageService{DB: s.dbManager.Pages(), RevisionService: s.pageRevisionService}
 	err = s.keyStore.Init()
 	if err != nil {
 		return err
@@ -72,7 +75,11 @@ func (s *WikiStartUp) Setup() error {
 }
 
 func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
-	s.pageHandler = &handlers.PageHandler{PageService: s.pageService, HtmlPolicy: s.htmlPolicy}
+	s.pageHandler = &handlers.PageHandler{
+		PageService:         s.pageService,
+		HtmlPolicy:          s.htmlPolicy,
+		PageRevisionService: s.pageRevisionService,
+	}
 	s.authHandler = &handlers.AuthHandler{UserService: s.userService, KeyStore: s.keyStore}
 	s.uploadHandler = &handlers.UploadHandler{FileManager: s.fileManager}
 
@@ -91,6 +98,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	admin.POST("/pages", s.pageHandler.CreatePage)
 	admin.PUT("/pages/:id", s.pageHandler.UpdatePage)
 	admin.DELETE("/pages/:id", s.pageHandler.DeletePage)
+	admin.GET("/pagerevision/:id", s.pageHandler.GetLatestRevision)
 	admin.POST("/upload", s.uploadHandler.UploadFile)
 	admin.POST("/ckeditor/upload", s.uploadHandler.CKEditorUpload)
 	admin.POST("/createpath", s.uploadHandler.CreatePath)

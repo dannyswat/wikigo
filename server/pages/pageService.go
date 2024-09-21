@@ -5,11 +5,13 @@ import (
 	"time"
 
 	"github.com/dannyswat/wikigo/common/errors"
+	"github.com/dannyswat/wikigo/revisions"
 	"github.com/go-playground/validator/v10"
 )
 
 type PageService struct {
-	DB PageRepository
+	DB              PageRepository
+	RevisionService *revisions.RevisionService[*Page]
 }
 
 func (s *PageService) GetPageByID(id int) (*Page, error) {
@@ -53,12 +55,20 @@ func (s *PageService) CreatePage(page *Page, user string) error {
 }
 
 func (s *PageService) UpdatePage(page *Page, user string) error {
+	oldPage, err := s.DB.GetPageByID(page.ID)
+	if err != nil {
+		return err
+	}
 	if err := ValidatePage(page, false); err != nil {
 		return err
 	}
 	page.LastModifiedAt = time.Now()
 	page.LastModifiedBy = user
-	return s.DB.UpdatePage(page)
+	err = s.DB.UpdatePage(page)
+	if err != nil {
+		return err
+	}
+	return s.RevisionService.AddRevision(page.ID, oldPage)
 }
 
 func (s *PageService) DeletePage(id int) error {

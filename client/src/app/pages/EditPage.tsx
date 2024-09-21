@@ -1,12 +1,13 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { deletePage, getPageByUrl, PageRequest, updatePage } from "../../api/pageApi";
+import { deletePage, getLatestPageRevisionByUrl, getPageByUrl, PageRequest, updatePage } from "../../api/pageApi";
 import { HtmlEditor } from "../../components/HtmlEditor";
 import { queryClient } from "../../common/query";
 import { useEffect, useState, MouseEvent } from "react";
 import { clearCache, PageDropDown } from "../../components/PageDropDown";
 import { IconFidgetSpinner } from "@tabler/icons-react";
 import ToggleButton from "../../components/ToggleButton";
+import MenuButton from "../../components/MenuButton";
 
 export default function EditPage() {
     const { id } = useParams();
@@ -60,6 +61,14 @@ export default function EditPage() {
         updatePageApi.mutate(data);
     }
 
+    async function loadLastRevision() {
+        const revision = await getLatestPageRevisionByUrl(data.id);
+        if (revision)
+            setData(revision.record);
+        else
+            alert('There is no revision available.');
+    }
+
     return <div className="w-full flex flex-col gap-4">
         <section className="flex flex-row items-center">
             <label className="basis-1/4">Title</label>
@@ -94,7 +103,7 @@ export default function EditPage() {
                 className="ms-4"
                 onChange={(value) => setData((prev) => ({ ...prev, isPinned: value }))} />
         </section>
-        <section className="flex flex-row justify-items-end">
+        <section className="flex flex-row justify-items-end items-center">
             <button onClick={handleSubmitClick}
                 className="basis-1/2 sm:basis-1/6 bg-lime-700 text-white rounded-md py-2 px-5">
                 {updatePageApi.isPending ? <IconFidgetSpinner className="animate-spin mx-auto" /> : 'Save'}
@@ -104,8 +113,13 @@ export default function EditPage() {
                     navigate(initialData ? '/p' + initialData.url : '/');
             }}
                 className="basis-1/2 sm:basis-1/6 bg-gray-700 text-white rounded-md py-2 px-5 ms-4">Cancel</button>
-            <button onClick={() => { if (confirm('Are you sure to delete the page?')) deletePageApi.mutate(data) }}
-                className="basis-1/4 sm:basis-1/12 bg-red-700 self-end text-white rounded-md py-2 px-5 ms-4">Delete</button>
+            <MenuButton className="basis-1/4 sm:basis-1/12 ms-4">
+                <div className="p-2">
+                    <button onClick={loadLastRevision} className="bg-blue-950 w-full box-border text-white rounded-md py-2 px-5 my-2">Revert</button>
+                    <button onClick={() => { if (confirm('Are you sure to delete the page?')) deletePageApi.mutate(data) }}
+                        className=" bg-red-700 text-white w-full box-border rounded-md py-2 px-5 mb-2">Delete</button>
+                </div>
+            </MenuButton>
         </section>
     </div>;
 }
