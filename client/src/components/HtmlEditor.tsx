@@ -3,12 +3,12 @@ import {
     BlockQuote, Bold, ClassicEditor, Code, CodeBlock,
     Essentials, Heading, Italic, Link, List, Paragraph,
     Strikethrough, Undo, Image, ImageUpload, SimpleUploadAdapter,
-    Table,
-    TableProperties,
-    TableToolbar,
-    FontColor,
-    ImageInsertViaUrl,
-    ImageInsert
+    Table, TableProperties, TableToolbar,
+    FontColor, ImageInsert, ImageBlock,
+    Underline, WordCount, FontSize,
+    TodoList,
+    Alignment,
+    ImageCaption,
 } from "ckeditor5";
 
 interface Props {
@@ -19,13 +19,21 @@ interface Props {
 export function HtmlEditor({ content, onChange }: Props) {
     return <CKEditor editor={ClassicEditor} data={content}
         config={{
-            toolbar: ['heading', '|', 'fontcolor', 'bold', 'italic', 'strikethrough', 'link', '|',
-                'bulletedList', 'numberedList', 'insertTable', '|', 'blockQuote', 'code', 'codeBlock', 'undo', 'imageUpload'],
+            toolbar: {
+                items: ['heading', 'fontSize',
+                    '|', 'fontcolor', 'bold', 'italic', 'underline', 'strikethrough', 'link', 'alignment',
+                    '|', 'imageUpload',
+                    '|', 'bulletedList', 'numberedList', 'todoList',
+                    '|', 'insertTable',
+                    '|', 'blockQuote', 'code', 'codeBlock',
+                    '|', 'undo', 'redo'],
+                shouldNotGroupWhenFull: true
+            },
             plugins: [
-                Essentials, Bold, Italic, Paragraph, Undo,
-                Heading, Link, List, Image, ImageUpload, BlockQuote,
-                Strikethrough, Code, CodeBlock, SimpleUploadAdapter,
-                Table, TableProperties, TableToolbar, FontColor, ImageInsertViaUrl, ImageInsert
+                Essentials, Bold, Italic, Paragraph, Undo, Underline, FontSize, Alignment,
+                Heading, Link, List, Image, ImageUpload, BlockQuote, WordCount,
+                Strikethrough, Code, CodeBlock, SimpleUploadAdapter, ImageBlock, ImageCaption,
+                Table, TableProperties, TableToolbar, FontColor, ImageInsert, TodoList
             ],
             simpleUpload: {
                 uploadUrl: '/api/admin/ckeditor/upload',
@@ -45,6 +53,17 @@ export function HtmlEditor({ content, onChange }: Props) {
             },
             table: {
                 contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'],
+            },
+            image: {
+                toolbar: ['imageTextAlternative', '|', 'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight'],
+                styles: {
+                    options: ['full', 'alignLeft', 'alignRight']
+                }
+            },
+            fontColor: {
+                colorPicker: {
+                    format: 'hex'
+                }
             }
         }}
         onChange={(_, editor) => onChange(editor.data.get())} />;
