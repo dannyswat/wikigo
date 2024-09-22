@@ -36,7 +36,7 @@ export function HtmlEditor({ content, onChange }: Props) {
                 Table, TableProperties, TableToolbar, FontColor, ImageInsert, TodoList
             ],
             simpleUpload: {
-                uploadUrl: '/api/admin/ckeditor/upload',
+                uploadUrl: '/api/editor/ckeditor/upload',
                 withCredentials: true,
             },
             link: {

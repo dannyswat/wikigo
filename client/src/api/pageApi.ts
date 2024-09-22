@@ -39,7 +39,7 @@ export async function getPageByUrl(url: string): Promise<PageResponse> {
 }
 
 export async function getLatestPageRevisionByUrl(id: number): Promise<RevisionPageResponse> {
-    const res = await fetch(baseApiUrl + `/admin/pagerevision/${id}`,
+    const res = await fetch(baseApiUrl + `/editor/pagerevision/${id}`,
         { credentials: 'include' }
     );
     return await res.json();
@@ -68,7 +68,7 @@ export interface PageRequest {
 }
 
 export async function createPage(page: PageRequest) {
-    const res = await fetch(baseApiUrl + `/admin/pages`, {
+    const res = await fetch(baseApiUrl + `/editor/pages`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ export async function createPage(page: PageRequest) {
 }
 
 export async function updatePage(page: PageRequest) {
-    const res = await fetch(baseApiUrl + `/admin/pages/${page.id}`, {
+    const res = await fetch(baseApiUrl + `/editor/pages/${page.id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ export async function updatePage(page: PageRequest) {
 }
 
 export async function deletePage(id: number) {
-    const res = await fetch(baseApiUrl + `/admin/pages/${id}`, {
+    const res = await fetch(baseApiUrl + `/editor/pages/${id}`, {
         method: 'DELETE',
     });
     if (res.status >= 400) {
