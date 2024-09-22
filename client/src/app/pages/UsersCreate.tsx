@@ -65,7 +65,7 @@ export default function UsersCreate() {
             </button>
             <button onClick={() => {
                 if (!data.username || confirm('Are you sure to leave?'))
-                    navigate('/')
+                    navigate('/users')
             }} className="basis-1/2 sm:basis-1/6 bg-gray-700 text-white rounded-md py-2 px-5 ms-4">Cancel</button>
         </section>
     </div>;
