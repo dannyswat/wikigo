@@ -1,25 +1,34 @@
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { queryClient } from "../../common/query";
 import { IconFidgetSpinner } from "@tabler/icons-react";
-import { createUserApi, CreateUserRequest, getRolesApi } from "../../api/userApi";
+import { getRolesApi, getUserApi, updateUserApi, UpdateUserRequest } from "../../api/userApi";
 
-export default function UsersCreate() {
+export default function UsersEdit() {
     const navigate = useNavigate();
-    const [data, setData] = useState<CreateUserRequest>({
+    const { id } = useParams();
+    const userId = parseInt(id || '');
+    const [data, setData] = useState<UpdateUserRequest>({
+        id: 0,
         username: '',
         email: '',
-        password: '',
+        newPassword: '',
         role: 'reader',
     });
+    const { data: user } = useQuery({
+        queryKey: ['user', userId],
+        queryFn: async () => {
+            return await getUserApi(userId);
+        }
+    })
     const { data: roles } = useQuery({
         queryKey: ['roles'],
         queryFn: getRolesApi,
     });
-    const createUser = useMutation({
-        mutationFn: (data: CreateUserRequest) => createUserApi(data),
+    const updateUser = useMutation({
+        mutationFn: (data: UpdateUserRequest) => updateUserApi(data),
         onSuccess: () => {
             queryClient.removeQueries({ queryKey: ['users'] });
             navigate('/users');
@@ -28,11 +37,21 @@ export default function UsersCreate() {
             alert(err);
             console.log(args);
         }
-    })
+    });
+
+    useEffect(() => {
+        if (user) {
+            setData({ ...user, newPassword: '' });
+        }
+    }, [user]);
 
     function handleSubmitClick(e: MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
-        createUser.mutate(data);
+        updateUser.mutate(data);
+    }
+    if (!id) {
+        navigate('/users');
+        return null;
     }
 
     return <div className="w-full flex flex-col gap-4">
@@ -48,8 +67,8 @@ export default function UsersCreate() {
         </section>
         <section className="flex flex-row items-center">
             <label className="basis-1/4">New Password</label>
-            <input className="basis-3/4 border-2 rounded-md p-2" autoComplete="secret" type="password" value={data.password}
-                onChange={(e) => setData((prev) => ({ ...prev, password: e.target.value }))} />
+            <input className="basis-3/4 border-2 rounded-md p-2" autoComplete="secret" type="password" value={data.newPassword}
+                onChange={(e) => setData((prev) => ({ ...prev, newPassword: e.target.value }))} />
         </section>
         <section className="flex flex-row items-center">
             <label className="basis-1/4">Role</label>
@@ -59,13 +78,13 @@ export default function UsersCreate() {
             </select>
         </section>
         <section className="flex flex-row justify-items-end">
-            <button disabled={createUser.isPending} onClick={handleSubmitClick}
+            <button disabled={updateUser.isPending} onClick={handleSubmitClick}
                 className="basis-1/2 sm:basis-1/6 bg-lime-700 text-white rounded-md py-2 px-5">
-                {createUser.isPending ? <IconFidgetSpinner className="animate-spin mx-auto" /> : 'Create'}
+                {updateUser.isPending ? <IconFidgetSpinner className="animate-spin mx-auto" /> : 'Save'}
             </button>
             <button onClick={() => {
-                if (!data.username || confirm('Are you sure to leave?'))
-                    navigate('/')
+                if (confirm('Are you sure to leave?'))
+                    navigate('/users')
             }} className="basis-1/2 sm:basis-1/6 bg-gray-700 text-white rounded-md py-2 px-5 ms-4">Cancel</button>
         </section>
     </div>;

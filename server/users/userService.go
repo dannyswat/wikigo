@@ -54,3 +54,7 @@ func (s *UserService) ListAll() ([]*User, error) {
 func (s *UserService) CreateUser(user *User) error {
 	return s.DB.CreateUser(user)
 }
+
+func (s *UserService) UpdateUser(user *User) error {
+	return s.DB.UpdateUser(user)
+}

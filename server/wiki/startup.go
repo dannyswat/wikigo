@@ -115,6 +115,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	admin.GET("/users", s.usersHandler.GetUsers)
 	admin.GET("/users/:id", s.usersHandler.GetUser)
 	admin.POST("/users", s.usersHandler.CreateUser)
+	admin.PUT("/users/:id", s.usersHandler.UpdateUser)
 
 	users := api.Group("/user")
 	users.Use(middlewares.AuthorizeMiddleware())

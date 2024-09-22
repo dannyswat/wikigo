@@ -11,6 +11,9 @@ import Layout from "../components/Layout";
 import { ChangePassword } from "./pages/ChangePassword";
 import AdminRoute from "../components/AdminRoute";
 import Users from "./pages/Users";
+import UsersCreate from "./pages/UsersCreate";
+import LayoutAdmin from "../components/LayoutAdmin";
+import UsersEdit from "./pages/UsersEdit";
 
 export function WikiGoRoutes() {
     return (
@@ -29,8 +32,10 @@ export function WikiGoRoutes() {
                         </Route>
                     </Route>
                     <Route element={<AdminRoute />}>
-                        <Route element={<Layout />}>
+                        <Route element={<LayoutAdmin />}>
                             <Route path="/users" element={<Users />} />
+                            <Route path="/users/create" element={<UsersCreate />} />
+                            <Route path="/users/:id" element={<UsersEdit />} />
                         </Route>
                     </Route>
                     <Route path="/change-password" element={<ChangePassword />} />

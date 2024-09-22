@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getUsersApi } from "../../api/userApi";
 import { IconLock } from "@tabler/icons-react";
+import { NavLink } from "react-router-dom";
 
 export default function Users() {
     const { data: users, isLoading, isError } = useQuery({
@@ -17,27 +18,32 @@ export default function Users() {
     return <div className="w-full">
         <h1 className="text-2xl font-semibold">Users</h1>
         <div className="flex justify-end">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add User</button>
+            <NavLink to="/users/create" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add User</NavLink>
         </div>
-        <table className="w-full">
-            <thead>
-                <tr>
-                    <th className="border border-gray-400 px-4 py-2">Username</th>
-                    <th className="border border-gray-400 px-4 py-2">Email</th>
-                    <th className="border border-gray-400 px-4 py-2">Role</th>
-                    <th className="border border-gray-400 px-4 py-2">Locked Out</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div className="table w-full my-2">
+            <div className="table-header-group">
+                <div className="table-row bg-gray-700 text-white">
+
+                    <div className="table-cell border border-gray-400 px-4 py-2 font-bold">Username</div>
+                    <div className="hidden sm:table-cell border border-gray-400 px-4 py-2 font-bold">Email</div>
+                    <div className="table-cell border border-gray-400 px-4 py-2 font-bold">Role</div>
+                    <div className="table-cell border border-gray-400 px-4 py-2 font-bold">Status</div>
+                    <div className="table-cell border border-gray-400 px-4 py-2 font-bold"></div>
+                </div>
+            </div>
+            <div className="table-row-group">
                 {users?.map(user => (
-                    <tr key={user.id}>
-                        <td className="border border-gray-400 px-4 py-2">{user.username}</td>
-                        <td className="border border-gray-400 px-4 py-2">{user.email}</td>
-                        <td className="border border-gray-400 px-4 py-2">{user.role}</td>
-                        <td className="border border-gray-400 px-4 py-2 text-center">{user.isLockedOut && <IconLock size={24} />}</td>
-                    </tr>
+                    <div className="table-row" key={user.id}>
+                        <div className="table-cell border border-gray-400 px-4 py-2">{user.username}</div>
+                        <div className="hidden sm:table-cell border border-gray-400 px-4 py-2">{user.email}</div>
+                        <div className="table-cell border border-gray-400 px-4 py-2">{user.role}</div>
+                        <div className="table-cell border border-gray-400 px-4 py-2 text-center">{user.isLockedOut && <IconLock size={24} />}</div>
+                        <div className="table-cell border border-gray-400 px-4 py-2 text-center">
+                            <NavLink to={`/users/${user.id}`} className="text-blue-500 hover:text-blue-700">Edit</NavLink>
+                        </div>
+                    </div>
                 ))}
-            </tbody>
-        </table>
+            </div>
+        </div>
     </div>
 }

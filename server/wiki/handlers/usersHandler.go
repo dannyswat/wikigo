@@ -13,7 +13,7 @@ type UsersHandler struct {
 
 type UserResponse struct {
 	ID          int    `json:"id"`
-	UserName    string `json:"userName"`
+	UserName    string `json:"username"`
 	Email       string `json:"email"`
 	Role        string `json:"role"`
 	IsLockedOut bool   `json:"isLockedOut"`
@@ -61,7 +61,7 @@ func (h *UsersHandler) GetUser(e echo.Context) error {
 }
 
 type CreateUserRequest struct {
-	UserName string `json:"userName" validate:"required,max=50"`
+	UserName string `json:"username" validate:"required,max=50"`
 	Password string `json:"password" validate:"required"`
 	Email    string `json:"email" validate:"required,email,max=100"`
 	Role     string `json:"role" validate:"required,oneof=reader editor admin"`
@@ -84,4 +84,45 @@ func (h *UsersHandler) CreateUser(e echo.Context) error {
 		return e.JSON(500, err)
 	}
 	return e.JSON(201, user)
+}
+
+type UpdateUserRequest struct {
+	UserName    string `json:"username" validate:"required,max=50"`
+	Email       string `json:"email" validate:"required,email,max=100"`
+	Role        string `json:"role" validate:"required,oneof=reader editor admin"`
+	NewPassword string `json:"newPassword"`
+}
+
+func (h *UsersHandler) UpdateUser(e echo.Context) error {
+	sId := e.Param("id")
+	if sId == "" {
+		return e.JSON(400, "invalid request")
+	}
+	userId, err := strconv.Atoi(sId)
+	if err != nil {
+		return e.JSON(400, "invalid request")
+	}
+	userReq := new(UpdateUserRequest)
+	if err := e.Bind(userReq); err != nil {
+		return e.JSON(400, err)
+	}
+	user, err := h.UserService.DB.GetUserByID(userId)
+	if err != nil {
+		return e.JSON(500, err)
+	}
+	if user == nil {
+		return e.JSON(404, "user not found")
+	}
+	user.UserName = userReq.UserName
+	user.Email = userReq.Email
+	user.Role = userReq.Role
+	if userReq.NewPassword != "" {
+		if err := user.UpdatePassword(userReq.NewPassword); err != nil {
+			return e.JSON(500, err)
+		}
+	}
+	if err := h.UserService.UpdateUser(user); err != nil {
+		return e.JSON(500, err)
+	}
+	return e.JSON(200, user)
 }
