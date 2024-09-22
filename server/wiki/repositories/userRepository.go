@@ -63,3 +63,7 @@ func (u *userDB) UpdateUser(user *users.User) error {
 func (u *userDB) DeleteUser(id int) error {
 	return u.db.Delete(id)
 }
+
+func (u *userDB) ListAll() ([]*users.User, error) {
+	return u.db.ListAll()
+}

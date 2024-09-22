@@ -6,8 +6,11 @@ import EditPage from "./pages/EditPage";
 import NewPage from "./pages/NewPage";
 import Layout2 from "../components/Layout2";
 import { GuardedRoute } from "../components/GuardedRoute";
+import EditorRoute from "../components/EditorRoute";
 import Layout from "../components/Layout";
 import { ChangePassword } from "./pages/ChangePassword";
+import AdminRoute from "../components/AdminRoute";
+import Users from "./pages/Users";
 
 export function WikiGoRoutes() {
     return (
@@ -19,9 +22,16 @@ export function WikiGoRoutes() {
                     <Route path="/p/:id/:id2?/:id3?/:id4?/:id5?" element={<Page />} />
                 </Route>
                 <Route element={<GuardedRoute />}>
-                    <Route element={<Layout />}>
-                        <Route path="create" element={<NewPage />} />
-                        <Route path="edit/:id/:id2?/:id3?/:id4?/:id5?" element={<EditPage />} />
+                    <Route element={<EditorRoute />}>
+                        <Route element={<Layout />}>
+                            <Route path="create" element={<NewPage />} />
+                            <Route path="edit/:id/:id2?/:id3?/:id4?/:id5?" element={<EditPage />} />
+                        </Route>
+                    </Route>
+                    <Route element={<AdminRoute />}>
+                        <Route element={<Layout />}>
+                            <Route path="/users" element={<Users />} />
+                        </Route>
                     </Route>
                     <Route path="/change-password" element={<ChangePassword />} />
                 </Route>

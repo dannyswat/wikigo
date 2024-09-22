@@ -30,6 +30,7 @@ type WikiStartUp struct {
 	pageHandler         *handlers.PageHandler
 	authHandler         *handlers.AuthHandler
 	uploadHandler       *handlers.UploadHandler
+	usersHandler        *handlers.UsersHandler
 	jwt                 *middlewares.JWT
 }
 
@@ -46,11 +47,16 @@ func (s *WikiStartUp) Setup() error {
 		adminUser = &users.User{
 			UserName:    "admin",
 			Email:       "dhlwat@live.com",
+			Role:        "admin",
 			IsLockedOut: false,
 			CreatedAt:   time.Now(),
 		}
 		adminUser.UpdatePassword("PleaseChange")
 		s.dbManager.Users().CreateUser(adminUser)
+	}
+	if adminUser.Role == "" {
+		adminUser.Role = "admin"
+		s.dbManager.Users().UpdateUser(adminUser)
 	}
 
 	s.userService = &users.UserService{DB: s.dbManager.Users()}
@@ -82,6 +88,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	}
 	s.authHandler = &handlers.AuthHandler{UserService: s.userService, KeyStore: s.keyStore}
 	s.uploadHandler = &handlers.UploadHandler{FileManager: s.fileManager}
+	s.usersHandler = &handlers.UsersHandler{UserService: s.userService}
 
 	s.jwt = &middlewares.JWT{KeyStore: s.keyStore}
 	e.Use(s.jwt.AuthMiddleware())
@@ -93,16 +100,26 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	api.GET("/pages/list/:id", s.pageHandler.GetPagesByParentID)
 	api.GET("/pages/listall", s.pageHandler.GetAllPages)
 
+	editor := api.Group("/editor")
+	editor.Use(middlewares.EditorMiddleware())
+	editor.POST("/pages", s.pageHandler.CreatePage)
+	editor.PUT("/pages/:id", s.pageHandler.UpdatePage)
+	editor.DELETE("/pages/:id", s.pageHandler.DeletePage)
+	editor.GET("/pagerevision/:id", s.pageHandler.GetLatestRevision)
+	editor.POST("/upload", s.uploadHandler.UploadFile)
+	editor.POST("/ckeditor/upload", s.uploadHandler.CKEditorUpload)
+	editor.POST("/createpath", s.uploadHandler.CreatePath)
+
 	admin := api.Group("/admin")
-	admin.Use(middlewares.AuthorizeMiddleware())
-	admin.POST("/pages", s.pageHandler.CreatePage)
-	admin.PUT("/pages/:id", s.pageHandler.UpdatePage)
-	admin.DELETE("/pages/:id", s.pageHandler.DeletePage)
-	admin.GET("/pagerevision/:id", s.pageHandler.GetLatestRevision)
-	admin.POST("/upload", s.uploadHandler.UploadFile)
-	admin.POST("/ckeditor/upload", s.uploadHandler.CKEditorUpload)
-	admin.POST("/createpath", s.uploadHandler.CreatePath)
-	admin.POST("/user/changepassword", s.authHandler.ChangePassword)
+	admin.Use(middlewares.AdminMiddleware())
+	admin.GET("/users", s.usersHandler.GetUsers)
+	admin.GET("/users/:id", s.usersHandler.GetUser)
+	admin.POST("/users", s.usersHandler.CreateUser)
+
+	users := api.Group("/user")
+	users.Use(middlewares.AuthorizeMiddleware())
+	users.GET("/role", s.authHandler.GetRole)
+	users.POST("/changepassword", s.authHandler.ChangePassword)
 
 	api.POST("/auth/login", s.authHandler.Login)
 	api.GET("/auth/publickey/:id", s.authHandler.GetPublicKey)

@@ -24,10 +24,15 @@ func (j *JWT) AuthMiddleware() echo.MiddlewareFunc {
 				return next(e)
 			}
 			token, err := j.KeyStore.VerifyJWT(accessToken.Value, "auth")
-			if err != nil || !token.Valid || user.Value != apihelper.GetUserIdFromToken(token) {
+			if err != nil || !token.Valid {
+				return next(e)
+			}
+			userId, role := apihelper.GetUserIdAndRoleFromToken(token)
+			if user.Value != userId {
 				return next(e)
 			}
 			e.Set("user", user.Value)
+			e.Set("role", role)
 			e.Set("token", token)
 			return next(e)
 		}
@@ -45,6 +50,30 @@ func AuthorizeMiddleware() echo.MiddlewareFunc {
 		return func(e echo.Context) error {
 			token := e.Get("token").(*jwt.Token)
 			if !token.Valid {
+				return &errors.ForbiddenError{Message: "unauthorized to access the resource"}
+			}
+			return next(e)
+		}
+	}
+}
+
+func AdminMiddleware() echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(e echo.Context) error {
+			role := e.Get("role")
+			if role == nil || role.(string) != "admin" {
+				return &errors.ForbiddenError{Message: "unauthorized to access the resource"}
+			}
+			return next(e)
+		}
+	}
+}
+
+func EditorMiddleware() echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(e echo.Context) error {
+			role := e.Get("role")
+			if role == nil || (role.(string) != "editor" && role.(string) != "admin") {
 				return &errors.ForbiddenError{Message: "unauthorized to access the resource"}
 			}
 			return next(e)

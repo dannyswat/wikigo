@@ -63,7 +63,7 @@ export async function changePasswordApi(request: ChangePasswordRequest) {
     const { cipher, key } = await encryptPassword(request.oldPassword, request.publicKey, request.timestamp);
     const { cipher: newCipher, key: newKey } = await encryptPassword(request.newPassword, request.newPublicKey, request.timestamp);
 
-    const resp = await fetch(baseApiUrl + '/admin/user/changepassword', {
+    const resp = await fetch(baseApiUrl + '/user/changepassword', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -78,6 +78,17 @@ export async function changePasswordApi(request: ChangePasswordRequest) {
     if (resp.status >= 400) {
         throw new Error(await resp.text());
     }
+    return await resp.json();
+}
+
+interface UserRoleResponse {
+    role: string;
+}
+
+export async function getUserRoleApi(): Promise<UserRoleResponse> {
+    const resp = await fetch(baseApiUrl + '/user/role', {
+        credentials: 'include',
+    });
     return await resp.json();
 }
 

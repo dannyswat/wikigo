@@ -1,0 +1,87 @@
+package handlers
+
+import (
+	"strconv"
+
+	"github.com/dannyswat/wikigo/users"
+	"github.com/labstack/echo/v4"
+)
+
+type UsersHandler struct {
+	UserService *users.UserService
+}
+
+type UserResponse struct {
+	ID          int    `json:"id"`
+	UserName    string `json:"userName"`
+	Email       string `json:"email"`
+	Role        string `json:"role"`
+	IsLockedOut bool   `json:"isLockedOut"`
+}
+
+func ToUserResponse(user *users.User) *UserResponse {
+	return &UserResponse{
+		ID:          user.ID,
+		UserName:    user.UserName,
+		Email:       user.Email,
+		Role:        user.Role,
+		IsLockedOut: user.IsLockedOut,
+	}
+}
+
+func (h *UsersHandler) GetUsers(e echo.Context) error {
+	users, err := h.UserService.ListAll()
+	if err != nil {
+		return e.JSON(500, err)
+	}
+	usersResp := make([]*UserResponse, len(users))
+	for i, user := range users {
+		usersResp[i] = ToUserResponse(user)
+	}
+	return e.JSON(200, users)
+}
+
+func (h *UsersHandler) GetUser(e echo.Context) error {
+	sId := e.Param("id")
+	if sId == "" {
+		return e.JSON(400, "invalid request")
+	}
+	userId, err := strconv.Atoi(sId)
+	if err != nil {
+		return e.JSON(400, "invalid request")
+	}
+	user, err := h.UserService.DB.GetUserByID(userId)
+	if err != nil {
+		return e.JSON(500, err)
+	}
+	if user == nil {
+		return e.JSON(404, "user not found")
+	}
+	return e.JSON(200, ToUserResponse(user))
+}
+
+type CreateUserRequest struct {
+	UserName string `json:"userName" validate:"required,max=50"`
+	Password string `json:"password" validate:"required"`
+	Email    string `json:"email" validate:"required,email,max=100"`
+	Role     string `json:"role" validate:"required,oneof=reader editor admin"`
+}
+
+func (h *UsersHandler) CreateUser(e echo.Context) error {
+	userReq := new(CreateUserRequest)
+	if err := e.Bind(userReq); err != nil {
+		return e.JSON(400, err)
+	}
+	user := &users.User{
+		UserName: userReq.UserName,
+		Email:    userReq.Email,
+		Role:     userReq.Role,
+	}
+	if err := user.UpdatePassword(user.Password); err != nil {
+		return e.JSON(500, err)
+	}
+	if err := h.UserService.CreateUser(user); err != nil {
+		return e.JSON(500, err)
+	}
+	return e.JSON(201, user)
+}

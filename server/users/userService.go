@@ -46,3 +46,11 @@ func (s *UserService) ChangePassword(username string, oldPassword, newPassword s
 	}
 	return s.DB.UpdateUser(user)
 }
+
+func (s *UserService) ListAll() ([]*User, error) {
+	return s.DB.ListAll()
+}
+
+func (s *UserService) CreateUser(user *User) error {
+	return s.DB.CreateUser(user)
+}

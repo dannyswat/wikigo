@@ -11,6 +11,7 @@ type User struct {
 	UserName    string    `json:"username" validate:"required,max=50,regexp=^[a-zA-Z0-9_]+$"`
 	Password    string    `json:"password"`
 	Email       string    `json:"email" validate:"required,email,max=100"`
+	Role        string    `json:"role" validate:"required,oneof=reader editor admin"`
 	CreatedAt   time.Time `json:"createdAt"`
 	IsLockedOut bool      `json:"isLockedOut"`
 }

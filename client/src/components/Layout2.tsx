@@ -13,7 +13,7 @@ interface Layout2Props {
 
 export default function Layout2({ isPage }: Layout2Props) {
     const navigate = useNavigate();
-    const { isLoggedIn } = useContext(UserContext);
+    const { isLoggedIn, canEdit } = useContext(UserContext);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { id } = useParams();
     const pageId = isPage ? (id ? window.location.pathname.substring(3) : 'home') : '';
@@ -36,8 +36,8 @@ export default function Layout2({ isPage }: Layout2Props) {
                 </div>
                 <div className="space-x-4 text-right">
                     {!isLoggedIn && <NavLink to="/login" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</NavLink>}
-                    {isLoggedIn && <NavLink to="/create" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Create</NavLink>}
-                    {isLoggedIn && isPage && pageId && <NavLink to={`/edit/${pageId}`} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">Edit</NavLink>}
+                    {isLoggedIn && canEdit && <NavLink to="/create" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Create</NavLink>}
+                    {isLoggedIn && isPage && pageId && canEdit && <NavLink to={`/edit/${pageId}`} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">Edit</NavLink>}
                     {isLoggedIn && <SettingMenu />}
                 </div>
             </header>

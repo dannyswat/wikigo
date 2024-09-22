@@ -85,9 +85,10 @@ func (h *AuthHandler) Login(e echo.Context) error {
 	}
 	tokenExpiry := time.Now().Add(time.Hour * 24)
 	signedToken, err := h.KeyStore.SignJWT(jwt.MapClaims{
-		"uid": user.UserName,
-		"iat": time.Now().Unix(),
-		"exp": tokenExpiry.Unix(),
+		"uid":   user.UserName,
+		"scope": user.Role,
+		"iat":   time.Now().Unix(),
+		"exp":   tokenExpiry.Unix(),
 	}, "auth")
 
 	if err != nil {
@@ -162,6 +163,15 @@ func (h *AuthHandler) ChangePassword(e echo.Context) error {
 		return stderrors.New("failed to change password")
 	}
 	return e.JSON(200, "password updated")
+}
+
+type RoleResponse struct {
+	Role string `json:"role"`
+}
+
+func (h *AuthHandler) GetRole(e echo.Context) error {
+	role := e.Get("role").(string)
+	return e.JSON(200, &RoleResponse{Role: role})
 }
 
 func (h *AuthHandler) Logout(e echo.Context) error {
