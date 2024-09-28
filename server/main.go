@@ -1,9 +1,11 @@
 package main
 
 import (
+	"html/template"
 	"os"
 
 	"github.com/dannyswat/wikigo/wiki"
+	"github.com/dannyswat/wikigo/wiki/handlers"
 	"github.com/dannyswat/wikigo/wiki/middlewares"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -21,7 +23,9 @@ func main() {
 	}
 
 	e := echo.New()
-
+	e.Renderer = &handlers.Template{
+		Templates: template.Must(template.ParseGlob("views/*.html")),
+	}
 	e.Use(middleware.Logger())
 	e.Use(middleware.Gzip())
 	e.Use(middleware.Recover())

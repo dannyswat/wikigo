@@ -1,0 +1,52 @@
+{{define "page"}}<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="/wikigo.svg">
+  <link rel="apple-touch-icon" href="/logo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="title" content="Wiki GO">
+  <title>Wiki GO</title>
+  <script type="module" crossorigin src="/assets/{{.JsUrl}}"></script>
+  <link rel="stylesheet" crossorigin href="/assets/{{.CssUrl}}">
+</head>
+
+<body>
+  <div id="root">
+    <div class="flex flex-col min-h-screen">
+      <header class="flex justify-between items-center p-4 bg-gray-800 text-white">
+        <div class="text-xl font-bold"><button class="p-2 sm:hidden"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+              height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" class="tabler-icon tabler-icon-menu-2 hover:text-gray-200">
+              <path d="M4 6l16 0"></path>
+              <path d="M4 12l16 0"></path>
+              <path d="M4 18l16 0"></path>
+            </svg></button><a aria-current="page" class="hidden sm:inline active" href="/"><img
+              src="/assets/{{.LogoUrl}}" alt="Wiki GO" class="h-8"></a></div>
+        <div class="space-x-4 text-right"><a
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href="/login">Login</a></div>
+      </header>
+      <div class="flex flex-1">
+        <div class="hidden sm:hidden fixed inset-0 bg-white bg-opacity-50 z-10"></div>
+        <nav
+          class="bg-gray-200 p-4 overflow-y-auto fixed inset-0 w-full hidden sm:block sm:relative sm:w-1/4 z-20">
+          <button class="absolute right-4 top-4 sm:hidden hover:text-gray-700"><svg xmlns="http://www.w3.org/2000/svg"
+              width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" class="tabler-icon tabler-icon-clear-all ">
+              <path d="M8 6h12"></path>
+              <path d="M6 12h12"></path>
+              <path d="M4 18h12"></path>
+            </svg></button>
+        </nav>
+        <div class="flex-1 p-4">
+          <h1 class="text-3xl font-bold font-serif mb-2 border-b-2">{{.Page.Title}}</h1>
+          <p class="text-sm font-serif px-1 mb-4">{{.Page.ShortDesc}}</p>
+          <div class="ck-content">{{.Page.Content}}</div>
+        </div>
+      </div>
+      <footer class="bg-gray-800 text-white text-center p-4">© 2024 Wiki GO. All rights reserved.</footer>
+    </div>
+  </div>
+</body>
+</html>{{end}}

@@ -15,6 +15,7 @@ type PageHandler struct {
 	PageService         *pages.PageService
 	PageRevisionService *revisions.RevisionService[*pages.Page]
 	HtmlPolicy          *bluemonday.Policy
+	ReactPage           *pages.ReactPageMeta
 }
 
 func (h *PageHandler) GetPageByID(e echo.Context) error {
@@ -27,7 +28,7 @@ func (h *PageHandler) GetPageByID(e echo.Context) error {
 	if err != nil {
 		return e.JSON(404, err)
 	}
-	return e.JSON(200, page)
+	return e.JSON(200, pages.NewReactPage(page, h.ReactPage))
 }
 
 func (h *PageHandler) GetPageByUrl(e echo.Context) error {
@@ -76,6 +77,18 @@ func (h *PageHandler) GetAllPages(e echo.Context) error {
 		return e.JSON(500, err)
 	}
 	return e.JSON(200, pages)
+}
+
+func (h *PageHandler) Page(e echo.Context) error {
+	if h.ReactPage == nil {
+		return e.Redirect(302, "/")
+	}
+	idStr := e.Param("id")
+	page, err := h.PageService.GetPageByUrl("/" + idStr)
+	if err != nil || page == nil {
+		return e.Render(404, "404", nil)
+	}
+	return e.Render(200, "page", pages.NewReactPage(page, h.ReactPage))
 }
 
 func (h *PageHandler) GetLatestRevision(e echo.Context) error {

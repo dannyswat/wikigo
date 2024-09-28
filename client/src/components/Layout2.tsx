@@ -2,7 +2,6 @@ import { useContext, useState } from 'react';
 import SideNav from './SideNav2';
 import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { UserContext } from '../providers/UserProvider';
-import Logo from '../assets/logo-no-background.svg';
 import { IconClearAll, IconMenu2 } from '@tabler/icons-react';
 import { Footer } from './Footer';
 import { SettingMenu } from './SettingMenu';
@@ -31,7 +30,7 @@ export default function Layout2({ isPage }: Layout2Props) {
                         <IconMenu2 className="hover:text-gray-200" size={24} />
                     </button>
                     <NavLink className="hidden sm:inline" to="/">
-                        <img src={Logo} alt="Wiki GO" className="h-8" />
+                        <img src="/logo-no-background.svg" alt="Wiki GO" className="h-8" />
                     </NavLink>
                 </div>
                 <div className="space-x-4 text-right">

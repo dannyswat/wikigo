@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom';
 import { IconSettings } from '@tabler/icons-react';
 
 import { UserContext } from '../providers/UserProvider';
-import Logo from '../assets/logo-no-background.svg';
 
 interface LayoutProps {
     customMenu?: ReactNode;
@@ -16,7 +15,7 @@ export default function Layout({ customMenu }: LayoutProps) {
         <div className="flex flex-col min-h-screen">
             <header className="flex justify-between items-center p-4 bg-gray-800 text-white">
                 <div className="text-xl font-bold">
-                    <img src={Logo} alt="Wiki GO" className="h-8" />
+                    <img src="/logo-no-background.svg" alt="Wiki GO" className="h-8" />
                 </div>
                 <div className="space-x-4 text-right">
                     {isLoggedIn && (customMenu ?? <IconSettings size={24} className="inline" />)}

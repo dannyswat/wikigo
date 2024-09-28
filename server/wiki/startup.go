@@ -2,6 +2,8 @@ package wiki
 
 import (
 	"log"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/dannyswat/wikigo/filemanager"
@@ -32,6 +34,7 @@ type WikiStartUp struct {
 	uploadHandler       *handlers.UploadHandler
 	usersHandler        *handlers.UsersHandler
 	jwt                 *middlewares.JWT
+	reactPage           *pages.ReactPageMeta
 }
 
 func (s *WikiStartUp) Setup() error {
@@ -76,6 +79,10 @@ func (s *WikiStartUp) Setup() error {
 		return err
 	}
 	s.fileManager.Init()
+	reactFile, err := os.ReadFile(filepath.FromSlash("public/index.html"))
+	if err == nil {
+		s.reactPage = pages.GetReactPageMeta(string(reactFile))
+	}
 
 	return nil
 }
@@ -85,6 +92,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 		PageService:         s.pageService,
 		HtmlPolicy:          s.htmlPolicy,
 		PageRevisionService: s.pageRevisionService,
+		ReactPage:           s.reactPage,
 	}
 	s.authHandler = &handlers.AuthHandler{UserService: s.userService, KeyStore: s.keyStore}
 	s.uploadHandler = &handlers.UploadHandler{FileManager: s.fileManager}
@@ -93,6 +101,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	s.jwt = &middlewares.JWT{KeyStore: s.keyStore}
 	e.Use(s.jwt.AuthMiddleware())
 
+	e.GET("/p/:id", s.pageHandler.Page)
 	api := e.Group(s.BaseRoute)
 	api.GET("/page/:id", s.pageHandler.GetPageByID)
 	api.GET("/page/url/:url", s.pageHandler.GetPageByUrl)
