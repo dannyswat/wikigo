@@ -39,6 +39,30 @@ export default function NewPage() {
         }
     })
 
+    function handleParentChange(parentID: number | undefined) {
+        setData((prev) => {
+            const state = { ...prev, parentID };
+            if (parentID) state.url = pageList?.find((p) => p.id === parentID)?.url || '';
+            return state;
+        });
+    }
+
+    function handleTitleChange(title: string) {
+        setData((prev) => ({
+            ...prev,
+            title: title,
+            url: _generateUrl(prev.parentID, title)
+        }));
+    }
+
+    function _generateUrl(parentID: number | undefined, title: string) {
+        if (parentID) {
+            const parentUrl = pageList?.find((p) => p.id === parentID)?.url;
+            return parentUrl ? `${parentUrl}/${generateUrl(title)}` : generateUrl(title);
+        }
+        return generateUrl(title);
+    }
+
     function handleSubmitClick(e: MouseEvent<HTMLButtonElement>) {
         e.preventDefault();
         createPageApi.mutate({ ...data, id: 0 });
@@ -48,18 +72,12 @@ export default function NewPage() {
         <section className="flex flex-row items-center">
             <label className="basis-1/4">Title</label>
             <input className="basis-3/4 border-2 rounded-md p-2" type="text" placeholder="Title" value={data.title}
-                onChange={(e) => setData((prev) => ({ ...prev, title: e.target.value }))} />
+                onChange={(e) => handleTitleChange(e.target.value)} />
         </section>
         <section className="flex flex-row items-center">
             <label className="basis-1/4">Parent Page</label>
             <PageDropDown className="basis-3/4 border-2 rounded-md p-2"
-                value={data.parentID} onChange={(value) => {
-                    setData((prev) => {
-                        const state = { ...prev, parentID: value };
-                        if (value) state.url = pageList?.find((p) => p.id === value)?.url || '';
-                        return state;
-                    });
-                }} />
+                value={data.parentID} onChange={handleParentChange} />
         </section>
         <section className="flex flex-row items-center">
             <label className="basis-1/4">URL</label>
@@ -95,4 +113,8 @@ export default function NewPage() {
             }} className="basis-1/2 sm:basis-1/6 bg-gray-700 text-white rounded-md py-2 px-5 ms-4">Cancel</button>
         </section>
     </div>;
+}
+
+function generateUrl(title: string) {
+    return title.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
 }
