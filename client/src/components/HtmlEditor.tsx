@@ -11,6 +11,8 @@ import {
     ImageCaption,
 } from "ckeditor5";
 
+import { FullScreen } from "../features/Editor/fullScreen";
+
 interface Props {
     content: string;
     onChange: (content: string) => void;
@@ -26,14 +28,14 @@ export function HtmlEditor({ content, onChange }: Props) {
                     '|', 'bulletedList', 'numberedList', 'todoList',
                     '|', 'insertTable',
                     '|', 'blockQuote', 'code', 'codeBlock',
-                    '|', 'undo', 'redo'],
+                    '|', 'undo', 'redo', 'fullScreen'],
                 shouldNotGroupWhenFull: true
             },
             plugins: [
                 Essentials, Bold, Italic, Paragraph, Undo, Underline, FontSize, Alignment,
                 Heading, Link, List, Image, ImageUpload, BlockQuote, WordCount,
                 Strikethrough, Code, CodeBlock, SimpleUploadAdapter, ImageBlock, ImageCaption,
-                Table, TableProperties, TableToolbar, FontColor, ImageInsert, TodoList
+                Table, TableProperties, TableToolbar, FontColor, ImageInsert, TodoList, FullScreen
             ],
             simpleUpload: {
                 uploadUrl: '/api/editor/ckeditor/upload',
