@@ -2,7 +2,7 @@ import { baseApiUrl } from "./baseApi";
 
 export interface PageResponse {
     id: number;
-    parentId: number | null;
+    parentId?: number;
     url: string;
     title: string;
     shortDesc: string;
@@ -58,7 +58,7 @@ export function getRootPages(): Promise<PageMeta[]> {
 
 export interface PageRequest {
     id: number;
-    parentID?: number;
+    parentId?: number;
     url: string;
     title: string;
     shortDesc: string;

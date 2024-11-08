@@ -52,6 +52,9 @@ export default function Layout2({ isPage }: Layout2Props) {
                 </div>
             </div>
             <Footer />
+            <button className="p-2 fixed right-3 bottom-3 bg-gray-600/30 hover:bg-gray-600 rounded-xl sm:hidden" onClick={() => setIsMenuOpen((p) => !p)}>
+                <IconMenu2 className="text-gray-200 hover:text-white" size={24} />
+            </button>
         </div>
     );
 }

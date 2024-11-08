@@ -15,7 +15,7 @@ export default function EditPage() {
     const navigate = useNavigate();
     const [data, setData] = useState<PageRequest>({
         id: 0,
-        parentID: undefined,
+        parentId: undefined,
         url: '',
         title: '',
         shortDesc: '',
@@ -26,7 +26,11 @@ export default function EditPage() {
     const { data: initialData, isLoading, isError } = useQuery({
         enabled: !!pageId,
         queryKey: ['page', pageId],
-        queryFn: () => getPageByUrl(pageId)
+        queryFn: async () => {
+            const res = await getPageByUrl(pageId);
+            console.log(res);
+            return res;
+        }
     });
 
     const updatePageApi = useMutation({
@@ -78,7 +82,7 @@ export default function EditPage() {
         <section className="flex flex-row items-center">
             <label className="basis-1/4">Parent Page</label>
             <PageDropDown className="basis-3/4 border-2 rounded-md p-2"
-                value={data.parentID} onChange={(value) => setData((prev) => ({ ...prev, parentID: value }))} />
+                value={data.parentId} onChange={(value) => setData((prev) => ({ ...prev, parentID: value }))} />
         </section>
         <section className="flex flex-row items-center">
             <label className="basis-1/4">URL</label>

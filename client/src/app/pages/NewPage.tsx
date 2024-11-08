@@ -14,7 +14,7 @@ export default function NewPage() {
     const navigate = useNavigate();
     const [data, setData] = useState<PageRequest>({
         id: 0,
-        parentID: undefined,
+        parentId: undefined,
         url: '',
         title: '',
         shortDesc: '',
@@ -39,10 +39,10 @@ export default function NewPage() {
         }
     })
 
-    function handleParentChange(parentID: number | undefined) {
+    function handleParentChange(parentId: number | undefined) {
         setData((prev) => {
-            const state = { ...prev, parentID };
-            if (parentID) state.url = pageList?.find((p) => p.id === parentID)?.url || '';
+            const state = { ...prev, parentId };
+            if (parentId) state.url = pageList?.find((p) => p.id === parentId)?.url || '';
             return state;
         });
     }
@@ -51,13 +51,13 @@ export default function NewPage() {
         setData((prev) => ({
             ...prev,
             title: title,
-            url: _generateUrl(prev.parentID, title)
+            url: _generateUrl(prev.parentId, title)
         }));
     }
 
-    function _generateUrl(parentID: number | undefined, title: string) {
-        if (parentID) {
-            const parentUrl = pageList?.find((p) => p.id === parentID)?.url;
+    function _generateUrl(parentId: number | undefined, title: string) {
+        if (parentId) {
+            const parentUrl = pageList?.find((p) => p.id === parentId)?.url;
             return parentUrl ? `${parentUrl}/${generateUrl(title)}` : generateUrl(title);
         }
         return generateUrl(title);
@@ -77,7 +77,7 @@ export default function NewPage() {
         <section className="flex flex-row items-center">
             <label className="basis-1/4">Parent Page</label>
             <PageDropDown className="basis-3/4 border-2 rounded-md p-2"
-                value={data.parentID} onChange={handleParentChange} />
+                value={data.parentId} onChange={handleParentChange} />
         </section>
         <section className="flex flex-row items-center">
             <label className="basis-1/4">URL</label>
