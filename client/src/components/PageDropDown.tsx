@@ -24,7 +24,7 @@ export function PageDropDown({ readonly, value, onChange, ...props }: Props) {
         queryFn: getAllPages,
     });
     const listItems = useMemo(() => [{ id: 0, title: 'None' } as PageMeta, ...(data || [])], [data]);
-    return <select {...props} value={value}
+    return <select {...props} value={value ?? ''}
         onChange={(e) => onChange(e.target.value ? parseInt(e.target.value) : undefined)}
         disabled={readonly}
         aria-placeholder={isLoading ? 'Loading...' : (isError ? 'ERROR!' : 'Please select')}>
