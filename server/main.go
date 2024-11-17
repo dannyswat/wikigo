@@ -42,6 +42,7 @@ func main() {
 	e.Use(middlewares.ErrorMiddleware())
 	wiki.RegisterHandlers(e)
 	e.GET("*", func(c echo.Context) error {
+		c.Response().Header().Set(echo.HeaderCacheControl, "no-cache, no-store, must-revalidate")
 		return c.File("public/index.html")
 	})
 	port := os.Getenv("PORT")
