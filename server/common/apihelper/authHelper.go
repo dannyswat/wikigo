@@ -13,8 +13,8 @@ func GetUserId(e echo.Context) string {
 	if tokenObj == nil {
 		return ""
 	}
-	token := tokenObj.(*jwt.Token)
-	if token == nil {
+	token, ok := tokenObj.(*jwt.Token)
+	if !ok || token == nil {
 		return ""
 	}
 	return GetUserIdFromToken(token)
@@ -25,8 +25,8 @@ func GetUserIdAndRole(e echo.Context) (string, string) {
 	if tokenObj == nil {
 		return "", ""
 	}
-	token := tokenObj.(*jwt.Token)
-	if token == nil {
+	token, ok := tokenObj.(*jwt.Token)
+	if !ok || token == nil {
 		return "", ""
 	}
 	return GetUserIdAndRoleFromToken(token)
@@ -41,11 +41,9 @@ func GetUserIdFromToken(token *jwt.Token) string {
 	if uid == nil {
 		return ""
 	}
-	userId, ok := uid.(string)
-	if !ok {
-		return ""
-	}
-	return userId
+	userId := str(uid)
+
+	return str(userId)
 }
 
 func GetUserIdAndRoleFromToken(token *jwt.Token) (string, string) {
