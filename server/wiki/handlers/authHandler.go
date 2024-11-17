@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/dannyswat/wikigo/common/apihelper"
 	"github.com/dannyswat/wikigo/common/errors"
 	"github.com/dannyswat/wikigo/keymgmt"
 	"github.com/dannyswat/wikigo/users"
@@ -175,20 +176,6 @@ func (h *AuthHandler) GetRole(e echo.Context) error {
 }
 
 func (h *AuthHandler) Logout(e echo.Context) error {
-	e.SetCookie(&http.Cookie{
-		Name:     "user",
-		Value:    "",
-		Expires:  time.Now(),
-		SameSite: http.SameSiteDefaultMode,
-		Path:     "/",
-	})
-	e.SetCookie(&http.Cookie{
-		Name:     "token",
-		Value:    "",
-		Expires:  time.Now(),
-		SameSite: http.SameSiteDefaultMode,
-		HttpOnly: true,
-		Path:     "/",
-	})
+	apihelper.RemoveAuthCookie(e)
 	return e.JSON(200, "success")
 }
