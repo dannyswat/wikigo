@@ -157,7 +157,7 @@ func (h *AuthHandler) ChangePassword(e echo.Context) error {
 
 	token := e.Get("token").(*jwt.Token)
 	claims := token.Claims.(jwt.MapClaims)
-	username := claims["uid"].(string)
+	username := str(claims["uid"])
 	err = h.UserService.ChangePassword(username, string(password), string(newPassword))
 	if err != nil {
 		log.Println(err)
@@ -171,11 +171,19 @@ type RoleResponse struct {
 }
 
 func (h *AuthHandler) GetRole(e echo.Context) error {
-	role := e.Get("role").(string)
+	role := str(e.Get("role"))
 	return e.JSON(200, &RoleResponse{Role: role})
 }
 
 func (h *AuthHandler) Logout(e echo.Context) error {
 	apihelper.RemoveAuthCookie(e)
 	return e.JSON(200, "success")
+}
+
+func str(o interface{}) string {
+	s, ok := o.(string)
+	if !ok {
+		return ""
+	}
+	return s
 }

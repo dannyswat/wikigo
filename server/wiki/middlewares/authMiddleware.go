@@ -49,8 +49,8 @@ func (j *JWT) ParseToken(tokenString string) (*jwt.Token, error) {
 func AuthorizeMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(e echo.Context) error {
-			token := e.Get("token").(*jwt.Token)
-			if !token.Valid {
+			token, ok := e.Get("token").(*jwt.Token)
+			if !ok || !token.Valid {
 				return &errors.ForbiddenError{Message: "unauthorized to access the resource"}
 			}
 			return next(e)
@@ -61,8 +61,8 @@ func AuthorizeMiddleware() echo.MiddlewareFunc {
 func AdminMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(e echo.Context) error {
-			role := e.Get("role")
-			if role == nil || role.(string) != "admin" {
+			role := str(e.Get("role"))
+			if role != "admin" {
 				return &errors.ForbiddenError{Message: "unauthorized to access the resource"}
 			}
 			return next(e)
@@ -73,11 +73,19 @@ func AdminMiddleware() echo.MiddlewareFunc {
 func EditorMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(e echo.Context) error {
-			role := e.Get("role")
-			if role == nil || (role.(string) != "editor" && role.(string) != "admin") {
+			role := str(e.Get("role"))
+			if role != "editor" && role != "admin" {
 				return &errors.ForbiddenError{Message: "unauthorized to access the resource"}
 			}
 			return next(e)
 		}
 	}
+}
+
+func str(o interface{}) string {
+	s, ok := o.(string)
+	if !ok {
+		return ""
+	}
+	return s
 }

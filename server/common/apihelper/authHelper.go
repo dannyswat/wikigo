@@ -41,20 +41,35 @@ func GetUserIdFromToken(token *jwt.Token) string {
 	if uid == nil {
 		return ""
 	}
-	return uid.(string)
+	userId, ok := uid.(string)
+	if !ok {
+		return ""
+	}
+	return userId
 }
 
 func GetUserIdAndRoleFromToken(token *jwt.Token) (string, string) {
-	claims := token.Claims.(jwt.MapClaims)
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || claims == nil {
+		return "", ""
+	}
 	uid := claims["uid"]
 	if uid == nil {
 		return "", ""
 	}
 	role := claims["scope"]
 	if role == nil {
-		return uid.(string), ""
+		return str(uid), ""
 	}
-	return uid.(string), role.(string)
+	return str(uid), str(role)
+}
+
+func str(o interface{}) string {
+	s, ok := o.(string)
+	if !ok {
+		return ""
+	}
+	return s
 }
 
 func RemoveAuthCookie(e echo.Context) {
