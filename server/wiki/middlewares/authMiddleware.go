@@ -21,6 +21,7 @@ func (j *JWT) AuthMiddleware() echo.MiddlewareFunc {
 			}
 			accessToken, err := e.Cookie("token")
 			if err != nil {
+				apihelper.RemoveAuthCookie(e)
 				return next(e)
 			}
 			token, err := j.KeyStore.VerifyJWT(accessToken.Value, "auth")
@@ -30,6 +31,7 @@ func (j *JWT) AuthMiddleware() echo.MiddlewareFunc {
 			}
 			userId, role := apihelper.GetUserIdAndRoleFromToken(token)
 			if user.Value != userId {
+				apihelper.RemoveAuthCookie(e)
 				return next(e)
 			}
 			e.Set("user", user.Value)
