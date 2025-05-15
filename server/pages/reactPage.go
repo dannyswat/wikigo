@@ -1,6 +1,10 @@
 package pages
 
-import "regexp"
+import (
+	"fmt"
+	"regexp"
+	"strings"
+)
 
 type ReactPageMeta struct {
 	JsUrl  string `json:"jsUrl"`
@@ -14,7 +18,7 @@ type ReactPage struct {
 }
 
 var (
-	reactIndexRegExp = regexp.MustCompile(`<script[^>]+ src="([^"]+)"|<link[^>]+ href="([^"]+)"`)
+	reactIndexRegExp = regexp.MustCompile(`<script[^>]{0,} src="([^"]+)"|<link[^>]{0,} href="([^"]+)"`)
 )
 
 func NewReactPage(page *Page, reactPage *ReactPageMeta) *ReactPage {
@@ -31,13 +35,16 @@ func GetReactPageMeta(content string) *ReactPageMeta {
 		return nil
 	}
 	meta := &ReactPageMeta{}
+	fmt.Println("Matches:", matches)
 	for _, match := range matches {
-		if len(match) < 2 {
+		fmt.Println("Match:", match)
+		if len(match) < 3 {
 			continue
 		}
-		if match[1] != "" {
+		if strings.HasPrefix(match[0], "<script") && match[1] != "" {
 			meta.JsUrl = match[1]
-		} else if match[2] != "" {
+		}
+		if strings.HasPrefix(match[0], "<link") && match[2] != "" {
 			meta.CssUrl = match[2]
 		}
 	}
