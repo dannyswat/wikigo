@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"html/template"
 	"strconv"
 	"strings"
 	"time"
@@ -63,4 +64,8 @@ func (p *Page) GetID() int {
 
 func (p *Page) SetID(id int) {
 	p.ID = id
+}
+
+func (p *Page) ContentHtml() template.HTML {
+	return template.HTML(p.Content)
 }

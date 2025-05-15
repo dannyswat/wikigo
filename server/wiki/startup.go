@@ -134,7 +134,6 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	api.POST("/auth/login", s.authHandler.Login)
 	api.GET("/auth/publickey/:id", s.authHandler.GetPublicKey)
 	api.POST("/auth/logout", s.authHandler.Logout)
-
 }
 
 func logIfError(err error) {

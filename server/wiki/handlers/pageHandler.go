@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/dannyswat/wikigo/common/apihelper"
@@ -86,6 +87,10 @@ func (h *PageHandler) Page(e echo.Context) error {
 	idStr := e.Param("id")
 	page, err := h.PageService.GetPageByUrl("/" + idStr)
 	if err != nil || page == nil {
+		fmt.Println("Page not found:", err)
+		return e.Render(404, "404", nil)
+	}
+	if page.IsProtected && apihelper.GetUserId(e) == "" {
 		return e.Render(404, "404", nil)
 	}
 	return e.Render(200, "page", pages.NewReactPage(page, h.ReactPage))
