@@ -26,6 +26,8 @@ const (
 	ErrCodeInternalError  ErrorCode = "INTERNAL_ERROR"
 	ErrCodeNotFound       ErrorCode = "NOT_FOUND"
 	ErrCodeUnauthorized   ErrorCode = "UNAUTHORIZED"
+	ErrCodeRateLimit      ErrorCode = "RATE_LIMIT"
+	ErrCodeForbidden      ErrorCode = "FORBIDDEN"
 )
 
 func NewInvalidRequestError(message string) ErrorResponse {
@@ -46,6 +48,10 @@ func NewNotFoundError(message string) ErrorResponse {
 
 func NewUnauthorizedError(message string) ErrorResponse {
 	return ErrorResponse{Message: message, Code: ErrCodeUnauthorized}
+}
+
+func NewRateLimitError(message string) ErrorResponse {
+	return ErrorResponse{Message: message, Code: ErrCodeRateLimit}
 }
 
 func GetErrorStatus(err error) int {
