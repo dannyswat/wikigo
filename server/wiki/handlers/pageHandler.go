@@ -91,7 +91,7 @@ func (h *PageHandler) Page(e echo.Context) error {
 		return e.Render(404, "404", nil)
 	}
 	if page.IsProtected && apihelper.GetUserId(e) == "" {
-		return e.Render(404, "404", nil)
+		return e.Redirect(302, "/login")
 	}
 	return e.Render(200, "page", pages.NewReactPage(page, h.ReactPage))
 }
