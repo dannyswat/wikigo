@@ -1,146 +1,147 @@
+@import "../node_modules/@excalidraw/excalidraw/dist/prod/index.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-    .ck-content {
-        @apply text-gray-800
-    }
+  .ck-content {
+    @apply text-gray-800;
+  }
 
-    .ck-content h2 {
-        @apply text-3xl;
-        @apply font-bold;
-        @apply text-teal-600;
-        @apply border-b-2;
-        @apply border-teal-600;
-    }
+  .ck-content h2 {
+    @apply text-3xl;
+    @apply font-bold;
+    @apply text-teal-600;
+    @apply border-b-2;
+    @apply border-teal-600;
+  }
 
-    .ck-content h3 {
-        @apply text-2xl;
-        @apply font-bold;
-        @apply text-teal-500;
-        @apply border-b-2;
-        @apply border-teal-500;
-    }
+  .ck-content h3 {
+    @apply text-2xl;
+    @apply font-bold;
+    @apply text-teal-500;
+    @apply border-b-2;
+    @apply border-teal-500;
+  }
 
-    .ck-content h4 {
-        @apply text-xl;
-        @apply font-bold;
-        @apply text-teal-400;
-    }
+  .ck-content h4 {
+    @apply text-xl;
+    @apply font-bold;
+    @apply text-teal-400;
+  }
 
-    .ck-content p {
-        @apply text-base;
-        @apply my-4;
-        margin: 0 0 0.5em 0;
-    }
+  .ck-content p {
+    @apply text-base;
+    @apply my-4;
+    margin: 0 0 0.5em 0;
+  }
 
-    .ck-content blockquote {
-        @apply italic;
-        @apply text-gray-600;
-        @apply border-l-4;
-        @apply border-gray-600;
-        @apply pl-4;
-        @apply my-4;
-    }
+  .ck-content blockquote {
+    @apply italic;
+    @apply text-gray-600;
+    @apply border-l-4;
+    @apply border-gray-600;
+    @apply pl-4;
+    @apply my-4;
+  }
 
-    .ck-content a {
-        @apply text-blue-500;
-        @apply underline;
-    }
+  .ck-content a {
+    @apply text-blue-500;
+    @apply underline;
+  }
 
-    .ck-content ul {
-        @apply list-disc;
-        @apply pl-4;
-        @apply my-2;
-    }
+  .ck-content ul {
+    @apply list-disc;
+    @apply pl-4;
+    @apply my-2;
+  }
 
-    .ck-content ol {
-        @apply list-decimal;
-        @apply pl-4;
-        @apply my-2;
-    }
+  .ck-content ol {
+    @apply list-decimal;
+    @apply pl-4;
+    @apply my-2;
+  }
 
-    .ck-content img {
-        @apply mx-auto;
-        @apply my-2;
-        @apply rounded-lg;
-    }
+  .ck-content img {
+    @apply mx-auto;
+    @apply my-2;
+    @apply rounded-lg;
+  }
 
-    .ck-content figure.table {
-        @apply w-full;
-        @apply sm:w-3/4;
-        @apply md:w-1/2;
-        @apply my-4;
-        @apply mx-auto;
-    }
-    .ck-content table {
-        @apply w-full;
-        @apply sm:w-3/4;
-        @apply md:w-1/2;
-        @apply my-4;
-        @apply mx-auto;
-        @apply border-collapse;
-    }
+  .ck-content figure.table {
+    @apply w-full;
+    @apply sm:w-3/4;
+    @apply md:w-1/2;
+    @apply my-4;
+    @apply mx-auto;
+  }
+  .ck-content table {
+    @apply w-full;
+    @apply sm:w-3/4;
+    @apply md:w-1/2;
+    @apply my-4;
+    @apply mx-auto;
+    @apply border-collapse;
+  }
 
-    .ck-content th {
-        @apply bg-[#EAEAEA];
-        @apply text-center;
-        @apply font-bold;
-        @apply border;
-        @apply p-2;
-    }
+  .ck-content th {
+    @apply bg-[#EAEAEA];
+    @apply text-center;
+    @apply font-bold;
+    @apply border;
+    @apply p-2;
+  }
 
-    .ck-content td {
-        @apply border;
-        @apply text-center;
-        @apply p-2;
-    }
+  .ck-content td {
+    @apply border;
+    @apply text-center;
+    @apply p-2;
+  }
 
-    .ck-content code {
-        @apply bg-gray-200;
-        @apply text-sm;
-        @apply p-1;
-        @apply rounded;
-    }
+  .ck-content code {
+    @apply bg-gray-200;
+    @apply text-sm;
+    @apply p-1;
+    @apply rounded;
+  }
 
-    .ck-content pre {
-        @apply bg-gray-200;
-        @apply p-2;
-        @apply rounded;
-        @apply overflow-x-auto;
-    }
+  .ck-content pre {
+    @apply bg-gray-200;
+    @apply p-2;
+    @apply rounded;
+    @apply overflow-x-auto;
+  }
 
-    .ck-content pre code {
-        @apply bg-transparent;
-        @apply p-0;
-    }
+  .ck-content pre code {
+    @apply bg-transparent;
+    @apply p-0;
+  }
 
-    .ck-content hr {
-        @apply my-4;
-        @apply border-t-2;
-        @apply border-gray-200;
-    }
+  .ck-content hr {
+    @apply my-4;
+    @apply border-t-2;
+    @apply border-gray-200;
+  }
 
-    .ck-content .ck-content__page-break {
-        @apply my-4;
-        @apply border-t-2;
-        @apply border-gray-200;
-    }
+  .ck-content .ck-content__page-break {
+    @apply my-4;
+    @apply border-t-2;
+    @apply border-gray-200;
+  }
 
-    .ck-content .ck-content__page-break::after {
-        @apply block;
-        @apply text-center;
-        @apply text-xs;
-        @apply text-gray-500;
-        content: 'Page Break';
-    }
+  .ck-content .ck-content__page-break::after {
+    @apply block;
+    @apply text-center;
+    @apply text-xs;
+    @apply text-gray-500;
+    content: "Page Break";
+  }
 
-    .ck-content .ck-content__page-break::before {
-        @apply block;
-        @apply text-center;
-        @apply text-xs;
-        @apply text-gray-500;
-        content: 'Page Break';
-    }
+  .ck-content .ck-content__page-break::before {
+    @apply block;
+    @apply text-center;
+    @apply text-xs;
+    @apply text-gray-500;
+    content: "Page Break";
+  }
 }

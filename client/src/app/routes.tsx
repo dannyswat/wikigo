@@ -14,33 +14,38 @@ import Users from "./pages/Users";
 import UsersCreate from "./pages/UsersCreate";
 import LayoutAdmin from "../components/LayoutAdmin";
 import UsersEdit from "./pages/UsersEdit";
+import Diagram from "./pages/Diagram";
 
 export function WikiGoRoutes() {
-    return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route element={<Layout2 isPage />}>
-                    <Route path="/" element={<Page />} />
-                    <Route path="/p/:id/:id2?/:id3?/:id4?/:id5?" element={<Page />} />
-                </Route>
-                <Route element={<GuardedRoute />}>
-                    <Route element={<EditorRoute />}>
-                        <Route element={<Layout />}>
-                            <Route path="create" element={<NewPage />} />
-                            <Route path="edit/:id/:id2?/:id3?/:id4?/:id5?" element={<EditPage />} />
-                        </Route>
-                    </Route>
-                    <Route element={<AdminRoute />}>
-                        <Route element={<LayoutAdmin />}>
-                            <Route path="/users" element={<Users />} />
-                            <Route path="/users/create" element={<UsersCreate />} />
-                            <Route path="/users/:id" element={<UsersEdit />} />
-                        </Route>
-                    </Route>
-                    <Route path="/change-password" element={<ChangePassword />} />
-                </Route>
-            </Routes>
-        </BrowserRouter>
-    );
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route element={<Layout2 isPage />}>
+          <Route path="/" element={<Page />} />
+          <Route path="/p/:id/:id2?/:id3?/:id4?/:id5?" element={<Page />} />
+        </Route>
+        <Route element={<GuardedRoute />}>
+          <Route element={<EditorRoute />}>
+            <Route element={<Layout />}>
+              <Route path="create" element={<NewPage />} />
+              <Route
+                path="edit/:id/:id2?/:id3?/:id4?/:id5?"
+                element={<EditPage />}
+              />
+              <Route path="diagram" element={<Diagram />} />
+            </Route>
+          </Route>
+          <Route element={<AdminRoute />}>
+            <Route element={<LayoutAdmin />}>
+              <Route path="/users" element={<Users />} />
+              <Route path="/users/create" element={<UsersCreate />} />
+              <Route path="/users/:id" element={<UsersEdit />} />
+            </Route>
+          </Route>
+          <Route path="/change-password" element={<ChangePassword />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
