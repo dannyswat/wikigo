@@ -118,6 +118,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	editor.POST("/upload", s.uploadHandler.UploadFile)
 	editor.POST("/ckeditor/upload", s.uploadHandler.CKEditorUpload)
 	editor.POST("/createpath", s.uploadHandler.CreatePath)
+	editor.POST("/diagram/upload", s.uploadHandler.SaveDiagram)
 
 	admin := api.Group("/admin")
 	admin.Use(middlewares.AdminMiddleware())

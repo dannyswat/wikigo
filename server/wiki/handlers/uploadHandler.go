@@ -103,3 +103,33 @@ func (uh *UploadHandler) CreatePath(e echo.Context) error {
 	}
 	return e.JSON(200, "Path created successfully")
 }
+
+type SaveDiagramRequest struct {
+	DiagramJson string `json:"diagram" validate:"required"`
+	SvgContent  string `json:"svg" validate:"required"`
+	Id          string `json:"id" validate:"required"`
+}
+
+type SaveDiagramResponse struct {
+	Id            string `json:"id"`
+	DiagramSvgUrl string `json:"diagramSvgUrl"`
+}
+
+func (uh *UploadHandler) SaveDiagram(e echo.Context) error {
+	req := new(SaveDiagramRequest)
+	if err := e.Bind(req); err != nil {
+		return e.JSON(400, err)
+	}
+	err := uh.FileManager.SaveFile([]byte(req.DiagramJson), req.Id+".json", "dgsource")
+	if err != nil {
+		return e.JSON(500, err)
+	}
+	err = uh.FileManager.SaveFile([]byte(req.SvgContent), req.Id+".svg", "diagrams")
+	if err != nil {
+		return e.JSON(500, err)
+	}
+	return e.JSON(200, &SaveDiagramResponse{
+		Id:            req.Id,
+		DiagramSvgUrl: "/media/diagrams/" + req.Id + ".svg",
+	})
+}

@@ -1,11 +1,34 @@
 import { Excalidraw, exportToSvg } from "@excalidraw/excalidraw";
-import { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
+import {
+  AppState,
+  BinaryFiles,
+  ExcalidrawImperativeAPI,
+} from "@excalidraw/excalidraw/types";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { uploadDiagram } from "../../api/uploadApi";
+import { NonDeletedExcalidrawElement } from "@excalidraw/excalidraw/element/types";
 
-export default function Diagram() {
+interface Diagram {
+  elements: NonDeletedExcalidrawElement[];
+  appState: AppState;
+  files: BinaryFiles;
+}
+
+export default function Diagram({ diagramUrl }: { diagramUrl: string }) {
   const [drawApi, setDrawApi] = useState<ExcalidrawImperativeAPI | null>(null);
-  const [svg, setSvg] = useState<string | null>(null);
-
+  const id = diagramUrl ? getIdFromDiagramUrl(diagramUrl) : undefined;
+  const { data } = useQuery<Diagram>({
+    queryKey: ["diagram", id],
+    queryFn: async () => {
+      const res = await fetch(`/media/dgsource/${id}.json`);
+      if (!res.ok) {
+        throw new Error("Failed to fetch diagram");
+      }
+      const data = await res.json();
+      return data;
+    },
+  });
   async function handleClick() {
     if (!drawApi) {
       console.error("Excalidraw API not available");
@@ -13,35 +36,46 @@ export default function Diagram() {
     }
 
     const elements = drawApi.getSceneElements();
-    if (elements.length === 0) {
-      console.warn("No elements on the canvas to export.");
-      setSvg(null); // Clear previous SVG if any
-      alert("Canvas is empty. Add some elements to export.");
-      return;
-    }
+    if (elements.length === 0) return;
 
     try {
       const svgElement: SVGSVGElement = await exportToSvg({
         elements: elements,
         appState: drawApi.getAppState(),
         files: drawApi.getFiles(),
-        // Optional: you can add more export options here
-        // exportPadding: 10,
-        // exportBackground: true, // Set to true if you want the canvas background color
+        exportPadding: 10,
+        exportBackground: true, // Set to true if you want the canvas background color
       });
-      setSvg(svgElement.outerHTML);
+      const svgHtml = svgElement.outerHTML;
+      const diagramJson = JSON.stringify({
+        elements: elements,
+        appState: drawApi.getAppState(),
+        files: drawApi.getFiles(),
+      });
+      await uploadDiagram({
+        id: id ?? crypto.randomUUID(),
+        diagram: diagramJson,
+        svg: svgHtml,
+      });
     } catch (error) {
       console.error("Error exporting to SVG:", error);
-      setSvg(null);
-      alert("Failed to export SVG. Check console for details.");
     }
   }
 
   return (
     <>
-      <div className="canvas h-[500px]">
-        <Excalidraw excalidrawAPI={(api) => setDrawApi(api)} />
-      </div>
+      {(data || !id) && (
+        <div className="canvas h-[500px]">
+          <Excalidraw
+            initialData={{
+              elements: data?.elements,
+              appState: data?.appState,
+              files: data?.files,
+            }}
+            excalidrawAPI={(api) => setDrawApi(api)}
+          />
+        </div>
+      )}
       <div className="mt-2">
         <button
           onClick={handleClick}
@@ -50,23 +84,14 @@ export default function Diagram() {
         >
           Export to SVG
         </button>
-        {svg && (
-          <div className="mt-4 p-4 border rounded">
-            <h3 className="text-lg font-semibold mb-2">Generated SVG:</h3>
-            {/* Render the SVG string in a div */}
-            <div dangerouslySetInnerHTML={{ __html: svg }} />
-            {/* Optionally, display the raw SVG string for debugging */}
-            {/* 
-            <h4 className="text-md font-semibold mt-4 mb-1">Raw SVG Code:</h4>
-            <textarea 
-              value={svg} 
-              readOnly 
-              className="w-full h-40 p-2 border rounded font-mono text-sm" 
-            />
-            */}
-          </div>
-        )}
       </div>
     </>
   );
+}
+
+// Example url: "https://example.com/diagram/12345.svg"
+function getIdFromDiagramUrl(diagramUrl: string): string {
+  const urlParts = diagramUrl.split("/");
+  const id = urlParts[urlParts.length - 1].split(".")[0]; // Get the last part before the file extension
+  return id;
 }
