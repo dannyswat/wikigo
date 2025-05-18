@@ -1,72 +1,192 @@
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import {
-    BlockQuote, Bold, ClassicEditor, Code, CodeBlock,
-    Essentials, Heading, Italic, Link, List, Paragraph,
-    Strikethrough, Undo, Image, ImageUpload, SimpleUploadAdapter,
-    Table, TableProperties, TableToolbar,
-    FontColor, ImageInsert, ImageBlock,
-    Underline, WordCount, FontSize,
-    TodoList,
-    Alignment,
-    ImageCaption,
+  BlockQuote,
+  Bold,
+  ClassicEditor,
+  Code,
+  CodeBlock,
+  Essentials,
+  Heading,
+  Italic,
+  Link,
+  List,
+  Paragraph,
+  Strikethrough,
+  Undo,
+  Image,
+  ImageUpload,
+  SimpleUploadAdapter,
+  Table,
+  TableProperties,
+  TableToolbar,
+  FontColor,
+  ImageInsert,
+  ImageBlock,
+  Underline,
+  WordCount,
+  FontSize,
+  TodoList,
+  Alignment,
+  ImageCaption,
 } from "ckeditor5";
 
 import { FullScreen } from "../features/Editor/fullScreen";
+import DiagramPlugin from "../features/Editor/DiagramPlugin"; // Import the new plugin
+import { useRef, useState } from "react";
+import DiagramModal from "../app/pages/Diagram";
 
 interface Props {
-    content: string;
-    onChange: (content: string) => void;
+  content: string;
+  onChange: (content: string) => void;
 }
 
 export function HtmlEditor({ content, onChange }: Props) {
-    return <CKEditor editor={ClassicEditor} data={content}
-        config={{
-            toolbar: {
-                items: ['heading', 'fontSize',
-                    '|', 'fontcolor', 'bold', 'italic', 'underline', 'strikethrough', 'link', 'alignment',
-                    '|', 'imageUpload',
-                    '|', 'bulletedList', 'numberedList', 'todoList',
-                    '|', 'insertTable',
-                    '|', 'blockQuote', 'code', 'codeBlock',
-                    '|', 'undo', 'redo', 'fullScreen'],
-                shouldNotGroupWhenFull: true
-            },
-            plugins: [
-                Essentials, Bold, Italic, Paragraph, Undo, Underline, FontSize, Alignment,
-                Heading, Link, List, Image, ImageUpload, BlockQuote, WordCount,
-                Strikethrough, Code, CodeBlock, SimpleUploadAdapter, ImageBlock, ImageCaption,
-                Table, TableProperties, TableToolbar, FontColor, ImageInsert, TodoList, FullScreen
-            ],
-            simpleUpload: {
-                uploadUrl: '/api/editor/ckeditor/upload',
-                withCredentials: true,
-            },
-            link: {
-                addTargetToExternalLinks: true,
-                decorators: {
-                    openInNewTab: {
-                        attributes: {
-                            "target": "_blank"
-                        },
-                        label: "Open in a new tab",
-                        mode: "manual"
-                    }
-                }
-            },
-            table: {
-                contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells'],
-            },
-            image: {
-                toolbar: ['imageTextAlternative', '|', 'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight'],
-                styles: {
-                    options: ['full', 'alignLeft', 'alignRight']
-                }
-            },
-            fontColor: {
-                colorPicker: {
-                    format: 'hex'
-                }
-            }
+  const [isDiagramModalOpen, setIsDiagramModalOpen] = useState(false);
+  const editorRef = useRef<ClassicEditor>();
+
+  return (
+    <>
+      <CKEditor
+        onReady={(editor) => {
+          if (!editor) return;
+          editorRef.current = editor;
+          editor.on("openDiagramModal", () => {
+            setIsDiagramModalOpen(true);
+          });
         }}
-        onChange={(_, editor) => onChange(editor.data.get())} />;
+        editor={ClassicEditor}
+        data={content}
+        config={{
+          toolbar: {
+            items: [
+              "heading",
+              "fontSize",
+              "|",
+              "fontcolor",
+              "bold",
+              "italic",
+              "underline",
+              "strikethrough",
+              "link",
+              "alignment",
+              "|",
+              "imageUpload",
+              "diagramPlugin",
+              "|",
+              "bulletedList",
+              "numberedList",
+              "todoList",
+              "|",
+              "insertTable",
+              "|",
+              "blockQuote",
+              "code",
+              "codeBlock",
+              "|",
+              "undo",
+              "redo",
+              "fullScreen",
+            ],
+            shouldNotGroupWhenFull: true,
+          },
+          plugins: [
+            Essentials,
+            Bold,
+            Italic,
+            Paragraph,
+            Undo,
+            Underline,
+            FontSize,
+            Alignment,
+            Heading,
+            Link,
+            List,
+            Image,
+            ImageUpload,
+            BlockQuote,
+            WordCount,
+            Strikethrough,
+            Code,
+            CodeBlock,
+            SimpleUploadAdapter,
+            ImageBlock,
+            ImageCaption,
+            Table,
+            TableProperties,
+            TableToolbar,
+            FontColor,
+            ImageInsert,
+            TodoList,
+            FullScreen,
+            DiagramPlugin, // Add the plugin to the plugins list
+          ],
+          simpleUpload: {
+            uploadUrl: "/api/editor/ckeditor/upload",
+            withCredentials: true,
+          },
+          link: {
+            addTargetToExternalLinks: true,
+            decorators: {
+              openInNewTab: {
+                attributes: {
+                  target: "_blank",
+                },
+                label: "Open in a new tab",
+                mode: "manual",
+              },
+            },
+          },
+          table: {
+            contentToolbar: ["tableColumn", "tableRow", "mergeTableCells"],
+          },
+          image: {
+            toolbar: [
+              "imageTextAlternative",
+              "|",
+              "imageStyle:alignLeft",
+              "imageStyle:full",
+              "imageStyle:alignRight",
+            ],
+            styles: {
+              options: ["full", "alignLeft", "alignRight"],
+            },
+          },
+          fontColor: {
+            colorPicker: {
+              format: "hex",
+            },
+          },
+        }}
+        onChange={(_, editor) => onChange(editor.data.get())}
+      />
+      {isDiagramModalOpen && (
+        <DiagramModal
+          diagramUrl=""
+          onClose={(imageUrl: string | undefined) => {
+            if (!imageUrl) return;
+            setIsDiagramModalOpen(false);
+            const editor = editorRef.current;
+            if (editor) {
+              editor.model.change((writer) => {
+                const imageElement = writer.createElement("imageBlock", {
+                  src: imageUrl,
+                });
+
+                // Insert the image at the current selection or at the end of the selection's first range.
+                const insertAt =
+                  editor.model.document.selection.getFirstPosition();
+                if (insertAt) {
+                  editor.model.insertContent(imageElement, insertAt);
+                } else {
+                  // Fallback if selection is not clear, e.g., insert at end of document
+                  // This might need adjustment based on desired behavior if selection is lost.
+                  editor.model.insertContent(imageElement);
+                }
+              });
+            }
+          }}
+        />
+      )}
+    </>
+  );
 }

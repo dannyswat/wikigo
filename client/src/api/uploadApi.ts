@@ -1,3 +1,5 @@
+import { baseApiUrl } from "./baseApi";
+
 export interface UploadDiagramRequest {
   id: string;
   diagram: string;
@@ -12,7 +14,7 @@ export interface UploadDiagramResponse {
 export async function uploadDiagram(
   request: UploadDiagramRequest
 ): Promise<UploadDiagramResponse> {
-  const res = await fetch("/api/upload/diagram", {
+  const res = await fetch(baseApiUrl + "/editor/diagram/upload", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

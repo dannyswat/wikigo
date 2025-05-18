@@ -120,11 +120,11 @@ func (uh *UploadHandler) SaveDiagram(e echo.Context) error {
 	if err := e.Bind(req); err != nil {
 		return e.JSON(400, err)
 	}
-	err := uh.FileManager.SaveFile([]byte(req.DiagramJson), req.Id+".json", "dgsource")
+	err := uh.FileManager.SaveFile([]byte(req.DiagramJson), req.Id+".json", "/dgsource")
 	if err != nil {
 		return e.JSON(500, err)
 	}
-	err = uh.FileManager.SaveFile([]byte(req.SvgContent), req.Id+".svg", "diagrams")
+	err = uh.FileManager.SaveFile([]byte(req.SvgContent), req.Id+".svg", "/diagrams")
 	if err != nil {
 		return e.JSON(500, err)
 	}
