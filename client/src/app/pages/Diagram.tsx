@@ -88,7 +88,7 @@ export default function DiagramModal({
   return createPortal(
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-white p-4 z-[10100]">
       {(data || !id) && (
-        <div className="canvas h-full">
+        <div className="canvas w-full h-full">
           <Excalidraw
             initialData={{
               elements: data?.elements,

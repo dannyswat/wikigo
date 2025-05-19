@@ -137,6 +137,19 @@ export default function SideNav({
             </button>
           </li>
         ))}
+        <li>
+          <button
+            onClick={() =>
+              navigate(
+                "/create" +
+                  (root ? "?parent=" + encodeURIComponent(root.url) : "")
+              )
+            }
+            className="w-full text-left text-gray-500 box-border hover:bg-gray-300 py-2 px-5 rounded"
+          >
+            + Create New Page
+          </button>
+        </li>
       </ul>
       {footerComponent}
     </nav>

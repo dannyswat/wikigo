@@ -1,4 +1,4 @@
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { createPage, getAllPages, PageRequest } from "../../api/pageApi";
 import { HtmlEditor } from "../../components/HtmlEditor";
 
@@ -12,7 +12,9 @@ import ToggleButton from "../../components/ToggleButton";
 
 export default function NewPage() {
   const navigate = useNavigate();
-  const [data, setData] = useState<PageRequest>({
+  const urlParams = new URLSearchParams(window.location.search);
+  const parentUrl = urlParams.get("parent");
+  const [data, setData] = useState<PageRequest>(() => ({
     id: 0,
     parentId: undefined,
     url: "",
@@ -21,7 +23,7 @@ export default function NewPage() {
     content: "",
     isProtected: false,
     isPinned: false,
-  });
+  }));
   const { data: pageList } = useQuery({
     queryKey: ["pages", true],
     queryFn: getAllPages,
@@ -38,6 +40,19 @@ export default function NewPage() {
       console.log(args);
     },
   });
+
+  useEffect(() => {
+    if (!parentUrl) return;
+    const page = pageList?.find((p) => p.url === parentUrl);
+    if (page) {
+      setData((prev) => ({
+        ...prev,
+        parentId: page.id,
+        url: _generateUrl(page.id, ""),
+      }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageList]);
 
   function handleParentChange(parentId: number | undefined) {
     setData((prev) => {

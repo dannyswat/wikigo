@@ -2,15 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 
 import { getPageByUrl } from "../../api/pageApi";
-import { useContext, useEffect } from "react";
-import { UserContext } from "../../providers/UserProvider";
+import { useEffect } from "react";
 
 export default function Page() {
   const { id } = useParams();
-  const { username } = useContext(UserContext);
   const pageId = id ? window.location.pathname.substring(3) : "home";
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["page", pageId, username],
+    queryKey: ["page", pageId],
     queryFn: () => getPageByUrl(pageId),
   });
 
