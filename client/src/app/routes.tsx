@@ -14,7 +14,6 @@ import Users from "./pages/Users";
 import UsersCreate from "./pages/UsersCreate";
 import LayoutAdmin from "../components/LayoutAdmin";
 import UsersEdit from "./pages/UsersEdit";
-import Diagram from "./pages/Diagram";
 
 export function WikiGoRoutes() {
   return (
@@ -33,7 +32,6 @@ export function WikiGoRoutes() {
                 path="edit/:id/:id2?/:id3?/:id4?/:id5?"
                 element={<EditPage />}
               />
-              <Route path="diagram" element={<Diagram />} />
             </Route>
           </Route>
           <Route element={<AdminRoute />}>
