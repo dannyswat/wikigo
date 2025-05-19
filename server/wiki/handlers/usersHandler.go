@@ -3,6 +3,7 @@ package handlers
 import (
 	"strconv"
 
+	"github.com/dannyswat/wikigo/common/apihelper"
 	"github.com/dannyswat/wikigo/users"
 	"github.com/labstack/echo/v4"
 )
@@ -51,6 +52,21 @@ func (h *UsersHandler) GetUser(e echo.Context) error {
 		return e.JSON(400, "invalid request")
 	}
 	user, err := h.UserService.DB.GetUserByID(userId)
+	if err != nil {
+		return e.JSON(500, err)
+	}
+	if user == nil {
+		return e.JSON(404, "user not found")
+	}
+	return e.JSON(200, ToUserResponse(user))
+}
+
+func (h *UsersHandler) GetCurrentUser(e echo.Context) error {
+	userId := apihelper.GetUserId(e)
+	if userId == "" {
+		return e.JSON(400, "invalid request")
+	}
+	user, err := h.UserService.DB.GetUserByUserName(userId)
 	if err != nil {
 		return e.JSON(500, err)
 	}

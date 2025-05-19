@@ -86,7 +86,7 @@ export default function DiagramModal({
   }
 
   return createPortal(
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-white p-4 z-50">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-white p-4 z-[10100]">
       {(data || !id) && (
         <div className="canvas h-full">
           <Excalidraw

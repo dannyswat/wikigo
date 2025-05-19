@@ -129,6 +129,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 
 	users := api.Group("/user")
 	users.Use(middlewares.AuthorizeMiddleware())
+	users.GET("/me", s.usersHandler.GetCurrentUser)
 	users.GET("/role", s.authHandler.GetRole)
 	users.POST("/changepassword", s.authHandler.ChangePassword)
 

@@ -7,6 +7,8 @@ import { UserContext } from "../../providers/UserProvider";
 export default function Login() {
   const navigate = useNavigate();
   const { isLoggedIn } = useContext(UserContext);
+  const urlParams = new URLSearchParams(window.location.search);
+  const returnUrl = urlParams.get("returnUrl");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -16,11 +18,11 @@ export default function Login() {
   });
   const login = useMutation({
     mutationFn: async (request: LoginRequest) => await loginApi(request),
-    onSuccess: () => navigate("/"),
+    onSuccess: () => navigate(returnUrl ?? "/"),
   });
 
   if (isLoggedIn) {
-    return <Navigate to="/" />;
+    return <Navigate to={returnUrl ?? "/"} />;
   }
 
   function handleLoginClick(e: MouseEvent<HTMLButtonElement>) {
