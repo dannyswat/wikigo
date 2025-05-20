@@ -94,7 +94,10 @@ export default function DiagramModal({
               elements: data?.elements,
               files: data?.files,
             }}
-            excalidrawAPI={(api) => setDrawApi(api)}
+            excalidrawAPI={(api) => {
+              setDrawApi(api);
+              api.resetScene();
+            }}
           />
         </div>
       )}
