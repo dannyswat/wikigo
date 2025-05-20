@@ -47,7 +47,7 @@ export default function DiagramModal({
     if (drawApi) {
       drawApi.resetScene();
     }
-    onClose(`/media/diagram/${id}.svg`);
+    onClose(`/media/diagrams/${id}.svg`);
   }
 
   async function handleClick() {
@@ -92,7 +92,6 @@ export default function DiagramModal({
           <Excalidraw
             initialData={{
               elements: data?.elements,
-              appState: data?.appState,
               files: data?.files,
             }}
             excalidrawAPI={(api) => setDrawApi(api)}
@@ -109,9 +108,9 @@ export default function DiagramModal({
         </button>
         <button
           onClick={handleClose}
-          className="px-4 py-2 bg-gray-500 text-white rounded"
+          className="ms-3 px-4 py-2 bg-gray-500 text-white rounded"
         >
-          Close
+          Cancel
         </button>
       </div>
     </div>,

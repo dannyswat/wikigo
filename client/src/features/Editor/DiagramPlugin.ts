@@ -15,14 +15,21 @@ export default class DiagramPlugin extends Plugin {
       const view = new ButtonView(locale);
 
       view.set({
-        label: t("Insert Diagram"),
+        label: t("Insert/Update Diagram"),
         icon: diagramIcon,
         tooltip: true,
       });
 
       // Callback executed once the image is clicked.
       this.listenTo(view, "execute", () => {
-        // This will open your Diagram modal
+        const element = editor.model.document.selection.getSelectedElement();
+        if (element) {
+          const src = element.getAttribute("src");
+          if (src && typeof src === "string" && src.endsWith(".svg")) {
+            editor.fire("openDiagramModal", src);
+            return;
+          }
+        }
         editor.fire("openDiagramModal");
       });
 

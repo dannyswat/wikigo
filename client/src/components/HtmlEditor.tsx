@@ -42,6 +42,7 @@ interface Props {
 
 export function HtmlEditor({ content, onChange }: Props) {
   const [isDiagramModalOpen, setIsDiagramModalOpen] = useState(false);
+  const [diagramUrl, setDiagramUrl] = useState<string>();
   const editorRef = useRef<ClassicEditor>();
 
   return (
@@ -50,7 +51,8 @@ export function HtmlEditor({ content, onChange }: Props) {
         onReady={(editor) => {
           if (!editor) return;
           editorRef.current = editor;
-          editor.on("openDiagramModal", () => {
+          editor.on("openDiagramModal", (_, args) => {
+            setDiagramUrl(args && typeof args === "string" ? args : undefined);
             setIsDiagramModalOpen(true);
           });
         }}
@@ -161,7 +163,7 @@ export function HtmlEditor({ content, onChange }: Props) {
       />
       {isDiagramModalOpen && (
         <DiagramModal
-          diagramUrl=""
+          diagramUrl={diagramUrl ?? ""}
           onClose={(imageUrl: string | undefined) => {
             if (!imageUrl) return;
             setIsDiagramModalOpen(false);
@@ -169,13 +171,14 @@ export function HtmlEditor({ content, onChange }: Props) {
             if (editor) {
               editor.model.change((writer) => {
                 const imageElement = writer.createElement("imageBlock", {
-                  src: imageUrl,
+                  src: imageUrl + "?t=" + Date.now(),
                 });
 
                 // Insert the image at the current selection or at the end of the selection's first range.
                 const insertAt =
                   editor.model.document.selection.getFirstPosition();
                 if (insertAt) {
+                  editor.model.deleteContent(editor.model.document.selection);
                   editor.model.insertContent(imageElement, insertAt);
                 } else {
                   // Fallback if selection is not clear, e.g., insert at end of document
