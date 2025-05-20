@@ -1,0 +1,33 @@
+# .dockerignore
+
+# Git files
+.git
+.gitignore
+
+# Docker files
+Dockerfile
+.dockerignore
+
+# Node.js
+client/node_modules
+client/dist
+client/.env*
+client/npm-debug.log*
+client/yarn-debug.log*
+client/yarn-error.log*
+
+# Go build artifacts in source
+server/*.exe
+server/__debug_bin*
+
+# Local build directory
+build
+
+# IDE/Editor specific
+.vscode
+*.code-workspace
+.idea
+
+# OS specific
+Thumbs.db
+.DS_Store
