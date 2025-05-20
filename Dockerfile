@@ -53,10 +53,6 @@ COPY --from=builder-go /app/wikigo.exe .
 # Copy server views (assuming the Go app looks for them in a 'views' directory relative to the executable)
 COPY --from=builder-go /app/server/views ./views
 
-# Copy server data (runtime data like SQLite DBs, keys, etc.)
-# This copies the initial data. For persistent data in production, use Docker volumes.
-COPY --from=builder-go /app/server/data ./data
-
 # Copy client build artifacts from builder-client stage to the public directory
 # (assuming the Go app serves static files from a 'public' directory relative to the executable)
 COPY --from=builder-client /app/build/public ./public
