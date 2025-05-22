@@ -140,7 +140,7 @@ export default function EditPage() {
       <section className="flex flex-row items-center">
         <label className="basis-1/4">Parent Page</label>
         <PageDropDown
-          className="basis-3/4 border-2 rounded-md p-2"
+          className="basis-3/4 border-2 rounded-md p-2 w-full"
           value={data.parentId}
           onChange={(value) =>
             setData((prev) => ({ ...prev, parentID: value }))
