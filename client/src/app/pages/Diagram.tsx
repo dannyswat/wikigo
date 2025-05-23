@@ -32,7 +32,7 @@ export default function DiagramModal({
   const { data } = useQuery<Diagram>({
     queryKey: ["diagram", id],
     queryFn: async () => {
-      const res = await fetch(`/media/dgsource/${id}.json`);
+      const res = await fetch(`/api/editor/diagram/source/${id}`);
       if (!res.ok) {
         throw new Error("Failed to fetch diagram");
       }
@@ -42,12 +42,13 @@ export default function DiagramModal({
     enabled: !!id,
     staleTime: 0,
   });
+  console.log(data);
 
   function handleClose() {
     if (drawApi) {
       drawApi.resetScene();
     }
-    onClose(`/media/diagrams/${id}.svg`);
+    onClose('');
   }
 
   async function handleClick() {
@@ -121,9 +122,10 @@ export default function DiagramModal({
   );
 }
 
-// Example url: "https://example.com/diagram/12345.svg"
+// Example url: "https://example.com/diagram/12345.svg?t=123455"
 function getIdFromDiagramUrl(diagramUrl: string): string {
-  const urlParts = diagramUrl.split("/");
+  const urlWithoutQuery = diagramUrl.split('?')[0];
+  const urlParts = urlWithoutQuery.split("/");
   const id = urlParts[urlParts.length - 1].split(".")[0]; // Get the last part before the file extension
   return id;
 }

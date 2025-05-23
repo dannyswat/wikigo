@@ -165,8 +165,8 @@ export function HtmlEditor({ content, onChange }: Props) {
         <DiagramModal
           diagramUrl={diagramUrl ?? ""}
           onClose={(imageUrl: string | undefined) => {
-            if (!imageUrl) return;
             setIsDiagramModalOpen(false);
+            if (!imageUrl) return;
             const editor = editorRef.current;
             if (editor) {
               editor.model.change((writer) => {

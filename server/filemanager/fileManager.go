@@ -10,6 +10,7 @@ import (
 type FileManager interface {
 	Init()
 	SaveFile(fileBinary []byte, fileName string, path string) error
+	ReadFile(fileName string, path string) ([]byte, error)
 	DeleteFile(fileName string, path string) error
 	CreatePath(path string) error
 	ListFiles(path string) ([]string, error)
@@ -42,6 +43,24 @@ func (fm *fileManager) Init() {
 	if os.IsNotExist(err) {
 		os.Mkdir(fm.RootPath, 0755)
 	}
+}
+
+func (fm *fileManager) ReadFile(fileName string, path string) ([]byte, error) {
+	if !fm.isFileNameAllowed(fileName) {
+		return nil, fmt.Errorf("file extension not allowed")
+	}
+	if !fm.isPathAllowed(path) {
+		return nil, fmt.Errorf("invalid path")
+	}
+	filePath := filepath.FromSlash(filepath.Join(fm.RootPath, path, fileName))
+	fileBinary, err := os.ReadFile(filePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, fmt.Errorf("file not found")
+		}
+		return nil, err
+	}
+	return fileBinary, nil
 }
 
 func (fm *fileManager) SaveFile(fileBinary []byte, fileName string, path string) error {

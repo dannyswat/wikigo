@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dannyswat/wikigo/common/apihelper"
 	"github.com/dannyswat/wikigo/filemanager"
 	"github.com/labstack/echo/v4"
 )
@@ -132,4 +133,17 @@ func (uh *UploadHandler) SaveDiagram(e echo.Context) error {
 		Id:            req.Id,
 		DiagramSvgUrl: "/media/diagrams/" + req.Id + ".svg",
 	})
+}
+
+func (uh *UploadHandler) GetDiagramSource(e echo.Context) error {
+	id := e.Param("id")
+	if id == "" {
+		return e.JSON(400, "invalid diagram id")
+	}
+	jsonBytes, err := uh.FileManager.ReadFile(id+".json", "/dgsource")
+	if err != nil {
+		return apihelper.ReturnErrorResponse(e, err)
+	}
+
+	return e.String(200, string(jsonBytes))
 }
