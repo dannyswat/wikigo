@@ -75,7 +75,7 @@ export default function NewPage() {
       const parentUrl = pageList?.find((p) => p.id === parentId)?.url;
       return parentUrl
         ? `${parentUrl}/${generateUrl(title)}`
-        : generateUrl(title);
+        : '/' + generateUrl(title);
     }
     return generateUrl(title);
   }

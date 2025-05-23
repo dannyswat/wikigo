@@ -14,6 +14,7 @@ import Users from "./pages/Users";
 import UsersCreate from "./pages/UsersCreate";
 import LayoutAdmin from "../components/LayoutAdmin";
 import UsersEdit from "./pages/UsersEdit";
+import EditorMenu from "../components/EditorMenu";
 
 export function WikiGoRoutes() {
   return (
@@ -26,7 +27,7 @@ export function WikiGoRoutes() {
         </Route>
         <Route element={<GuardedRoute />}>
           <Route element={<EditorRoute />}>
-            <Route element={<Layout />}>
+            <Route element={<Layout customMenu={<EditorMenu />} />}>
               <Route path="create" element={<NewPage />} />
               <Route
                 path="edit/:id/:id2?/:id3?/:id4?/:id5?"

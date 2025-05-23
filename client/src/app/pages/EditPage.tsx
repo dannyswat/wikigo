@@ -19,7 +19,7 @@ import { useAutoSaveStore } from "../../providers/AutoSaveStore";
 export default function EditPage() {
   const { id } = useParams();
   const pageId = id ? window.location.pathname.substring(6) : "home";
-  const { isAutoSaveEnabled, setAutoSave } = useAutoSaveStore();
+  const { isAutoSaveEnabled } = useAutoSaveStore();
   const localStorageKey = `editPageData_${pageId}`;
   const navigate = useNavigate();
   const [data, setData] = useState<PageRequest>(() => ({
@@ -192,12 +192,6 @@ export default function EditPage() {
           onChange={(value) =>
             setData((prev) => ({ ...prev, isPinned: value }))
           }
-        />
-        <ToggleButton
-          label="Auto Save"
-          checked={isAutoSaveEnabled}
-          className="ms-4"
-          onChange={() => setAutoSave(!isAutoSaveEnabled)}
         />
       </section>
       <section className="flex flex-row justify-items-end items-center">
