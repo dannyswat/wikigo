@@ -1,4 +1,4 @@
-import { Excalidraw, exportToSvg } from "@excalidraw/excalidraw";
+import { Excalidraw, exportToBlob, exportToSvg } from "@excalidraw/excalidraw";
 import {
   AppState,
   BinaryFiles,
@@ -61,13 +61,16 @@ export default function DiagramModal({
     if (elements.length === 0) return;
 
     try {
-      const svgElement: SVGSVGElement = await exportToSvg({
+      const exportSetting = {
         elements: elements,
         appState: drawApi.getAppState(),
         files: drawApi.getFiles(),
         exportPadding: 10,
         exportBackground: true, // Set to true if you want the canvas background color
-      });
+      };
+      const png = await exportToBlob(exportSetting);
+      const pngBase64 = await getBase64DataUrlFromBlob(png);
+      const svgElement: SVGSVGElement = await exportToSvg(exportSetting);
       const svgHtml = svgElement.outerHTML;
       const diagramJson = JSON.stringify({
         elements: elements,
@@ -78,9 +81,10 @@ export default function DiagramModal({
         id: id ?? crypto.randomUUID(),
         diagram: diagramJson,
         svg: svgHtml,
+        png: pngBase64
       });
       setId(result.id);
-      onClose(result.diagramSvgUrl);
+      onClose(result.diagramPngUrl);
     } catch (error) {
       console.error("Error exporting to SVG:", error);
     }
@@ -128,4 +132,15 @@ function getIdFromDiagramUrl(diagramUrl: string): string {
   const urlParts = urlWithoutQuery.split("/");
   const id = urlParts[urlParts.length - 1].split(".")[0]; // Get the last part before the file extension
   return id;
+}
+
+function getBase64DataUrlFromBlob(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      resolve(reader.result as string);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
 }

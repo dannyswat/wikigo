@@ -4,11 +4,13 @@ export interface UploadDiagramRequest {
   id: string;
   diagram: string;
   svg: string;
+  png: string;
 }
 
 export interface UploadDiagramResponse {
   id: string;
   diagramSvgUrl: string;
+  diagramPngUrl: string;
 }
 
 export async function uploadDiagram(

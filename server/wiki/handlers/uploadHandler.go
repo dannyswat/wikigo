@@ -108,12 +108,14 @@ func (uh *UploadHandler) CreatePath(e echo.Context) error {
 type SaveDiagramRequest struct {
 	DiagramJson string `json:"diagram" validate:"required"`
 	SvgContent  string `json:"svg" validate:"required"`
+	PngContent  string `json:"png" validate:"required"`
 	Id          string `json:"id" validate:"required"`
 }
 
 type SaveDiagramResponse struct {
 	Id            string `json:"id"`
 	DiagramSvgUrl string `json:"diagramSvgUrl"`
+	DiagramPngUrl string `json:"diagramPngUrl"`
 }
 
 func (uh *UploadHandler) SaveDiagram(e echo.Context) error {
@@ -125,6 +127,14 @@ func (uh *UploadHandler) SaveDiagram(e echo.Context) error {
 	if err != nil {
 		return e.JSON(500, err)
 	}
+	pngBinary, err := getPngBinaryFromBase64DataUrl(req.PngContent)
+	if err != nil {
+		return e.JSON(400, "invalid PNG content: "+err.Error())
+	}
+	err = uh.FileManager.SaveFile(pngBinary, req.Id+".png", "/diagrams")
+	if err != nil {
+		return e.JSON(500, err)
+	}
 	err = uh.FileManager.SaveFile([]byte(req.SvgContent), req.Id+".svg", "/diagrams")
 	if err != nil {
 		return e.JSON(500, err)
@@ -132,6 +142,7 @@ func (uh *UploadHandler) SaveDiagram(e echo.Context) error {
 	return e.JSON(200, &SaveDiagramResponse{
 		Id:            req.Id,
 		DiagramSvgUrl: "/media/diagrams/" + req.Id + ".svg",
+		DiagramPngUrl: "/media/diagrams/" + req.Id + ".png",
 	})
 }
 
@@ -146,4 +157,15 @@ func (uh *UploadHandler) GetDiagramSource(e echo.Context) error {
 	}
 
 	return e.String(200, string(jsonBytes))
+}
+
+func getPngBinaryFromBase64DataUrl(dataUrl string) ([]byte, error) {
+	// Split the data URL into parts
+	parts := strings.SplitN(dataUrl, ",", 2)
+	if len(parts) != 2 {
+		return nil, fmt.Errorf("invalid data URL format")
+	}
+
+	// Decode the base64 part
+	return base64.StdEncoding.DecodeString(parts[1])
 }
