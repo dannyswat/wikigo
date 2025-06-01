@@ -6,6 +6,6 @@ copy release\* build
 mkdir build\views
 copy server\views\* build\views
 cd server
-go build cmd\web -o ..\build\wikigo.exe
+go build -o ..\build\wikigo.exe .\cmd\web\main.go
 cd ..\client
 npm run build
