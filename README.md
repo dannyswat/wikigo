@@ -121,4 +121,4 @@ You can override default settings via environment variables:
 
 ## License
 
-This project is released under the MIT License. See [LICENSE](LICENSE) for details.
+This project is released under the GNU General Public License v2.0 (GPL-2.0), in accordance with the CKEditor license terms. See [LICENSE](LICENSE) for details.
