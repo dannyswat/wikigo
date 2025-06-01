@@ -1,6 +1,5 @@
 build/
 server/data/
 server/media/
-server/public/
 *.exe
 __debug*
