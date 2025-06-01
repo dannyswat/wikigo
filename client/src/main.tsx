@@ -5,7 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import App from './App.tsx'
 import './index.css'
 import { queryClient } from './common/query'
-import { UserProvider } from './providers/UserProvider.tsx'
+import { UserProvider } from './features/auth/UserProvider.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

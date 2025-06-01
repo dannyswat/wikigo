@@ -1,4 +1,4 @@
-import { WikiGoRoutes } from "./app/routes";
+import { WikiGoRoutes } from "./routes";
 
 import './App.css';
 
