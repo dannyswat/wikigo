@@ -1,11 +1,11 @@
 package wiki
 
 import (
+	"github.com/dannyswat/wikigo/app/repositories"
 	"github.com/dannyswat/wikigo/keymgmt"
 	"github.com/dannyswat/wikigo/pages"
 	"github.com/dannyswat/wikigo/revisions"
 	"github.com/dannyswat/wikigo/users"
-	"github.com/dannyswat/wikigo/wiki/repositories"
 )
 
 type DBManager interface {

@@ -4,9 +4,9 @@ import (
 	"html/template"
 	"os"
 
-	"github.com/dannyswat/wikigo/wiki"
-	"github.com/dannyswat/wikigo/wiki/handlers"
-	"github.com/dannyswat/wikigo/wiki/middlewares"
+	wiki "github.com/dannyswat/wikigo/app"
+	"github.com/dannyswat/wikigo/app/handlers"
+	"github.com/dannyswat/wikigo/app/middlewares"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
