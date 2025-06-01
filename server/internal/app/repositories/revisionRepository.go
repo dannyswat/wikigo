@@ -3,8 +3,9 @@ package repositories
 import (
 	"strconv"
 
+	"wikigo/internal/revisions"
+
 	"github.com/dannyswat/filedb"
-	"github.com/dannyswat/wikigo/revisions"
 )
 
 const (

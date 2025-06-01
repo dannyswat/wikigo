@@ -11,8 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dannyswat/wikigo/common/apihelper"
-	"github.com/dannyswat/wikigo/filemanager"
+	"wikigo/internal/common/apihelper"
+	"wikigo/internal/filemanager"
+
 	"github.com/labstack/echo/v4"
 )
 

@@ -4,8 +4,9 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/dannyswat/wikigo/common/errors"
-	"github.com/dannyswat/wikigo/revisions"
+	"wikigo/internal/common/errors"
+	"wikigo/internal/revisions"
+
 	"github.com/go-playground/validator/v10"
 )
 

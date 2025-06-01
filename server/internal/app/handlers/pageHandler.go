@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/dannyswat/wikigo/common/apihelper"
-	"github.com/dannyswat/wikigo/pages"
-	"github.com/dannyswat/wikigo/revisions"
+	"wikigo/internal/common/apihelper"
+	"wikigo/internal/pages"
+	"wikigo/internal/revisions"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/microcosm-cc/bluemonday"

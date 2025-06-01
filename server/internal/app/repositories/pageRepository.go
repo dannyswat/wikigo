@@ -3,8 +3,9 @@ package repositories
 import (
 	"strconv"
 
+	"wikigo/internal/pages"
+
 	"github.com/dannyswat/filedb"
-	"github.com/dannyswat/wikigo/pages"
 )
 
 type pageDB struct {

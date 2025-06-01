@@ -1,8 +1,9 @@
 package repositories
 
 import (
+	"wikigo/internal/keymgmt"
+
 	"github.com/dannyswat/filedb"
-	"github.com/dannyswat/wikigo/keymgmt"
 )
 
 type keyDB struct {

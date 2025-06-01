@@ -8,10 +8,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dannyswat/wikigo/common/apihelper"
-	"github.com/dannyswat/wikigo/common/errors"
-	"github.com/dannyswat/wikigo/keymgmt"
-	"github.com/dannyswat/wikigo/users"
+	"wikigo/internal/common/apihelper"
+	"wikigo/internal/common/errors"
+	"wikigo/internal/keymgmt"
+	"wikigo/internal/users"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"

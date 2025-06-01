@@ -3,8 +3,9 @@ package handlers
 import (
 	"strconv"
 
-	"github.com/dannyswat/wikigo/common/apihelper"
-	"github.com/dannyswat/wikigo/users"
+	"wikigo/internal/common/apihelper"
+	"wikigo/internal/users"
+
 	"github.com/labstack/echo/v4"
 )
 

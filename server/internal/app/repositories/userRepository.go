@@ -1,8 +1,9 @@
 package repositories
 
 import (
+	"wikigo/internal/users"
+
 	"github.com/dannyswat/filedb"
-	"github.com/dannyswat/wikigo/users"
 )
 
 type userDB struct {

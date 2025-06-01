@@ -1,17 +1,24 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"os"
 
-	wiki "github.com/dannyswat/wikigo/app"
-	"github.com/dannyswat/wikigo/app/handlers"
-	"github.com/dannyswat/wikigo/app/middlewares"
+	wiki "wikigo/internal/app"
+	"wikigo/internal/app/handlers"
+	"wikigo/internal/app/middlewares"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
+	currentDir, err := os.Getwd()
+	if err != nil {
+		panic(fmt.Sprintf("Failed to get current working directory: %v", err))
+	}
+	fmt.Printf("Current working directory: %s\n", currentDir)
 
 	wiki := &wiki.WikiStartUp{
 		DataPath:  "data",

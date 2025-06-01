@@ -6,13 +6,14 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/dannyswat/wikigo/app/handlers"
-	"github.com/dannyswat/wikigo/app/middlewares"
-	"github.com/dannyswat/wikigo/filemanager"
-	"github.com/dannyswat/wikigo/keymgmt"
-	"github.com/dannyswat/wikigo/pages"
-	"github.com/dannyswat/wikigo/revisions"
-	"github.com/dannyswat/wikigo/users"
+	"wikigo/internal/app/handlers"
+	"wikigo/internal/app/middlewares"
+	"wikigo/internal/filemanager"
+	"wikigo/internal/keymgmt"
+	"wikigo/internal/pages"
+	"wikigo/internal/revisions"
+	"wikigo/internal/users"
+
 	"github.com/labstack/echo/v4"
 	"github.com/microcosm-cc/bluemonday"
 )

@@ -1,7 +1,8 @@
 package middlewares
 
 import (
-	"github.com/dannyswat/wikigo/common/apihelper"
+	"wikigo/internal/common/apihelper"
+
 	"github.com/labstack/echo/v4"
 )
 

@@ -1,4 +1,4 @@
-module github.com/dannyswat/wikigo
+module wikigo
 
 go 1.21.5
 
