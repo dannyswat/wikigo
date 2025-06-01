@@ -77,7 +77,7 @@ export default function NewPage() {
         ? `${parentUrl}/${generateUrl(title)}`
         : '/' + generateUrl(title);
     }
-    return generateUrl(title);
+    return '/' + generateUrl(title);
   }
 
   function handleSubmitClick(e: MouseEvent<HTMLButtonElement>) {
