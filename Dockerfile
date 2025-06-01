@@ -19,7 +19,7 @@ COPY server/. .
 # Build the Go application
 # CGO_ENABLED=0 for a static binary. GOOS=linux for cross-compilation if Docker host isn't Linux.
 # Replace ./main.go if your main package entrypoint is different (e.g., ./cmd/wikigo/main.go)
-RUN CGO_ENABLED=0 GOOS=linux go build -v -o /app/wikigo.exe -ldflags="-s -w" ./main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -v -o /app/wikigo.exe -ldflags="-s -w" ./cmd/web/main.go
 
 # Stage 2: Build React client
 FROM node:24-alpine AS builder-client
