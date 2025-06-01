@@ -25,7 +25,7 @@ export default class DiagramPlugin extends Plugin {
         const element = editor.model.document.selection.getSelectedElement();
         if (element) {
           const src = element.getAttribute("src");
-          if (src && typeof src === "string" && src.endsWith(".svg")) {
+          if (src && typeof src === "string" && (src.includes(".svg") || src.includes(".png"))) {
             editor.fire("openDiagramModal", src);
             return;
           }
