@@ -12,6 +12,7 @@ import (
 	"wikigo/internal/keymgmt"
 	"wikigo/internal/pages"
 	"wikigo/internal/revisions"
+	"wikigo/internal/setting"
 	"wikigo/internal/users"
 
 	"github.com/labstack/echo/v4"
@@ -28,12 +29,14 @@ type WikiStartUp struct {
 	pageService         *pages.PageService
 	keyStore            *keymgmt.KeyMgmtService
 	pageRevisionService *revisions.RevisionService[*pages.Page]
+	settingService      *setting.SettingService
 	htmlPolicy          *bluemonday.Policy
 	fileManager         filemanager.FileManager
 	pageHandler         *handlers.PageHandler
 	authHandler         *handlers.AuthHandler
 	uploadHandler       *handlers.UploadHandler
 	usersHandler        *handlers.UsersHandler
+	settingHandler      *handlers.SettingHandler
 	jwt                 *middlewares.JWT
 	reactPage           *pages.ReactPageMeta
 }
@@ -67,6 +70,24 @@ func (s *WikiStartUp) Setup() error {
 	s.keyStore = &keymgmt.KeyMgmtService{DB: s.dbManager.Keys()}
 	s.pageRevisionService = &revisions.RevisionService[*pages.Page]{Repository: s.dbManager.PageRevisions()}
 	s.pageService = &pages.PageService{DB: s.dbManager.Pages(), RevisionService: s.pageRevisionService}
+	s.settingService = &setting.SettingService{DB: s.dbManager.Settings()}
+	s.settingService.Init(&setting.Setting{
+		SiteName: "Wiki Go",
+		Logo:     "logo.png",
+		Theme:    "default",
+		Footer:   "Powered by Wiki Go",
+	}, &setting.SecuritySetting{
+		Cors:                    "*",
+		FrameOptions:            "SAMEORIGIN",
+		ReferrerPolicy:          "no-referrer",
+		StrictTransportSecurity: "max-age=31536000; includeSubDomains",
+		ContentSecurityPolicy:   "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
+		XContentTypeOptions:     "nosniff",
+		XSSProtection:           "1; mode=block",
+		XRobotsTag:              "noindex, nofollow",
+		PermissionsPolicy:       "geolocation=(), microphone=(), camera=()",
+		FeaturePolicy:           "geolocation 'none'; microphone 'none'; camera 'none'",
+	})
 	err = s.keyStore.Init()
 	if err != nil {
 		return err
@@ -98,6 +119,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	s.authHandler = &handlers.AuthHandler{UserService: s.userService, KeyStore: s.keyStore}
 	s.uploadHandler = &handlers.UploadHandler{FileManager: s.fileManager}
 	s.usersHandler = &handlers.UsersHandler{UserService: s.userService}
+	s.settingHandler = &handlers.SettingHandler{SettingService: s.settingService}
 
 	s.jwt = &middlewares.JWT{KeyStore: s.keyStore}
 	e.Use(s.jwt.AuthMiddleware())
@@ -128,6 +150,11 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	admin.GET("/users/:id", s.usersHandler.GetUser)
 	admin.POST("/users", s.usersHandler.CreateUser)
 	admin.PUT("/users/:id", s.usersHandler.UpdateUser)
+
+	api.GET("/setting", s.settingHandler.GetSetting)
+	api.GET("/securitysetting", s.settingHandler.GetSecuritySetting)
+	admin.POST("/setting", s.settingHandler.UpdateSetting)
+	admin.POST("/securitysetting", s.settingHandler.UpdateSecuritySetting)
 
 	users := api.Group("/user")
 	users.Use(middlewares.AuthorizeMiddleware())
