@@ -20,12 +20,15 @@ func main() {
 	}
 	fmt.Printf("Current working directory: %s\n", currentDir)
 
-	wiki := &wiki.WikiStartUp{
+	app := &wiki.WikiStartUp{
 		DataPath:  "data",
 		BaseRoute: "/api",
 		MediaPath: "media",
 	}
-	if err := wiki.Setup(); err != nil {
+	isSetupComplete := true
+	if err := app.Setup(); err == wiki.ErrSetupIncomplete {
+		isSetupComplete = false
+	} else if err != nil {
 		panic(err)
 	}
 
@@ -36,7 +39,7 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Gzip())
 	e.Use(middleware.Recover())
-	e.Static("/media", wiki.MediaPath)
+	e.Static("/media", app.MediaPath)
 	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 		Root:       "public",
 		Skipper:    nil,
@@ -47,7 +50,12 @@ func main() {
 		Filesystem: nil,
 	}))
 	e.Use(middlewares.ErrorMiddleware())
-	wiki.RegisterHandlers(e)
+
+	app.RegisterSetupHandlers(e, isSetupComplete)
+
+	if isSetupComplete {
+		app.RegisterHandlers(e)
+	}
 	e.GET("*", func(c echo.Context) error {
 		c.Response().Header().Set(echo.HeaderCacheControl, "no-cache, no-store, must-revalidate")
 		return c.File("public/index.html")

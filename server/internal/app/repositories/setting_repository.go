@@ -33,6 +33,9 @@ func (r *SettingRepository) Init(initial *setting.Setting, initialSecurity *sett
 }
 
 func (r *SettingRepository) GetSetting() (*setting.Setting, error) {
+	if _, err := os.Stat(r.Path); os.IsNotExist(err) {
+		return nil, nil
+	}
 	file, err := os.Open(r.Path)
 	if err != nil {
 		return nil, err
@@ -46,6 +49,9 @@ func (r *SettingRepository) GetSetting() (*setting.Setting, error) {
 }
 
 func (r *SettingRepository) GetSecuritySetting() (*setting.SecuritySetting, error) {
+	if _, err := os.Stat(r.Path); os.IsNotExist(err) {
+		return nil, nil
+	}
 	file, err := os.Open(r.Path)
 	if err != nil {
 		return nil, err

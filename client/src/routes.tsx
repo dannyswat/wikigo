@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import LoginPage from "./features/auth/LoginPage";
 import Page from "./features/pages/Page";
@@ -15,6 +15,8 @@ import UsersCreate from "./features/users/UsersCreate";
 import LayoutAdmin from "./features/layout/LayoutAdmin";
 import UsersEdit from "./features/users/UsersEdit";
 import EditorMenu from "./features/editors/EditorMenu";
+import CreateAdmin from "./features/setup/CreateAdmin";
+import CreateSetting from "./features/setup/CreateSetting";
 
 export function WikiGoRoutes() {
   return (
@@ -44,6 +46,18 @@ export function WikiGoRoutes() {
           </Route>
           <Route path="/change-password" element={<ChangePasswordPage />} />
         </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export function SetupRoutes() {
+  return (
+    <BrowserRouter >
+      <Routes>
+        <Route path="/setup-admin" element={<CreateAdmin />} />
+        <Route path="/setup-site" element={<CreateSetting />} />
+        <Route path="*" element={<Navigate to="/setup-admin" replace />} />
       </Routes>
     </BrowserRouter>
   );

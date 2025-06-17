@@ -6,7 +6,7 @@ import { UserContext } from "./UserProvider";
 export default function GuardedRoute() {
     const { isLoggedIn } = useContext(UserContext);
     if (!isLoggedIn) {
-        return <Navigate to="/login" />;
+        return <Navigate to="/login" replace />;
     }
 
     return <Outlet />

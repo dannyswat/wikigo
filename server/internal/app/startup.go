@@ -1,10 +1,10 @@
 package wiki
 
 import (
+	"errors"
 	"log"
 	"os"
 	"path/filepath"
-	"time"
 
 	"wikigo/internal/app/handlers"
 	"wikigo/internal/app/middlewares"
@@ -41,6 +41,10 @@ type WikiStartUp struct {
 	reactPage           *pages.ReactPageMeta
 }
 
+var (
+	ErrSetupIncomplete = errors.New("setup is not complete")
+)
+
 func (s *WikiStartUp) Setup() error {
 	s.dbManager = NewDBManager(s.DataPath)
 	if err := s.dbManager.Init(); err != nil {
@@ -50,44 +54,25 @@ func (s *WikiStartUp) Setup() error {
 	if err != nil {
 		panic(err)
 	}
-	if adminUser == nil {
-		adminUser = &users.User{
-			UserName:    "admin",
-			Email:       "dhlwat@live.com",
-			Role:        "admin",
-			IsLockedOut: false,
-			CreatedAt:   time.Now(),
-		}
-		adminUser.UpdatePassword("PleaseChange")
-		s.dbManager.Users().CreateUser(adminUser)
+	siteSetting, err := s.dbManager.Settings().GetSetting()
+	if err != nil {
+		panic(err)
 	}
-	if adminUser.Role == "" {
-		adminUser.Role = "admin"
-		s.dbManager.Users().UpdateUser(adminUser)
-	}
+	isAdminSetup := adminUser != nil
+	isSiteSetup := siteSetting != nil
 
 	s.userService = &users.UserService{DB: s.dbManager.Users()}
+	s.settingService = &setting.SettingService{DB: s.dbManager.Settings()}
+
+	if !isAdminSetup || !isSiteSetup {
+		log.Println("Wiki setup is incomplete. Please run the setup handlers.")
+		return ErrSetupIncomplete
+	}
+
 	s.keyStore = &keymgmt.KeyMgmtService{DB: s.dbManager.Keys()}
 	s.pageRevisionService = &revisions.RevisionService[*pages.Page]{Repository: s.dbManager.PageRevisions()}
 	s.pageService = &pages.PageService{DB: s.dbManager.Pages(), RevisionService: s.pageRevisionService}
-	s.settingService = &setting.SettingService{DB: s.dbManager.Settings()}
-	s.settingService.Init(&setting.Setting{
-		SiteName: "Wiki Go",
-		Logo:     "logo.png",
-		Theme:    "default",
-		Footer:   "Powered by Wiki Go",
-	}, &setting.SecuritySetting{
-		Cors:                    "*",
-		FrameOptions:            "SAMEORIGIN",
-		ReferrerPolicy:          "no-referrer",
-		StrictTransportSecurity: "max-age=31536000; includeSubDomains",
-		ContentSecurityPolicy:   "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'",
-		XContentTypeOptions:     "nosniff",
-		XSSProtection:           "1; mode=block",
-		XRobotsTag:              "noindex, nofollow",
-		PermissionsPolicy:       "geolocation=(), microphone=(), camera=()",
-		FeaturePolicy:           "geolocation 'none'; microphone 'none'; camera 'none'",
-	})
+
 	err = s.keyStore.Init()
 	if err != nil {
 		return err
@@ -107,6 +92,15 @@ func (s *WikiStartUp) Setup() error {
 	}
 
 	return nil
+}
+
+func (s *WikiStartUp) RegisterSetupHandlers(e *echo.Echo, isSetupComplete bool) {
+	setupHandler := handlers.NewSetupHandler(s.settingService, s.userService)
+	e.GET("/api/setup/setting", setupHandler.GetSetting)
+	if !isSetupComplete {
+		e.POST("/api/setup/admin", setupHandler.CreateAdmin)
+		e.POST("/api/setup/complete", setupHandler.CreateSetting)
+	}
 }
 
 func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {

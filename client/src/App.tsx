@@ -1,7 +1,8 @@
-import { WikiGoRoutes } from "./routes";
+import { SetupRoutes, WikiGoRoutes } from "./routes";
 
 import './App.css';
+import SettingProvider from "./features/setup/SettingProvider";
 
 export default function App() {
-  return (<WikiGoRoutes />);
+  return (<SettingProvider setup={<SetupRoutes />}><WikiGoRoutes /></SettingProvider>);
 }
