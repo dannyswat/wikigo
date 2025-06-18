@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { createAdmin } from "./setupApi";
+import { SettingContext } from "./SettingProvider";
+import { Navigate } from "react-router-dom";
 
 export default function CreateAdmin() {
+    const setting = useContext(SettingContext);
     const [form, setForm] = useState({
         user_name: "admin",
         email: "",
@@ -30,6 +33,10 @@ export default function CreateAdmin() {
             setLoading(false);
         }
     };
+
+    if (setting && setting.isAdminCreated) {
+        return <Navigate to="/setup-site" replace />;
+    }
 
     return (
         <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">

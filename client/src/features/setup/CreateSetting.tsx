@@ -1,17 +1,19 @@
 import React, { useState } from "react";
 import { createSetting } from "./setupApi";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export default function CreateSetting() {
     const [form, setForm] = useState({
-        site_name: "",
+        site_name: "Wiki Go",
         logo: "",
-        theme: "",
-        footer: "",
-        language: "",
+        theme: "default",
+        footer: "All rights reserved © Wiki Go",
+        language: "en",
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -26,6 +28,8 @@ export default function CreateSetting() {
             await createSetting(form);
             setSuccess("Setting created successfully.");
             setForm({ site_name: "", logo: "", theme: "", footer: "", language: "" });
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            navigate('/', { replace: true });
         } catch (err: any) {
             setError(err.message || "Failed to create setting.");
         } finally {

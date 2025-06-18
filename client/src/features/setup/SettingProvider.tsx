@@ -4,6 +4,7 @@ import Loading from "../layout/Loading";
 
 interface SettingContextValues {
     setting: Setting | undefined;
+    isAdminCreated?: boolean;
     updateSetting: (value: Setting) => void;
 }
 
@@ -16,14 +17,21 @@ interface SettingProviderProps {
 
 export default function SettingProvider({ children, setup }: SettingProviderProps) {
     const [setting, setSetting] = useState(getSettingFromLocalStorage);
+    const [isAdminCreated, setIsAdminCreated] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(!setting);
 
     useEffect(() => {
         if (!isLoading) return;
         getSetting().then((res) => {
-            if (res.is_admin_created && res.is_setup_complete)
+            if (res.is_admin_created && res.is_setup_complete) {
                 updateSetting(res.setting);
+                document.title = res.setting.site_name || "Wiki Go";
+                document.documentElement.lang = res.setting.language || "en";
 
+            } else {
+                setIsAdminCreated(res.is_admin_created);
+                setSetting(undefined);
+            }
             setIsLoading(false);
         })
     }, []);
@@ -35,7 +43,7 @@ export default function SettingProvider({ children, setup }: SettingProviderProp
 
     if (isLoading) return <Loading />;
 
-    return <SettingContext.Provider value={{ setting, updateSetting }}>{!!setting ? children : setup}</SettingContext.Provider>
+    return <SettingContext.Provider value={{ setting, updateSetting, isAdminCreated }}>{!!setting ? children : setup}</SettingContext.Provider>
 }
 
 function getSettingFromLocalStorage(): Setting | undefined {
