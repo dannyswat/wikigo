@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { createSetting } from "./setupApi";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateSetting() {
     const [form, setForm] = useState({
