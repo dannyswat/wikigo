@@ -17,6 +17,8 @@ import UsersEdit from "./features/users/UsersEdit";
 import EditorMenu from "./features/editors/EditorMenu";
 import CreateAdmin from "./features/setup/CreateAdmin";
 import CreateSetting from "./features/setup/CreateSetting";
+import SiteSetting from "./features/settings/SiteSetting";
+import SecuritySetting from "./features/settings/SecuritySetting";
 
 export function WikiGoRoutes() {
   return (
@@ -42,6 +44,8 @@ export function WikiGoRoutes() {
               <Route path="/users" element={<Users />} />
               <Route path="/users/create" element={<UsersCreate />} />
               <Route path="/users/:id" element={<UsersEdit />} />
+              <Route path="/site-setting" element={<SiteSetting />} />
+              <Route path="/security-setting" element={<SecuritySetting />} />
             </Route>
           </Route>
           <Route path="/change-password" element={<ChangePasswordPage />} />

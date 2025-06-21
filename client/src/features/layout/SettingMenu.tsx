@@ -41,12 +41,25 @@ export function SettingMenu({ returnUrl }: { returnUrl?: string }) {
         }
       >
         {isAdmin && (
-          <button
-            onClick={() => navigate("/users")}
-            className="w-full box-border px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
-          >
-            Users
-          </button>
+          <>
+            <button
+              onClick={() => navigate("/users")}
+              className="w-full box-border px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
+            >
+              Users
+            </button>
+            <button onClick={() => navigate("/site-setting")}
+              className="w-full box-border px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
+            >
+              Site Setting
+            </button>
+            <button
+              onClick={() => navigate("/security-setting")}
+              className="w-full box-border px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
+            >
+              Security
+            </button>
+          </>
         )}
         <button
           onClick={() => navigate("/change-password")}
