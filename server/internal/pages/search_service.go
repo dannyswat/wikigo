@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"unicode"
 )
 
 type SearchService struct {
@@ -29,7 +30,7 @@ func (s *SearchService) Init() error {
 }
 
 func (s *SearchService) Search(text string, pageSize int) []*PageMeta {
-	terms := tokenize(text)
+	terms := Tokenize(text)
 	pageMatchCount := make(map[int]int)
 	for _, term := range terms {
 		if term == "" {
@@ -85,13 +86,60 @@ func (s *SearchService) UpdatePageSearchTerms(page *Page) error {
 	if page == nil || page.ID <= 0 {
 		return nil // No valid page to update
 	}
-	terms := tokenize(page.Title + " " + page.Content)
+	terms := Tokenize(page.Title + " " + page.Content)
 	return s.SearchTermListRepository.UpdateSearchTermLists(terms, page.ID)
 }
 
-func tokenize(text string) []string {
+func Tokenize(text string) []string {
 	// Remove HTML tags
 	re := regexp.MustCompile(`<[^>]*>`) // matches anything between < and >
 	plain := re.ReplaceAllString(text, " ")
-	return strings.Fields(plain)
+
+	// Common English stopwords
+	stopwords := map[string]bool{
+		"a": true, "an": true, "and": true, "are": true, "as": true, "at": true, "be": true, "by": true,
+		"for": true, "from": true, "has": true, "he": true, "in": true, "is": true, "it": true, "its": true,
+		"of": true, "on": true, "that": true, "the": true, "to": true, "was": true, "will": true, "with": true,
+	}
+
+	result := make([]string, 0) // Initialize to empty slice, not nil
+	runes := []rune(plain)
+
+	// Process text character by character, handling different scripts separately
+	for i := 0; i < len(runes); i++ {
+		if isChinese(runes[i]) {
+			// Find consecutive Chinese characters
+			start := i
+			for i < len(runes) && isChinese(runes[i]) {
+				i++
+			}
+			chineseText := runes[start:i]
+
+			// Generate 2-grams only if we have 2 or more Chinese characters
+			if len(chineseText) >= 2 {
+				for j := 0; j < len(chineseText)-1; j++ {
+					result = append(result, string(chineseText[j:j+2]))
+				}
+			}
+			i-- // Adjust for the outer loop increment
+		} else if unicode.Is(unicode.Latin, runes[i]) || unicode.IsDigit(runes[i]) {
+			// Start collecting Latin-based word
+			start := i
+			for i < len(runes) && (unicode.Is(unicode.Latin, runes[i]) || unicode.IsDigit(runes[i])) {
+				i++
+			}
+			word := strings.ToLower(string(runes[start:i]))
+			if len(word) > 2 && !stopwords[word] {
+				result = append(result, word)
+			}
+			i-- // Adjust for the outer loop increment
+		}
+		// Skip other Unicode scripts (as requested)
+	}
+
+	return result
+}
+
+func isChinese(r rune) bool {
+	return unicode.Is(unicode.Han, r)
 }
