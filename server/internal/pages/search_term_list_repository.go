@@ -3,5 +3,5 @@ package pages
 type SearchTermListRepository interface {
 	Init() error
 	GetSearchTermList(term string) (*SearchTermList, error)
-	UpdateSearchTermLists(terms []string, pageId int) error
+	UpdateSearchTermLists(terms, oldTerms []string, pageId int) error
 }

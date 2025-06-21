@@ -31,6 +31,7 @@ type WikiStartUp struct {
 	pageService          *pages.PageService
 	keyStore             *keymgmt.KeyMgmtService
 	pageRevisionService  *revisions.RevisionService[*pages.Page]
+	searchService        *pages.SearchService
 	settingService       *setting.SettingService
 	htmlPolicy           *bluemonday.Policy
 	fileManager          filemanager.FileManager
@@ -79,7 +80,15 @@ func (s *WikiStartUp) Setup() error {
 
 	s.keyStore = &keymgmt.KeyMgmtService{DB: s.dbManager.Keys()}
 	s.pageRevisionService = &revisions.RevisionService[*pages.Page]{Repository: s.dbManager.PageRevisions()}
-	s.pageService = &pages.PageService{DB: s.dbManager.Pages(), RevisionService: s.pageRevisionService}
+	s.searchService = &pages.SearchService{
+		PageRepository:           s.dbManager.Pages(),
+		SearchTermListRepository: s.dbManager.SearchTerms(),
+	}
+	s.pageService = &pages.PageService{
+		DB:              s.dbManager.Pages(),
+		RevisionService: s.pageRevisionService,
+		SearchService:   s.searchService,
+	}
 
 	err = s.keyStore.Init()
 	if err != nil {

@@ -86,8 +86,23 @@ func (s *SearchService) UpdatePageSearchTerms(page *Page) error {
 	if page == nil || page.ID <= 0 {
 		return nil // No valid page to update
 	}
+	oldPage, err := s.PageRepository.GetPageByID(page.ID)
+	if err != nil {
+		return err
+	}
+	var oldTerms []string
+	if oldPage != nil {
+		oldTerms = Tokenize(oldPage.Title + " " + oldPage.Content)
+	} else {
+		oldTerms = []string{}
+	}
 	terms := Tokenize(page.Title + " " + page.Content)
-	return s.SearchTermListRepository.UpdateSearchTermLists(terms, page.ID)
+	return s.SearchTermListRepository.UpdateSearchTermLists(terms, oldTerms, page.ID)
+}
+
+func (s *SearchService) DeletePageSearchTerms(page *Page) error {
+	oldTerms := Tokenize(page.Title + " " + page.Content)
+	return s.SearchTermListRepository.UpdateSearchTermLists([]string{}, oldTerms, page.ID)
 }
 
 func Tokenize(text string) []string {

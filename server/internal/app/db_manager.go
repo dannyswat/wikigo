@@ -16,6 +16,7 @@ type DBManager interface {
 	Pages() pages.PageRepository
 	Keys() keymgmt.KeyRepository
 	PageRevisions() revisions.RevisionRepository[*pages.Page]
+	SearchTerms() pages.SearchTermListRepository
 	Settings() setting.SettingRepository
 }
 
@@ -24,6 +25,7 @@ type dbManager struct {
 	pages         pages.PageRepository
 	keys          keymgmt.KeyRepository
 	pageRevisions revisions.RevisionRepository[*pages.Page]
+	searchTerms   pages.SearchTermListRepository
 	settings      setting.SettingRepository
 }
 
@@ -33,6 +35,7 @@ func NewDBManager(path string) DBManager {
 		pages:         repositories.NewPageDB(path + "/pages"),
 		keys:          repositories.NewKeyDB(path + "/keys"),
 		pageRevisions: repositories.NewRevisionRepository[*pages.Page](path + "/revisions"),
+		searchTerms:   repositories.NewSearchTermListRepository(path + "/search_terms"),
 		settings:      &repositories.SettingRepository{Path: filepath.Join(path, "setting.json")},
 	}
 }
@@ -48,6 +51,9 @@ func (m *dbManager) Init() error {
 		return err
 	}
 	if err := m.pageRevisions.Init(); err != nil {
+		return err
+	}
+	if err := m.searchTerms.Init(); err != nil {
 		return err
 	}
 	return nil
@@ -67,6 +73,10 @@ func (m *dbManager) Keys() keymgmt.KeyRepository {
 
 func (m *dbManager) PageRevisions() revisions.RevisionRepository[*pages.Page] {
 	return m.pageRevisions
+}
+
+func (m *dbManager) SearchTerms() pages.SearchTermListRepository {
+	return m.searchTerms
 }
 
 func (m *dbManager) Settings() setting.SettingRepository {

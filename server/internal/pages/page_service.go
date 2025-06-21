@@ -13,6 +13,7 @@ import (
 type PageService struct {
 	DB              PageRepository
 	RevisionService *revisions.RevisionService[*Page]
+	SearchService   *SearchService
 }
 
 func (s *PageService) GetPageByID(id int) (*Page, error) {
@@ -52,7 +53,11 @@ func (s *PageService) CreatePage(page *Page, user string) error {
 	page.CreatedBy = user
 	page.LastModifiedAt = page.CreatedAt
 	page.LastModifiedBy = user
-	return s.DB.CreatePage(page)
+	err := s.DB.CreatePage(page)
+	if err == nil {
+		err = s.SearchService.UpdatePageSearchTerms(page)
+	}
+	return err
 }
 
 func (s *PageService) UpdatePage(page *Page, user string) error {
@@ -69,11 +74,27 @@ func (s *PageService) UpdatePage(page *Page, user string) error {
 	if err != nil {
 		return err
 	}
-	return s.RevisionService.AddRevision(page.ID, oldPage)
+	err = s.RevisionService.AddRevision(page.ID, oldPage)
+	if err == nil {
+		err = s.SearchService.UpdatePageSearchTerms(page)
+	}
+	return err
 }
 
 func (s *PageService) DeletePage(id int) error {
-	return s.DB.DeletePage(id)
+	if id <= 0 {
+		return errors.NewValidationError("invalid page ID", "ID")
+	}
+	page, err := s.DB.GetPageByID(id)
+	if err != nil {
+		return errors.NewValidationError("page not found", "ID")
+	}
+	err = s.DB.DeletePage(id)
+	if err != nil {
+		return err
+	}
+	err = s.SearchService.DeletePageSearchTerms(page)
+	return err
 }
 
 func ValidatePage(page *Page, isNew bool) error {
