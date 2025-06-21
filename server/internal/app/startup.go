@@ -8,6 +8,7 @@ import (
 
 	"wikigo/internal/app/handlers"
 	"wikigo/internal/app/middlewares"
+	"wikigo/internal/common/caching"
 	"wikigo/internal/filemanager"
 	"wikigo/internal/keymgmt"
 	"wikigo/internal/pages"
@@ -25,22 +26,23 @@ type WikiStartUp struct {
 	MediaPath string
 	BaseRoute string
 
-	dbManager           DBManager
-	userService         *users.UserService
-	pageService         *pages.PageService
-	keyStore            *keymgmt.KeyMgmtService
-	pageRevisionService *revisions.RevisionService[*pages.Page]
-	settingService      *setting.SettingService
-	htmlPolicy          *bluemonday.Policy
-	fileManager         filemanager.FileManager
-	pageHandler         *handlers.PageHandler
-	authHandler         *handlers.AuthHandler
-	uploadHandler       *handlers.UploadHandler
-	usersHandler        *handlers.UsersHandler
-	settingHandler      *handlers.SettingHandler
-	jwt                 *middlewares.JWT
-	reactPage           *pages.ReactPageMeta
-	validator           *validator.Validate
+	dbManager            DBManager
+	userService          *users.UserService
+	pageService          *pages.PageService
+	keyStore             *keymgmt.KeyMgmtService
+	pageRevisionService  *revisions.RevisionService[*pages.Page]
+	settingService       *setting.SettingService
+	htmlPolicy           *bluemonday.Policy
+	fileManager          filemanager.FileManager
+	pageHandler          *handlers.PageHandler
+	authHandler          *handlers.AuthHandler
+	uploadHandler        *handlers.UploadHandler
+	usersHandler         *handlers.UsersHandler
+	settingHandler       *handlers.SettingHandler
+	jwt                  *middlewares.JWT
+	reactPage            *pages.ReactPageMeta
+	validator            *validator.Validate
+	securitySettingCache *caching.SimpleCache[*setting.SecuritySetting]
 }
 
 var (
@@ -63,8 +65,10 @@ func (s *WikiStartUp) Setup() error {
 	isAdminSetup := adminUser != nil
 	isSiteSetup := siteSetting != nil
 
+	s.securitySettingCache = caching.NewSimpleCache[*setting.SecuritySetting]()
+
 	s.userService = &users.UserService{DB: s.dbManager.Users()}
-	s.settingService = &setting.SettingService{DB: s.dbManager.Settings()}
+	s.settingService = &setting.SettingService{DB: s.dbManager.Settings(), Cache: s.securitySettingCache}
 
 	s.validator = validator.New()
 
@@ -124,6 +128,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	e.Validator = &handlers.CustomValidator{Validator: s.validator}
 
 	s.jwt = &middlewares.JWT{KeyStore: s.keyStore}
+	e.Use(middlewares.NewSecurityMiddleware(s.settingService).EchoSecurityMiddleware())
 	e.Use(s.jwt.AuthMiddleware())
 
 	e.GET("/p/:id", s.pageHandler.Page)

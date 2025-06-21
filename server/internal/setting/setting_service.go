@@ -1,7 +1,10 @@
 package setting
 
+import "wikigo/internal/common/caching"
+
 type SettingService struct {
-	DB SettingRepository
+	DB    SettingRepository
+	Cache *caching.SimpleCache[*SecuritySetting]
 }
 
 func (s *SettingService) Init(initial *Setting, initialSecurity *SecuritySetting) error {
@@ -32,7 +35,11 @@ func (s *SettingService) UpdateSecuritySetting(securitySetting *SecuritySetting)
 	if err := ValidateSecuritySetting(securitySetting); err != nil {
 		return err
 	}
-	return s.DB.UpdateSecuritySetting(securitySetting)
+	err := s.DB.UpdateSecuritySetting(securitySetting)
+	if err == nil {
+		s.Cache.Set(securitySetting)
+	}
+	return err
 }
 
 func ValidateSetting(setting *Setting) error {
