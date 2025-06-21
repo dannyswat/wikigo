@@ -15,6 +15,7 @@ import (
 	"wikigo/internal/setting"
 	"wikigo/internal/users"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/microcosm-cc/bluemonday"
 )
@@ -39,6 +40,7 @@ type WikiStartUp struct {
 	settingHandler      *handlers.SettingHandler
 	jwt                 *middlewares.JWT
 	reactPage           *pages.ReactPageMeta
+	validator           *validator.Validate
 }
 
 var (
@@ -63,6 +65,8 @@ func (s *WikiStartUp) Setup() error {
 
 	s.userService = &users.UserService{DB: s.dbManager.Users()}
 	s.settingService = &setting.SettingService{DB: s.dbManager.Settings()}
+
+	s.validator = validator.New()
 
 	if !isAdminSetup || !isSiteSetup {
 		log.Println("Wiki setup is incomplete. Please run the setup handlers.")
@@ -101,6 +105,8 @@ func (s *WikiStartUp) RegisterSetupHandlers(e *echo.Echo, isSetupComplete bool) 
 		e.POST("/api/setup/admin", setupHandler.CreateAdmin)
 		e.POST("/api/setup/complete", setupHandler.CreateSetting)
 	}
+
+	e.Validator = &handlers.CustomValidator{Validator: s.validator}
 }
 
 func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
@@ -114,6 +120,8 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	s.uploadHandler = &handlers.UploadHandler{FileManager: s.fileManager}
 	s.usersHandler = &handlers.UsersHandler{UserService: s.userService}
 	s.settingHandler = &handlers.SettingHandler{SettingService: s.settingService}
+
+	e.Validator = &handlers.CustomValidator{Validator: s.validator}
 
 	s.jwt = &middlewares.JWT{KeyStore: s.keyStore}
 	e.Use(s.jwt.AuthMiddleware())

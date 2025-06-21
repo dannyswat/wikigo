@@ -6,9 +6,10 @@ interface SettingContextValues {
     setting: Setting | undefined;
     isAdminCreated?: boolean;
     updateSetting: (value: Setting) => void;
+    updateAdminCreated: () => void;
 }
 
-export const SettingContext = createContext<SettingContextValues>({ updateSetting: () => { }, setting: undefined });
+export const SettingContext = createContext<SettingContextValues>({ updateSetting: () => { }, setting: undefined, updateAdminCreated: () => { } });
 
 interface SettingProviderProps {
     children: ReactNode;
@@ -41,9 +42,13 @@ export default function SettingProvider({ children, setup }: SettingProviderProp
         setSetting(value);
     }
 
+    function updateAdminCreated() {
+        setIsAdminCreated(true);
+    }
+
     if (isLoading) return <Loading />;
 
-    return <SettingContext.Provider value={{ setting, updateSetting, isAdminCreated }}>{!!setting ? children : setup}</SettingContext.Provider>
+    return <SettingContext.Provider value={{ setting, updateSetting, isAdminCreated, updateAdminCreated }}>{!!setting ? children : setup}</SettingContext.Provider>
 }
 
 function getSettingFromLocalStorage(): Setting | undefined {

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { createSetting } from "./setupApi";
-import { useNavigate } from "react-router-dom";
 
 export default function CreateSetting() {
     const [form, setForm] = useState({
@@ -13,7 +12,6 @@ export default function CreateSetting() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
-    const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -29,7 +27,7 @@ export default function CreateSetting() {
             setSuccess("Setting created successfully.");
             setForm({ site_name: "", logo: "", theme: "", footer: "", language: "" });
             await new Promise(resolve => setTimeout(resolve, 2000));
-            navigate('/', { replace: true });
+            window.location.replace('/');
         } catch (err: any) {
             setError(err.message || "Failed to create setting.");
         } finally {

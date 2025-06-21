@@ -27,6 +27,7 @@ export default function CreateAdmin() {
             await createAdmin(form);
             setSuccess("Admin account created successfully.");
             setForm({ user_name: "", email: "", password: "" });
+            setting.updateAdminCreated();
         } catch (err: any) {
             setError(err.message || "Failed to create admin account.");
         } finally {
