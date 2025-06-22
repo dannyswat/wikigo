@@ -106,7 +106,7 @@ export default function SecuritySetting() {
                                 type="text"
                                 value={origin}
                                 onChange={e => handleOriginsChange(e, idx)}
-                                className="flex-1 border rounded px-3 py-2"
+                                className="flex-1 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                             />
                             <button type="button" onClick={() => removeOrigin(idx)} className="ml-2 text-red-600 dark:text-red-400">Remove</button>
                         </div>
@@ -120,7 +120,7 @@ export default function SecuritySetting() {
                         name="allowed_cors_methods"
                         value={form.allowed_cors_methods}
                         onChange={handleChange}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                 </div>
                 <div>
@@ -130,7 +130,7 @@ export default function SecuritySetting() {
                         name="frame_options"
                         value={form.frame_options}
                         onChange={handleChange}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                 </div>
                 <div>
@@ -140,7 +140,7 @@ export default function SecuritySetting() {
                         name="referrer_policy"
                         value={form.referrer_policy}
                         onChange={handleChange}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                 </div>
                 <div>
@@ -150,7 +150,7 @@ export default function SecuritySetting() {
                         name="strict_transport_security"
                         value={form.strict_transport_security}
                         onChange={handleChange}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                 </div>
                 <div>
@@ -160,7 +160,7 @@ export default function SecuritySetting() {
                         name="content_security_policy"
                         value={form.content_security_policy}
                         onChange={handleChange}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                 </div>
                 <div>
@@ -170,7 +170,7 @@ export default function SecuritySetting() {
                         name="x_content_type_options"
                         value={form.x_content_type_options}
                         onChange={handleChange}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                 </div>
                 <div>
@@ -180,7 +180,7 @@ export default function SecuritySetting() {
                         name="x_xss_protection"
                         value={form.x_xss_protection}
                         onChange={handleChange}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                 </div>
                 <div>
@@ -190,7 +190,7 @@ export default function SecuritySetting() {
                         name="x_robots_tag"
                         value={form.x_robots_tag}
                         onChange={handleChange}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     />
                 </div>
                 {mutation.isError && <div className="text-red-600 dark:text-red-400">{(mutation.error as Error).message}</div>}

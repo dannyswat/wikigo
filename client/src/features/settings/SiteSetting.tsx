@@ -60,7 +60,7 @@ export default function SiteSetting() {
                         name="site_name"
                         value={form.site_name || ''}
                         onChange={handleChange}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                         required
                     />
                 </div>
@@ -71,7 +71,7 @@ export default function SiteSetting() {
                         name="logo"
                         value={form.logo || ''}
                         onChange={handleChange}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                         required
                     />
                 </div>
@@ -82,7 +82,7 @@ export default function SiteSetting() {
                         name="theme"
                         value={form.theme || ''}
                         onChange={handleChange}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                         required
                     />
                 </div>
@@ -93,7 +93,7 @@ export default function SiteSetting() {
                         name="footer"
                         value={form.footer || ''}
                         onChange={handleChange}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                         required
                     />
                 </div>
@@ -104,7 +104,7 @@ export default function SiteSetting() {
                         name="language"
                         value={form.language || ''}
                         onChange={handleChange}
-                        className="w-full border rounded px-3 py-2"
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                         required
                     />
                 </div>
