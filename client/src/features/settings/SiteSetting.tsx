@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
+import ImageInput from "../../components/ImageInput";
 
 export default function SiteSetting() {
     const queryClient = useQueryClient();
@@ -22,7 +23,7 @@ export default function SiteSetting() {
 
     const mutation = useMutation({
         mutationFn: async (data: any) => {
-            const response = await fetch('/api/setting', {
+            const response = await fetch('/api/admin/setting', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
@@ -66,14 +67,7 @@ export default function SiteSetting() {
                 </div>
                 <div>
                     <label className="block mb-1 font-medium">Logo URL</label>
-                    <input
-                        type="text"
-                        name="logo"
-                        value={form.logo || ''}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                        required
-                    />
+                    <ImageInput value={form.logo || ''} onChange={(value) => setForm({ ...form, logo: value })} />
                 </div>
                 <div>
                     <label className="block mb-1 font-medium">Theme</label>

@@ -4,6 +4,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { IconClearAll, IconMenu2 } from '@tabler/icons-react';
 import { Footer } from './Footer';
 import { SettingMenu } from './SettingMenu';
+import SiteLogo from '../../components/SiteLogo';
 
 export default function LayoutAdmin() {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ export default function LayoutAdmin() {
                         <IconMenu2 className="hover:text-gray-200 dark:hover:text-gray-300" size={24} />
                     </button>
                     <NavLink className="hidden sm:inline" to="/">
-                        <img src="/logo-no-background.svg" alt="Wiki GO" className="h-8" />
+                        <SiteLogo />
                     </NavLink>
                 </div>
                 <div className="space-x-4 text-right">

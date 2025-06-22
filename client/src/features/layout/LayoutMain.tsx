@@ -5,6 +5,7 @@ import { UserContext } from "../auth/UserProvider";
 import { IconClearAll, IconMenu2, IconSearch } from "@tabler/icons-react";
 import { Footer } from "./Footer";
 import { SettingMenu } from "./SettingMenu";
+import SiteLogo from "../../components/SiteLogo";
 
 interface LayoutProps {
   isPage?: boolean;
@@ -39,7 +40,7 @@ export default function LayoutMain({ isPage }: LayoutProps) {
             <IconMenu2 className="hover:text-gray-200 dark:hover:text-gray-300" size={24} />
           </button>
           <NavLink className="hidden sm:inline" to="/">
-            <img src="/logo-no-background.svg" alt="Wiki GO" className="h-8" />
+            <SiteLogo />
           </NavLink>
         </div>
         <div className="space-x-4 text-right flex items-center">

@@ -19,7 +19,7 @@ interface SettingProviderProps {
 export default function SettingProvider({ children, setup }: SettingProviderProps) {
     const [setting, setSetting] = useState(getSettingFromLocalStorage);
     const [isAdminCreated, setIsAdminCreated] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState(!setting);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (!isLoading) return;
