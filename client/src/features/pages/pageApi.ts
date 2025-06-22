@@ -116,3 +116,13 @@ export async function deletePage(id: number) {
     }
     return await res.json();
 }
+
+export async function rebuildSearchIndex() {
+    const res = await fetch(baseApiUrl + `/admin/pages/rebuildsearch`, {
+        method: 'POST',
+    });
+    if (res.status >= 400) {
+        throw new Error(await res.text());
+    }
+    return await res.json();
+}

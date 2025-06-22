@@ -205,3 +205,10 @@ func (h *PageHandler) DeletePage(e echo.Context) error {
 	}
 	return e.JSON(200, "page deleted")
 }
+
+func (h *PageHandler) RebuildSearchIndex(e echo.Context) error {
+	if err := h.SearchService.RebuildSearchIndex(); err != nil {
+		return apihelper.ReturnErrorResponse(e, err)
+	}
+	return e.JSON(200, "search index rebuilt")
+}

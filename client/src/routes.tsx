@@ -20,6 +20,7 @@ import CreateSetting from "./features/setup/CreateSetting";
 import SiteSetting from "./features/settings/SiteSetting";
 import SecuritySetting from "./features/settings/SecuritySetting";
 import Search from "./features/pages/Search";
+import RebuildSearch from "./features/pages/RebuildSearch";
 
 export function WikiGoRoutes() {
   return (
@@ -48,6 +49,7 @@ export function WikiGoRoutes() {
               <Route path="/users/:id" element={<UsersEdit />} />
               <Route path="/site-setting" element={<SiteSetting />} />
               <Route path="/security-setting" element={<SecuritySetting />} />
+              <Route path="/page-admin" element={<RebuildSearch />} />
             </Route>
           </Route>
           <Route path="/change-password" element={<ChangePasswordPage />} />

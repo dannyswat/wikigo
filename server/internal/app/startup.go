@@ -168,6 +168,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	admin.GET("/users/:id", s.usersHandler.GetUser)
 	admin.POST("/users", s.usersHandler.CreateUser)
 	admin.PUT("/users/:id", s.usersHandler.UpdateUser)
+	admin.POST("/pages/rebuildsearch", s.pageHandler.RebuildSearchIndex)
 
 	api.GET("/setting", s.settingHandler.GetSetting)
 	api.GET("/securitysetting", s.settingHandler.GetSecuritySetting)

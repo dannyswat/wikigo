@@ -167,6 +167,31 @@ func Tokenize(text string) []string {
 	return result
 }
 
+func (s *SearchService) RebuildSearchIndex() error {
+	// Get all pages from the repository
+	pages, err := s.PageRepository.GetAllPages(false)
+	if err != nil {
+		return err
+	}
+
+	// Clear existing search terms
+	if err := s.SearchTermListRepository.DeleteAll(); err != nil {
+		return err
+	}
+
+	// Rebuild search terms for each page
+	for _, page := range pages {
+		pageWithContent, err := s.PageRepository.GetPageByID(page.ID)
+		if err != nil {
+			return err
+		}
+		if err := s.AddPageSearchTerms(pageWithContent); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func isChinese(r rune) bool {
 	return unicode.Is(unicode.Han, r)
 }

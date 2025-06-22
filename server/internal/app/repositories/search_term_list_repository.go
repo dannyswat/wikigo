@@ -98,6 +98,19 @@ func (r *SearchTermListRepository) UpdateSearchTermLists(terms, oldTerms []strin
 	return nil
 }
 
+func (r *SearchTermListRepository) DeleteAll() error {
+	entries, err := r.db.ListAll()
+	if err != nil {
+		return err
+	}
+	for _, entry := range entries {
+		if err := r.db.Delete(entry.ID); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func findDiff(oldTerms, newTerms []string) (added, removed []string) {
 	oldSet := make(map[string]struct{}, len(oldTerms))
 	for _, term := range oldTerms {
