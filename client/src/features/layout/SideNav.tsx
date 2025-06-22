@@ -92,7 +92,7 @@ export default function SideNav({
   return (
     <nav
       className={
-        "w-1/4 bg-gray-200 p-4 overflow-y-auto" +
+        "w-1/4 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-4 overflow-y-auto" +
         (className ? " " + className : "")
       }
       {...props}
@@ -107,7 +107,7 @@ export default function SideNav({
                   lastRoot.current.length ? lastRoot.current.pop() : undefined
                 )
               }
-              className="w-full text-left box-border hover:bg-gray-300 py-2 px-5 rounded"
+              className="w-full text-left box-border hover:bg-gray-300 dark:hover:bg-gray-700 py-2 px-5 rounded"
             >
               <i className="mr-2">&larr;</i>
               Back
@@ -116,7 +116,7 @@ export default function SideNav({
           <li>
             <button
               onClick={() => navigate("/p" + root.url)}
-              className="w-full text-left box-border font-bold hover:bg-gray-300 py-2 px-5 rounded"
+              className="w-full text-left box-border font-bold hover:bg-gray-300 dark:hover:bg-gray-700 py-2 px-5 rounded"
             >
               {root.title}
             </button>
@@ -128,7 +128,7 @@ export default function SideNav({
           <li key={page.id}>
             <button
               onClick={() => handleMenuItemClick(page)}
-              className="w-full text-left box-border hover:bg-gray-300 py-2 px-5 rounded"
+              className="w-full text-left box-border hover:bg-gray-300 dark:hover:bg-gray-700 py-2 px-5 rounded"
             >
               {page.title}
               {page.children && page.children.length > 0 && (
@@ -145,7 +145,7 @@ export default function SideNav({
                 (root ? "?parent=" + encodeURIComponent(root.url) : "")
               )
             }
-            className="w-full text-left text-gray-500 box-border hover:bg-gray-300 py-2 px-5 rounded"
+            className="w-full text-left text-gray-500 dark:text-gray-400 box-border hover:bg-gray-300 dark:hover:bg-gray-700 py-2 px-5 rounded"
           >
             + Create New Page
           </button>

@@ -45,14 +45,14 @@ export default function Search() {
                     value={searchQuery}
                     onChange={handleSearchQueryChange}
                     placeholder="Enter search query..."
-                    className="basis-3/4 border-2 rounded-md p-2"
+                    className="basis-3/4 border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md p-2"
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />
                 <div className="basis-1/4 flex justify-end ps-2">
                     <button
                         onClick={handleSearch}
                         disabled={loading}
-                        className="bg-lime-700 text-white rounded-md py-2 px-5 box-border"
+                        className="bg-lime-700 hover:bg-lime-800 dark:bg-lime-600 dark:hover:bg-lime-700 text-white rounded-md py-2 px-5 box-border"
                     >
                         {loading ? (
                             <IconFidgetSpinner className="animate-spin mx-auto" />
@@ -65,7 +65,7 @@ export default function Search() {
 
             {error && (
                 <section className="flex flex-row">
-                    <div className="w-full p-3 bg-red-100 border border-red-400 text-red-700 rounded-md">
+                    <div className="w-full p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 rounded-md">
                         {error}
                     </div>
                 </section>
@@ -78,15 +78,15 @@ export default function Search() {
                     </h2>
                     <div className="space-y-3">
                         {searchResults.map((page) => (
-                            <div key={page.id} className="border-2 rounded-md p-4">
+                            <div key={page.id} className="border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-md p-4">
                                 <a
                                     href={`/p${page.url}`}
-                                    className="text-blue-600 hover:text-blue-800 font-medium text-lg"
+                                    className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium text-lg"
                                 >
                                     {page.title}
                                 </a>
                                 {page.url && (
-                                    <div className="text-sm text-gray-500 mt-1">
+                                    <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                                         {page.url}
                                     </div>
                                 )}
@@ -98,7 +98,7 @@ export default function Search() {
 
             {searchQuery && !loading && searchResults?.length === 0 && !error && (
                 <section className="flex flex-row">
-                    <div className="w-full text-center py-8 text-gray-500 border-2 rounded-md">
+                    <div className="w-full text-center py-8 text-gray-500 dark:text-gray-400 border-2 border-gray-200 dark:border-gray-700 rounded-md">
                         No pages found for "{activeSearchQuery}"
                     </div>
                 </section>

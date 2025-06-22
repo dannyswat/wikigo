@@ -90,7 +90,7 @@ export default function NewPage() {
       <section className="flex flex-row items-center">
         <label className="basis-1/4">Title</label>
         <input
-          className="basis-3/4 border-2 rounded-md p-2"
+          className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           type="text"
           placeholder="Title"
           value={data.title}
@@ -100,7 +100,7 @@ export default function NewPage() {
       <section className="flex flex-row items-center">
         <label className="basis-1/4">Parent Page</label>
         <PageDropDown
-          className="basis-3/4 border-2 rounded-md p-2 w-full"
+          className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           value={data.parentId}
           onChange={handleParentChange}
         />
@@ -108,7 +108,7 @@ export default function NewPage() {
       <section className="flex flex-row items-center">
         <label className="basis-1/4">URL</label>
         <input
-          className="basis-3/4 border-2 rounded-md p-2"
+          className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           type="text"
           placeholder="URL"
           value={data.url}
@@ -120,7 +120,7 @@ export default function NewPage() {
       <section className="flex flex-row items-center">
         <label className="basis-1/4">Short Description</label>
         <input
-          className="basis-3/4 border-2 rounded-md p-2"
+          className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           type="text"
           placeholder="Short Description"
           value={data.shortDesc}
@@ -156,7 +156,7 @@ export default function NewPage() {
         <button
           disabled={createPageApi.isPending}
           onClick={handleSubmitClick}
-          className="basis-1/2 sm:basis-1/6 bg-lime-700 text-white rounded-md py-2 px-5"
+          className="basis-1/2 sm:basis-1/6 bg-lime-700 hover:bg-lime-800 dark:bg-lime-600 dark:hover:bg-lime-700 text-white rounded-md py-2 px-5"
         >
           {createPageApi.isPending ? (
             <IconFidgetSpinner className="animate-spin mx-auto" />
@@ -169,7 +169,7 @@ export default function NewPage() {
             if (!data.content || confirm("Are you sure to leave?"))
               navigate("/");
           }}
-          className="basis-1/2 sm:basis-1/6 bg-gray-700 text-white rounded-md py-2 px-5 ms-4"
+          className="basis-1/2 sm:basis-1/6 bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-md py-2 px-5 ms-4"
         >
           Cancel
         </button>

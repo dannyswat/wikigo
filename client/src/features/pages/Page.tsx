@@ -22,10 +22,10 @@ export default function Page() {
 
   return (
     <>
-      <h1 className="text-3xl font-bold font-serif mb-2 border-b-2">
+      <h1 className="text-3xl font-bold font-serif mb-2 border-b-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
         {data.title}
       </h1>
-      <p className="text-sm font-serif px-1 mb-4">{data.shortDesc}</p>
+      <p className="text-sm font-serif px-1 mb-4 text-gray-700 dark:text-gray-300">{data.shortDesc}</p>
       <div
         className="ck-content"
         dangerouslySetInnerHTML={{ __html: data.content || "" }}

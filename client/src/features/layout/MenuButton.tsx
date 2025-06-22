@@ -29,7 +29,7 @@ export default function MenuButton({ children, className }: MenuButtonProps) {
       </button>
       <div
         className={
-          "absolute bottom-8 right-0 w-48 py-2 mt-2 z-10 bg-white text-left border border-gray-200 rounded-lg shadow-xl " +
+          "absolute bottom-8 right-0 w-48 py-2 mt-2 z-10 bg-white dark:bg-gray-800 text-left border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl " +
           (isOpen ? "block" : "hidden")
         }
       >

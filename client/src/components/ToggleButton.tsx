@@ -11,7 +11,7 @@ export default function ToggleButton({ className, checked, onChange, label, ...p
     return (
         <button className={'inline-block cursor-pointer' + (className ? ' ' + className : '')} {...props}
             onClick={() => onChange(!checked)}>
-            {checked && <IconCheck className="mr-2 inline-block text-green-700" />}
+            {checked && <IconCheck className="mr-2 inline-block text-green-700 dark:text-green-500" />}
             {!checked && <IconCrop11 className="mr-2 inline-block" />}
             <label className="inline-block">{label}</label>
         </button>

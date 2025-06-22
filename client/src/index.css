@@ -5,29 +5,29 @@
 
 @layer base {
   .ck-content {
-    @apply text-gray-800;
+    @apply text-gray-800 dark:text-gray-200;
   }
 
   .ck-content h2 {
     @apply text-3xl;
     @apply font-bold;
-    @apply text-teal-600;
+    @apply text-teal-600 dark:text-teal-400;
     @apply border-b-2;
-    @apply border-teal-600;
+    @apply border-teal-600 dark:border-teal-400;
   }
 
   .ck-content h3 {
     @apply text-2xl;
     @apply font-bold;
-    @apply text-teal-500;
+    @apply text-teal-500 dark:text-teal-300;
     @apply border-b-2;
-    @apply border-teal-500;
+    @apply border-teal-500 dark:border-teal-300;
   }
 
   .ck-content h4 {
     @apply text-xl;
     @apply font-bold;
-    @apply text-teal-400;
+    @apply text-teal-400 dark:text-teal-200;
   }
 
   .ck-content p {
@@ -38,15 +38,15 @@
 
   .ck-content blockquote {
     @apply italic;
-    @apply text-gray-600;
+    @apply text-gray-600 dark:text-gray-400;
     @apply border-l-4;
-    @apply border-gray-600;
+    @apply border-gray-600 dark:border-gray-400;
     @apply pl-4;
     @apply my-4;
   }
 
   .ck-content a {
-    @apply text-blue-500;
+    @apply text-blue-500 dark:text-blue-400;
     @apply underline;
   }
 
@@ -75,6 +75,7 @@
     @apply my-4;
     @apply mx-auto;
   }
+
   .ck-content table {
     @apply w-full;
     @apply sm:w-3/4;
@@ -85,28 +86,28 @@
   }
 
   .ck-content th {
-    @apply bg-[#EAEAEA];
+    @apply bg-[#EAEAEA] dark:bg-gray-700;
     @apply text-center;
     @apply font-bold;
-    @apply border;
+    @apply border border-gray-300 dark:border-gray-600;
     @apply p-2;
   }
 
   .ck-content td {
-    @apply border;
+    @apply border border-gray-300 dark:border-gray-600;
     @apply text-center;
     @apply p-2;
   }
 
   .ck-content code {
-    @apply bg-gray-200;
+    @apply bg-gray-200 dark:bg-gray-700;
     @apply text-sm;
     @apply p-1;
     @apply rounded;
   }
 
   .ck-content pre {
-    @apply bg-gray-200;
+    @apply bg-gray-200 dark:bg-gray-700;
     @apply p-2;
     @apply rounded;
     @apply overflow-x-auto;
@@ -120,20 +121,20 @@
   .ck-content hr {
     @apply my-4;
     @apply border-t-2;
-    @apply border-gray-200;
+    @apply border-gray-200 dark:border-gray-600;
   }
 
   .ck-content .ck-content__page-break {
     @apply my-4;
     @apply border-t-2;
-    @apply border-gray-200;
+    @apply border-gray-200 dark:border-gray-600;
   }
 
   .ck-content .ck-content__page-break::after {
     @apply block;
     @apply text-center;
     @apply text-xs;
-    @apply text-gray-500;
+    @apply text-gray-500 dark:text-gray-400;
     content: "Page Break";
   }
 
@@ -141,7 +142,7 @@
     @apply block;
     @apply text-center;
     @apply text-xs;
-    @apply text-gray-500;
+    @apply text-gray-500 dark:text-gray-400;
     content: "Page Break";
   }
 }

@@ -18,22 +18,22 @@ export default function RebuildSearch() {
     return (
         <div className="w-full flex flex-col gap-4">
             <h1 className="text-2xl font-bold">Rebuild Search Index</h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-400">
                 This will rebuild the search index for all pages. It may take some time depending on the number of pages.
             </p>
             <button
                 onClick={handleClick}
-                className="bg-blue-500 text-white rounded-md py-2 px-4 hover:bg-blue-600"
+                className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-md py-2 px-4"
             >
                 Rebuild Search Index
             </button>
             {message && message.includes('successfully') && (
-                <div className="mt-4 p-2 bg-green-100 text-green-800 rounded-md">
+                <div className="mt-4 p-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-md">
                     {message}
                 </div>
             )}
             {message && !message.includes('successfully') && (
-                <div className="mt-4 p-2 bg-red-100 text-red-800 rounded-md">
+                <div className="mt-4 p-2 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-md">
                     {message}
                 </div>
             )}

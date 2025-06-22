@@ -36,7 +36,7 @@ export default function CreateSetting() {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
+        <div className="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded shadow">
             <h2 className="text-2xl font-bold mb-4">Setup Site Settings</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
@@ -94,11 +94,11 @@ export default function CreateSetting() {
                         required
                     />
                 </div>
-                {error && <div className="text-red-600">{error}</div>}
-                {success && <div className="text-green-600">{success}</div>}
+                {error && <div className="text-red-600 dark:text-red-400">{error}</div>}
+                {success && <div className="text-green-600 dark:text-green-400">{success}</div>}
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+                    className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white py-2 rounded disabled:opacity-50"
                     disabled={loading}
                 >
                     {loading ? "Saving..." : "Save Settings"}

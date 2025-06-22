@@ -81,11 +81,11 @@ export default function SecuritySetting() {
     };
 
     if (isLoading) return <div>Loading...</div>;
-    if (error) return <div className="text-red-600">{(error as Error).message}</div>;
+    if (error) return <div className="text-red-600 dark:text-red-400">{(error as Error).message}</div>;
     if (!form) return null;
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
+        <div className="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded shadow">
             <h2 className="text-2xl font-bold mb-4">Security Settings</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
@@ -108,10 +108,10 @@ export default function SecuritySetting() {
                                 onChange={e => handleOriginsChange(e, idx)}
                                 className="flex-1 border rounded px-3 py-2"
                             />
-                            <button type="button" onClick={() => removeOrigin(idx)} className="ml-2 text-red-600">Remove</button>
+                            <button type="button" onClick={() => removeOrigin(idx)} className="ml-2 text-red-600 dark:text-red-400">Remove</button>
                         </div>
                     ))}
-                    <button type="button" onClick={addOrigin} className="mt-1 text-blue-600">Add Origin</button>
+                    <button type="button" onClick={addOrigin} className="mt-1 text-blue-600 dark:text-blue-400">Add Origin</button>
                 </div>
                 <div>
                     <label className="block mb-1 font-medium">Allowed CORS Methods</label>
@@ -193,11 +193,11 @@ export default function SecuritySetting() {
                         className="w-full border rounded px-3 py-2"
                     />
                 </div>
-                {mutation.isError && <div className="text-red-600">{(mutation.error as Error).message}</div>}
-                {mutation.isSuccess && <div className="text-green-600">Settings updated!</div>}
+                {mutation.isError && <div className="text-red-600 dark:text-red-400">{(mutation.error as Error).message}</div>}
+                {mutation.isSuccess && <div className="text-green-600 dark:text-green-400">Settings updated!</div>}
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+                    className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white py-2 rounded disabled:opacity-50"
                     disabled={mutation.status === 'pending'}
                 >
                     {mutation.status === 'pending' ? "Saving..." : "Save Settings"}

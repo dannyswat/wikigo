@@ -36,7 +36,7 @@ export function SettingMenu({ returnUrl }: { returnUrl?: string }) {
       </button>
       <div
         className={
-          "absolute right-0 w-48 py-2 mt-2 z-10 bg-white text-left border border-gray-200 rounded-lg shadow-xl " +
+          "absolute right-0 w-48 py-2 mt-2 z-10 bg-white dark:bg-gray-800 text-left border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl " +
           (isOpen ? "block" : "hidden")
         }
       >
@@ -44,18 +44,18 @@ export function SettingMenu({ returnUrl }: { returnUrl?: string }) {
           <>
             <button
               onClick={() => navigate("/users")}
-              className="w-full box-border px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
+              className="w-full box-border px-4 py-2 text-left text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
             >
               Users
             </button>
             <button onClick={() => navigate("/site-setting")}
-              className="w-full box-border px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
+              className="w-full box-border px-4 py-2 text-left text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
             >
               Site Setting
             </button>
             <button
               onClick={() => navigate("/security-setting")}
-              className="w-full box-border px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
+              className="w-full box-border px-4 py-2 text-left text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
             >
               Security
             </button>
@@ -63,13 +63,13 @@ export function SettingMenu({ returnUrl }: { returnUrl?: string }) {
         )}
         <button
           onClick={() => navigate("/change-password")}
-          className="w-full box-border px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
+          className="w-full box-border px-4 py-2 text-left text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
         >
           Change Password
         </button>
         <button
           onClick={() => logout.mutate()}
-          className="w-full box-border px-4 py-2 text-left text-gray-800 hover:bg-gray-200"
+          className="w-full box-border px-4 py-2 text-left text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
         >
           Logout
         </button>

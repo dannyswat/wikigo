@@ -91,7 +91,7 @@ export default function DiagramModal({
   }
 
   return createPortal(
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-white p-4 z-[10100]">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-white dark:bg-gray-900 p-4 z-[10100]">
       {(data || !id) && (
         <div className="canvas w-full h-full">
           <Excalidraw
@@ -110,13 +110,13 @@ export default function DiagramModal({
         <button
           onClick={handleClick}
           disabled={!drawApi}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
+          className="px-4 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded disabled:bg-gray-300 dark:disabled:bg-gray-600"
         >
           Save
         </button>
         <button
           onClick={handleClose}
-          className="ms-3 px-4 py-2 bg-gray-500 text-white rounded"
+          className="ms-3 px-4 py-2 bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded"
         >
           Cancel
         </button>
