@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import SideNav from "./SideNav";
 import { NavLink, Outlet, useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../auth/UserProvider";
-import { IconClearAll, IconMenu2 } from "@tabler/icons-react";
+import { IconClearAll, IconMenu2, IconSearch } from "@tabler/icons-react";
 import { Footer } from "./Footer";
 import { SettingMenu } from "./SettingMenu";
 
@@ -43,6 +43,9 @@ export default function LayoutMain({ isPage }: LayoutProps) {
           </NavLink>
         </div>
         <div className="space-x-4 text-right">
+          <NavLink to="/search" className="text-white">
+            <IconSearch className="inline-block mr-1" size={20} />
+          </NavLink>
           {!isLoggedIn && (
             <NavLink
               to={"/login" + returnUrlQuery}
@@ -76,16 +79,14 @@ export default function LayoutMain({ isPage }: LayoutProps) {
       </header>
       <div className="flex flex-1">
         <div
-          className={`${
-            isMenuOpen ? "block" : "hidden"
-          } sm:hidden fixed inset-0 bg-white bg-opacity-50 z-10`}
+          className={`${isMenuOpen ? "block" : "hidden"
+            } sm:hidden fixed inset-0 bg-white bg-opacity-50 z-10`}
           onClick={() => setIsMenuOpen(false)}
         ></div>
         <SideNav
           navigate={navigateTo}
-          className={`fixed inset-0 w-full ${
-            isMenuOpen ? "block" : "hidden"
-          } sm:block sm:relative sm:w-1/4 z-20`}
+          className={`fixed inset-0 w-full ${isMenuOpen ? "block" : "hidden"
+            } sm:block sm:relative sm:w-1/4 z-20`}
           headerComponent={
             <button
               className="absolute right-4 top-4 sm:hidden hover:text-gray-700"

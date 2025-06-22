@@ -125,6 +125,7 @@ func (s *WikiStartUp) RegisterSetupHandlers(e *echo.Echo, isSetupComplete bool) 
 func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	s.pageHandler = &handlers.PageHandler{
 		PageService:         s.pageService,
+		SearchService:       s.searchService,
 		HtmlPolicy:          s.htmlPolicy,
 		PageRevisionService: s.pageRevisionService,
 		ReactPage:           s.reactPage,
@@ -147,6 +148,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	api.GET("/pages/list", s.pageHandler.GetPagesByParentID)
 	api.GET("/pages/list/:id", s.pageHandler.GetPagesByParentID)
 	api.GET("/pages/listall", s.pageHandler.GetAllPages)
+	api.GET("/pages/search", s.pageHandler.SearchPages)
 
 	editor := api.Group("/editor")
 	editor.Use(middlewares.EditorMiddleware())

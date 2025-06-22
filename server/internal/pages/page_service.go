@@ -55,7 +55,7 @@ func (s *PageService) CreatePage(page *Page, user string) error {
 	page.LastModifiedBy = user
 	err := s.DB.CreatePage(page)
 	if err == nil {
-		err = s.SearchService.UpdatePageSearchTerms(page)
+		err = s.SearchService.AddPageSearchTerms(page)
 	}
 	return err
 }
@@ -76,7 +76,7 @@ func (s *PageService) UpdatePage(page *Page, user string) error {
 	}
 	err = s.RevisionService.AddRevision(page.ID, oldPage)
 	if err == nil {
-		err = s.SearchService.UpdatePageSearchTerms(page)
+		err = s.SearchService.UpdatePageSearchTerms(page, oldPage)
 	}
 	return err
 }

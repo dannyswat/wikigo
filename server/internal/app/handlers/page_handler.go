@@ -15,6 +15,7 @@ import (
 
 type PageHandler struct {
 	PageService         *pages.PageService
+	SearchService       *pages.SearchService
 	PageRevisionService *revisions.RevisionService[*pages.Page]
 	HtmlPolicy          *bluemonday.Policy
 	ReactPage           *pages.ReactPageMeta
@@ -77,6 +78,18 @@ func (h *PageHandler) GetAllPages(e echo.Context) error {
 	pages, err := h.PageService.GetAllPages(includeProtected)
 	if err != nil {
 		return e.JSON(500, err)
+	}
+	return e.JSON(200, pages)
+}
+
+func (h *PageHandler) SearchPages(e echo.Context) error {
+	query := e.QueryParam("q")
+	if query == "" {
+		return e.JSON(400, "query parameter 'q' is required")
+	}
+	pages, err := h.SearchService.Search(query, 10)
+	if err != nil {
+		return apihelper.ReturnErrorResponse(e, err)
 	}
 	return e.JSON(200, pages)
 }

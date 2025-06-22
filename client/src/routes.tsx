@@ -19,6 +19,7 @@ import CreateAdmin from "./features/setup/CreateAdmin";
 import CreateSetting from "./features/setup/CreateSetting";
 import SiteSetting from "./features/settings/SiteSetting";
 import SecuritySetting from "./features/settings/SecuritySetting";
+import Search from "./features/pages/Search";
 
 export function WikiGoRoutes() {
   return (
@@ -28,6 +29,7 @@ export function WikiGoRoutes() {
         <Route element={<LayoutMain isPage />}>
           <Route path="/" element={<Page />} />
           <Route path="/p/:id/:id2?/:id3?/:id4?/:id5?" element={<Page />} />
+          <Route path="/search" element={<Search />} />
         </Route>
         <Route element={<GuardedRoute />}>
           <Route element={<EditorRoute />}>

@@ -56,6 +56,16 @@ export function getRootPages(): Promise<PageMeta[]> {
     return fetch(baseApiUrl + `/pages/list`).then((res) => res.json());
 }
 
+export async function searchPages(query: string): Promise<PageMeta[]> {
+    const res = await fetch(baseApiUrl + `/pages/search?q=${encodeURIComponent(query)}`, {
+        credentials: 'include',
+    });
+    if (res.status >= 400) {
+        throw new Error(await res.text());
+    }
+    return await res.json();
+}
+
 export interface PageRequest {
     id: number;
     parentId?: number;

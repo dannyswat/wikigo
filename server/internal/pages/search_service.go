@@ -29,7 +29,7 @@ func (s *SearchService) Init() error {
 	return nil
 }
 
-func (s *SearchService) Search(text string, pageSize int) []*PageMeta {
+func (s *SearchService) Search(text string, pageSize int) ([]*PageMeta, error) {
 	terms := Tokenize(text)
 	pageMatchCount := make(map[int]int)
 	for _, term := range terms {
@@ -38,7 +38,7 @@ func (s *SearchService) Search(text string, pageSize int) []*PageMeta {
 		}
 		searchTermList, err := s.SearchTermListRepository.GetSearchTermList(term)
 		if err != nil {
-			continue // Handle error appropriately
+			return nil, err
 		}
 		if searchTermList == nil {
 			searchTermList = &SearchTermList{Term: term, PageIds: []int{}}
@@ -62,7 +62,7 @@ func (s *SearchService) Search(text string, pageSize int) []*PageMeta {
 		return pageCounts[i].count > pageCounts[j].count
 	})
 
-	var results []*PageMeta
+	results := make([]*PageMeta, 0)
 	for _, pc := range pageCounts {
 		if pc.count > 0 {
 			if pageSize > 0 && len(results) >= pageSize {
@@ -70,7 +70,7 @@ func (s *SearchService) Search(text string, pageSize int) []*PageMeta {
 			}
 			page, err := s.PageRepository.GetPageByID(pc.pageId)
 			if err != nil {
-				continue // Handle error appropriately
+				return nil, err
 			}
 			results = append(results, &PageMeta{
 				ID:    page.ID,
@@ -79,16 +79,20 @@ func (s *SearchService) Search(text string, pageSize int) []*PageMeta {
 			})
 		}
 	}
-	return results
+	return results, nil
 }
 
-func (s *SearchService) UpdatePageSearchTerms(page *Page) error {
+func (s *SearchService) AddPageSearchTerms(page *Page) error {
+	if page == nil {
+		return nil // No valid page to add
+	}
+	terms := Tokenize(page.Title + " " + page.Content)
+	return s.SearchTermListRepository.UpdateSearchTermLists(terms, []string{}, page.ID)
+}
+
+func (s *SearchService) UpdatePageSearchTerms(page *Page, oldPage *Page) error {
 	if page == nil || page.ID <= 0 {
 		return nil // No valid page to update
-	}
-	oldPage, err := s.PageRepository.GetPageByID(page.ID)
-	if err != nil {
-		return err
 	}
 	var oldTerms []string
 	if oldPage != nil {
@@ -117,7 +121,8 @@ func Tokenize(text string) []string {
 		"of": true, "on": true, "that": true, "the": true, "to": true, "was": true, "will": true, "with": true,
 	}
 
-	result := make([]string, 0) // Initialize to empty slice, not nil
+	// Use a map to track unique terms
+	uniqueTerms := make(map[string]bool)
 	runes := []rune(plain)
 
 	// Process text character by character, handling different scripts separately
@@ -133,7 +138,8 @@ func Tokenize(text string) []string {
 			// Generate 2-grams only if we have 2 or more Chinese characters
 			if len(chineseText) >= 2 {
 				for j := 0; j < len(chineseText)-1; j++ {
-					result = append(result, string(chineseText[j:j+2]))
+					term := string(chineseText[j : j+2])
+					uniqueTerms[term] = true
 				}
 			}
 			i-- // Adjust for the outer loop increment
@@ -145,11 +151,17 @@ func Tokenize(text string) []string {
 			}
 			word := strings.ToLower(string(runes[start:i]))
 			if len(word) > 2 && !stopwords[word] {
-				result = append(result, word)
+				uniqueTerms[word] = true
 			}
 			i-- // Adjust for the outer loop increment
 		}
 		// Skip other Unicode scripts (as requested)
+	}
+
+	// Convert map to slice
+	result := make([]string, 0, len(uniqueTerms))
+	for term := range uniqueTerms {
+		result = append(result, term)
 	}
 
 	return result
