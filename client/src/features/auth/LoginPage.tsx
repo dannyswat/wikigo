@@ -3,9 +3,11 @@ import { MouseEvent, useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { getPublicKeyApi, loginApi, LoginRequest } from "./authApi";
 import { UserContext } from "./UserProvider";
+import { useTheme } from "../../contexts/ThemeProvider";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const { isLoggedIn } = useContext(UserContext);
   const urlParams = new URLSearchParams(window.location.search);
   const returnUrl = urlParams.get("returnUrl");
@@ -40,7 +42,7 @@ export default function LoginPage() {
       className="flex items-center justify-center h-screen bg-cover"
       style={{
         backgroundImage:
-          "url(1726537215_sheep-flock-of-sheep-series-standing-on-85683.jpeg)",
+          theme === 'dark' ? "url(dark-blue-sky.jpg)" : "url(1726537215_sheep-flock-of-sheep-series-standing-on-85683.jpeg)",
       }}
     >
       <div className="w-96 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-4 rounded shadow-lg">

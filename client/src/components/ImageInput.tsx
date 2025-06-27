@@ -24,7 +24,7 @@ export default function ImageInput({ value, onChange }: ImageInputProps) {
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
-                className="mb-2"
+                className="mb-2 w-full"
             />
             <button
                 type="button"

@@ -108,6 +108,7 @@
 
   .ck-content pre {
     @apply bg-gray-200 dark:bg-gray-700;
+    @apply text-gray-800 dark:text-gray-200;
     @apply p-2;
     @apply rounded;
     @apply overflow-x-auto;
@@ -145,4 +146,8 @@
     @apply text-gray-500 dark:text-gray-400;
     content: "Page Break";
   }
+}
+
+.ck.ck-editor__main>.ck-editor__editable {
+  @apply dark:bg-gray-800;
 }

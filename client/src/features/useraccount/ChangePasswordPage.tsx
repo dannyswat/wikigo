@@ -3,9 +3,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { changePasswordApi, ChangePasswordRequest, getPublicKeyApi } from "../auth/authApi";
+import { useTheme } from "../../contexts/ThemeProvider";
 
 export default function ChangePasswordPage() {
     const navigate = useNavigate();
+    const { theme } = useTheme();
     const [data, setData] = useState({
         oldPassword: '',
         newPassword: '',
@@ -50,7 +52,7 @@ export default function ChangePasswordPage() {
     }
 
     return (
-        <div className="flex items-center justify-center h-screen bg-cover" style={{ backgroundImage: 'url(1726537215_sheep-flock-of-sheep-series-standing-on-85683.jpeg)' }}>
+        <div className="flex items-center justify-center h-screen bg-cover" style={{ backgroundImage: theme === 'dark' ? 'url(dark-blue-sky.jpg)' : 'url(1726537215_sheep-flock-of-sheep-series-standing-on-85683.jpeg)' }}>
             <div className="w-96 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-4 rounded shadow-lg">
                 <h1 className="text-2xl font-bold mb-4">Change Password</h1>
                 <input className="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded mb-4" placeholder="Your password" name="oldPassword" type="password" onChange={handleChange} />
