@@ -24,7 +24,7 @@ export default function EditPage() {
   const navigate = useNavigate();
   const [data, setData] = useState<PageRequest>(() => ({
     id: 0,
-    parentId: undefined,
+    parentId: null,
     url: "",
     title: "",
     shortDesc: "",
@@ -141,9 +141,9 @@ export default function EditPage() {
         <label className="basis-1/4">Parent Page</label>
         <PageDropDown
           className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-          value={data.parentId}
+          value={data.parentId || undefined}
           onChange={(value) =>
-            setData((prev) => ({ ...prev, parentID: value }))
+            setData((prev) => ({ ...prev, parentId: value || null }))
           }
         />
       </section>

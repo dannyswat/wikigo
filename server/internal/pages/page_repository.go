@@ -10,4 +10,5 @@ type PageRepository interface {
 	CreatePage(page *Page) error
 	UpdatePage(page *Page) error
 	DeletePage(id int) error
+	IsPageCyclical(page *Page) (bool, error)
 }

@@ -68,6 +68,11 @@ func (s *PageService) UpdatePage(page *Page, user string) error {
 	if err := ValidatePage(page, false); err != nil {
 		return err
 	}
+	if cyclical, err := s.DB.IsPageCyclical(page); err != nil {
+		return err
+	} else if cyclical {
+		return errors.NewValidationError("cyclical page detected", "ParentID")
+	}
 	page.LastModifiedAt = time.Now()
 	page.LastModifiedBy = user
 	err = s.DB.UpdatePage(page)

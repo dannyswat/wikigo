@@ -67,6 +67,36 @@ func (p *pageDB) GetPagesByParentID(parentID *int) ([]*pages.PageMeta, error) {
 	return pagesResult, nil
 }
 
+func (p *pageDB) IsPageCyclical(page *pages.Page) (bool, error) {
+	if page == nil {
+		return false, nil // No page to check
+	}
+	if page.ID == 0 {
+		return false, nil // No ID to check
+	}
+	if page.ParentID == nil {
+		return false, nil
+	}
+	currentPageId := page.ParentID
+	visited := make(map[int]bool)
+	visited[page.ID] = true // Mark the current page as visited
+	for currentPageId != nil {
+		if visited[*currentPageId] {
+			return true, nil // Cycle detected
+		}
+		visited[*currentPageId] = true
+		currentPage, err := p.GetPageByID(*currentPageId)
+		if err != nil {
+			return false, err
+		}
+		if currentPage == nil {
+			return false, nil // No cycle detected, but parent page not found
+		}
+		currentPageId = currentPage.ParentID
+	}
+	return false, nil // No cycle detected
+}
+
 func (p *pageDB) GetAllPages(includeProtected bool) ([]*pages.PageMeta, error) {
 	entries, err := p.db.ListAllIndexFields("CreatedBy")
 	if err != nil {
