@@ -66,13 +66,13 @@ export default function TableOfContent({ title, content }: TableOfContentProps) 
     }
 
     return (
-        <div className="h-full max-h-screen overflow-hidden bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg sticky top-4">
+        <div className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg sticky top-4">
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                 <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                     {title || 'Table of Contents'}
                 </h4>
             </div>
-            <nav className="p-4 overflow-y-auto max-h-screen">
+            <nav className="p-4">
                 <ul className="space-y-1">
                     {headings.map(({ id, text, level }) => (
                         <li key={id}>
