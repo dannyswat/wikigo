@@ -22,19 +22,19 @@ export default function Page() {
   if (!data) return <div>Page not found</div>;
 
   return (
-    <div className="flex gap-6">
-      <div className="flex-1 min-w-0">
+    <div className="flex gap-6 h-full max-h-screen overflow-hidden">
+      <div className="flex-1 min-w-0 overflow-y-auto pr-2">
         <h1 className="text-3xl font-bold font-serif mb-2 border-b-2 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100">
           {data.title}
         </h1>
         <p className="text-sm font-serif px-1 mb-4 text-gray-700 dark:text-gray-300">{data.shortDesc}</p>
         <div
-          className="ck-content"
+          className="ck-content overflow-x-auto break-words"
           dangerouslySetInnerHTML={{ __html: data.content || "" }}
         ></div>
       </div>
       {data.content && (
-        <div className="hidden lg:block flex-shrink-0">
+        <div className="hidden lg:block flex-shrink-0 w-64 overflow-hidden">
           <TableOfContent title={data.title} content={data.content} />
         </div>
       )}

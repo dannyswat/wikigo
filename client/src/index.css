@@ -6,6 +6,16 @@
 @layer base {
   .ck-content {
     @apply text-gray-800 dark:text-gray-200;
+    @apply max-w-full;
+    @apply overflow-x-auto;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Ensure all content within ck-content respects container width */
+  .ck-content * {
+    @apply max-w-full;
+    box-sizing: border-box;
   }
 
   .ck-content h2 {
@@ -66,6 +76,8 @@
     @apply mx-auto;
     @apply my-2;
     @apply rounded-lg;
+    @apply max-w-full;
+    @apply h-auto;
   }
 
   .ck-content figure.table {
@@ -146,6 +158,41 @@
     @apply text-gray-500 dark:text-gray-400;
     content: "Page Break";
   }
+}
+
+/* Additional responsive rules for ck-content */
+.ck-content {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.ck-content * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.ck-content table {
+  width: 100% !important;
+  table-layout: fixed;
+}
+
+.ck-content figure.table {
+  width: 100% !important;
+  overflow-x: auto;
+}
+
+.ck-content pre {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.ck-content iframe,
+.ck-content video,
+.ck-content embed,
+.ck-content object {
+  max-width: 100%;
+  height: auto;
 }
 
 .ck.ck-editor__main>.ck-editor__editable {
