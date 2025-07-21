@@ -32,6 +32,7 @@ import {
 
 import { FullScreen } from "./FullScreenPlugin";
 import { Diagram } from "./DiagramPlugin"; // Import the new plugin
+import { SimplePasteCleanup } from "./SimplePasteCleanupPlugin";
 import { useRef, useState } from "react";
 import DiagramModal from "./DiagramModal";
 
@@ -121,6 +122,7 @@ export function HtmlEditor({ content, onChange }: Props) {
             TodoList,
             FullScreen,
             Diagram, // Add the plugin to the plugins list
+            SimplePasteCleanup, // Add the paste cleanup plugin
           ],
           simpleUpload: {
             uploadUrl: "/api/editor/ckeditor/upload",
