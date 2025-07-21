@@ -13,8 +13,7 @@ export class SimplePasteCleanup extends Plugin {
         const editor = this.editor;
 
         // Hook into the clipboard input processing pipeline
-        this.listenTo(editor.plugins.get('ClipboardPipeline'), 'inputTransformation', (evt, data) => {
-            console.log('SimplePasteCleanup: Processing pasted content');
+        this.listenTo(editor.plugins.get('ClipboardPipeline'), 'inputTransformation', (_, data) => {
             if (data.dataTransfer) {
                 const htmlData = data.dataTransfer.getData('text/html');
                 if (htmlData) {
