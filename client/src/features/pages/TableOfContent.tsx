@@ -35,9 +35,11 @@ export default function TableOfContent({ title, content }: TableOfContentProps) 
 
         // Adjust levels if no h1 exists - treat h2 as level 1, h3 as level 2
         const hasH1 = extractedHeadings.some(heading => heading.level === 1);
+        const hasH2 = extractedHeadings.some(heading => heading.level === 2);
+        const adjust = (hasH1 ? 0 : 1) + (hasH2 ? 0 : 1);
         const adjustedHeadings = extractedHeadings.map(heading => ({
             ...heading,
-            level: hasH1 ? heading.level : heading.level - 1
+            level: hasH1 ? heading.level : heading.level - adjust
         }));
 
         setHeadings(adjustedHeadings);
@@ -78,9 +80,8 @@ export default function TableOfContent({ title, content }: TableOfContentProps) 
                         <li key={id}>
                             <button
                                 onClick={() => scrollToHeading(id)}
-                                className={`block w-full text-left text-sm hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-gray-700 dark:text-gray-300 ${level === 1 ? 'pl-0' : level === 2 ? 'pl-4' : level === 3 ? 'pl-8' : level === 4 ? 'pl-12' : 'pl-0'
+                                className={`block w-full py-1 text-left text-sm/4 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-gray-700 dark:text-gray-300 ${level === 1 ? 'ps-0' : level === 2 ? 'ps-4' : level === 3 ? 'ps-8' : level === 4 ? 'ps-12' : 'ps-0'
                                     }`}
-                                style={{ textAlign: 'left' }}
                             >
                                 {text}
                             </button>

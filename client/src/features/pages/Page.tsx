@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 
 import { getPageByUrl } from "./pageApi";
 import { useEffect } from "react";
-import TableOfContent from "../../components/TableOfContent";
+import TableOfContent from "./TableOfContent";
 
 export default function Page() {
   const { id } = useParams();
