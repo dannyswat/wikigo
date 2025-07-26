@@ -16,8 +16,8 @@ func NewPageDB(path string) pages.PageRepository {
 	return &pageDB{
 		db: filedb.NewFileDB[*pages.Page](path, []filedb.FileIndexConfig{
 			{Field: "Url", Unique: true},
-			{Field: "CreatedBy", Unique: false, Include: []string{"Url", "ParentID", "Title", "IsPinned", "IsProtected"}},
-			{Field: "ParentID", Unique: false, Include: []string{"Url", "Title", "IsPinned", "IsProtected"}},
+			{Field: "CreatedBy", Unique: false, Include: []string{"Url", "ParentID", "Title", "IsPinned", "IsProtected", "SortChildrenDesc"}},
+			{Field: "ParentID", Unique: false, Include: []string{"Url", "Title", "IsPinned", "IsProtected", "SortChildrenDesc"}},
 		}),
 	}
 }
@@ -154,12 +154,17 @@ func GetPageMetaFromIndexEntry(entry *filedb.IndexEntry, field string) *pages.Pa
 	if protected, err := strconv.ParseBool(entry.Others["IsProtected"]); err == nil {
 		isProtected = protected
 	}
+	var sortChildrenDesc bool
+	if desc, err := strconv.ParseBool(entry.Others["SortChildrenDesc"]); err == nil {
+		sortChildrenDesc = desc
+	}
 	return &pages.PageMeta{
-		ID:          entry.ID,
-		ParentID:    parentId,
-		Url:         entry.Others["Url"],
-		Title:       entry.Others["Title"],
-		IsPinned:    isPinned,
-		IsProtected: isProtected,
+		ID:               entry.ID,
+		ParentID:         parentId,
+		Url:              entry.Others["Url"],
+		Title:            entry.Others["Title"],
+		IsPinned:         isPinned,
+		IsProtected:      isProtected,
+		SortChildrenDesc: sortChildrenDesc,
 	}
 }

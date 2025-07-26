@@ -23,6 +23,8 @@ export default function NewPage() {
     content: "",
     isProtected: false,
     isPinned: false,
+    isCategoryPage: false,
+    sortChildrenDesc: false,
   }));
   const { data: pageList } = useQuery({
     queryKey: ["pages", true],
@@ -149,6 +151,28 @@ export default function NewPage() {
           className="ms-4"
           onChange={(value) =>
             setData((prev) => ({ ...prev, isPinned: value }))
+          }
+        />
+        <ToggleButton
+          label="Category Page"
+          checked={data.isCategoryPage ?? false}
+          className="ms-4"
+          onChange={(value) =>
+            setData((prev) => ({
+              ...prev,
+              isCategoryPage: value,
+            }))
+          }
+        />
+        <ToggleButton
+          label="Reverse Sort"
+          checked={data.sortChildrenDesc ?? false}
+          className="ms-4"
+          onChange={(value) =>
+            setData((prev) => ({
+              ...prev,
+              sortChildrenDesc: value,
+            }))
           }
         />
       </section>

@@ -31,6 +31,8 @@ export default function EditPage() {
     content: "",
     isProtected: false,
     isPinned: false,
+    isCategoryPage: false,
+    sortChildrenDesc: false,
   }));
 
   const autoSaveData = useMemo<PageRequest | undefined>(() => {
@@ -191,6 +193,22 @@ export default function EditPage() {
           className="ms-4"
           onChange={(value) =>
             setData((prev) => ({ ...prev, isPinned: value }))
+          }
+        />
+        <ToggleButton
+          label="Category Page"
+          checked={data.isCategoryPage}
+          className="ms-4"
+          onChange={(value) =>
+            setData((prev) => ({ ...prev, isCategoryPage: value }))
+          }
+        />
+        <ToggleButton
+          label="Reverse Sort"
+          checked={data.sortChildrenDesc}
+          className="ms-4"
+          onChange={(value) =>
+            setData((prev) => ({ ...prev, sortChildrenDesc: value }))
           }
         />
       </section>

@@ -1,0 +1,43 @@
+import { PageMeta } from "./pageApi";
+
+export interface PageMetaObject extends PageMeta {
+    children: PageMetaObject[];
+}
+
+export function findItemInTree(tree: PageMetaObject[], url: string): PageMetaObject[] {
+    for (const item of tree) {
+        if (item.url === url) return [item];
+        const found = findItemInTree(item.children, url);
+        if (found.length) return [item, ...found];
+    }
+    return [];
+}
+
+export function buildTree(pages: PageMeta[]): PageMetaObject[] {
+    pages.sort(function (a, b) {
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+    });
+    const allPages: PageMetaObject[] = pages.map((page) => ({
+        ...page,
+        children: [],
+    }));
+
+    return buildTreeInternal(allPages, undefined);
+}
+
+function buildTreeInternal(
+    allPages: PageMetaObject[],
+    parent?: PageMetaObject
+): PageMetaObject[] {
+    let pages = allPages.filter(
+        (page) => page.parentId === (parent ? parent.id : null)
+    );
+    if (parent?.sortChildrenDesc) pages = pages.reverse();
+    for (const page of pages) {
+        page.children = buildTreeInternal(allPages, page);
+        parent?.children.push(page);
+    }
+    return pages;
+}

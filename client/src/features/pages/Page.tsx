@@ -1,17 +1,30 @@
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { getPageByUrl } from "./pageApi";
-import { useEffect } from "react";
+import { getAllPages, getPageByUrl } from "./pageApi";
+import { useContext, useEffect, useMemo } from "react";
 import TableOfContent from "./TableOfContent";
+import { UserContext } from "../auth/UserProvider";
+import { buildTree, findItemInTree } from "./pageTree";
+import { IconFidgetSpinner } from "@tabler/icons-react";
+import PageList from "./PageList";
 
 export default function Page() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const pageId = id ? window.location.pathname.substring(3) : "home";
+  const { isLoggedIn } = useContext(UserContext);
   const { data, isLoading, isError } = useQuery({
     queryKey: ["page", pageId],
     queryFn: () => getPageByUrl(pageId),
   });
+  const { data: allPages, isLoading: isLoadingAllPages } = useQuery({
+    queryKey: ["pages", isLoggedIn],
+    queryFn: getAllPages,
+    enabled: data?.isCategoryPage,
+  });
+  const pageMeta = useMemo(() => (allPages && data ?
+    findItemInTree(buildTree(allPages), data.url) : []), [allPages, data]);
 
   useEffect(() => {
     if (data?.title) document.title = data.title + " - Wiki GO";
@@ -32,12 +45,27 @@ export default function Page() {
           className="ck-content overflow-x-auto break-words"
           dangerouslySetInnerHTML={{ __html: data.content || "" }}
         ></div>
+        {isLoadingAllPages && (
+          <div className="flex justify-center mt-4">
+            <IconFidgetSpinner className="animate-spin text-gray-500" />
+          </div>
+        )}
+        {data.isCategoryPage && pageMeta && pageMeta.length > 0 && pageMeta[0].children.length > 0 && (
+          <div className="mt-4">
+            <PageList
+              pages={pageMeta[0].children}
+              onPageClick={(page) => {
+                navigate("/p" + page.url);
+              }}
+            />
+          </div>
+        )}
+        {data.content && (
+          <div className="hidden lg:block flex-shrink-0 w-64">
+            <TableOfContent title={data.title} content={data.content} />
+          </div>
+        )}
       </div>
-      {data.content && (
-        <div className="hidden lg:block flex-shrink-0 w-64">
-          <TableOfContent title={data.title} content={data.content} />
-        </div>
-      )}
     </div>
   );
 }

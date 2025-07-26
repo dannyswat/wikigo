@@ -1,5 +1,18 @@
 import { baseApiUrl } from "../../common/baseApi";
 
+export interface PageRequest {
+    id: number;
+    parentId: number | null;
+    url: string;
+    title: string;
+    shortDesc: string;
+    content: string;
+    isPinned: boolean;
+    isProtected: boolean;
+    isCategoryPage: boolean;
+    sortChildrenDesc: boolean;
+}
+
 export interface PageResponse {
     id: number;
     parentId: number | null;
@@ -9,6 +22,8 @@ export interface PageResponse {
     content: string;
     isPinned: boolean;
     isProtected: boolean;
+    isCategoryPage: boolean;
+    sortChildrenDesc: boolean;
 }
 
 interface RevisionPageResponse {
@@ -25,6 +40,7 @@ export interface PageMeta {
     title: string;
     isPinned: boolean;
     isProtected: boolean;
+    sortChildrenDesc: boolean;
 }
 
 export function getPage(pageId: string): Promise<PageResponse> {
@@ -64,17 +80,6 @@ export async function searchPages(query: string): Promise<PageMeta[]> {
         throw new Error(await res.text());
     }
     return await res.json();
-}
-
-export interface PageRequest {
-    id: number;
-    parentId: number | null;
-    url: string;
-    title: string;
-    shortDesc: string;
-    content: string;
-    isPinned: boolean;
-    isProtected: boolean;
 }
 
 export async function createPage(page: PageRequest) {

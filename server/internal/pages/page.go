@@ -8,19 +8,21 @@ import (
 )
 
 type Page struct {
-	ID             int       `json:"id"`
-	ParentID       *int      `json:"parentId"`
-	Url            string    `json:"url" validate:"required,max=100"`
-	Title          string    `json:"title" validate:"required,max=100"`
-	ShortDesc      string    `json:"shortDesc" validate:"max=300"`
-	Content        string    `json:"content"`
-	Tags           []string  `json:"tags"`
-	CreatedAt      time.Time `json:"createdAt"`
-	CreatedBy      string    `json:"createdBy"`
-	LastModifiedAt time.Time `json:"lastModifiedAt"`
-	LastModifiedBy string    `json:"lastModifiedBy"`
-	IsProtected    bool      `json:"isProtected"`
-	IsPinned       bool      `json:"isPinned"`
+	ID               int       `json:"id"`
+	ParentID         *int      `json:"parentId"`
+	Url              string    `json:"url" validate:"required,max=100"`
+	Title            string    `json:"title" validate:"required,max=100"`
+	ShortDesc        string    `json:"shortDesc" validate:"max=300"`
+	Content          string    `json:"content"`
+	Tags             []string  `json:"tags"`
+	CreatedAt        time.Time `json:"createdAt"`
+	CreatedBy        string    `json:"createdBy"`
+	LastModifiedAt   time.Time `json:"lastModifiedAt"`
+	LastModifiedBy   string    `json:"lastModifiedBy"`
+	IsProtected      bool      `json:"isProtected"`
+	IsPinned         bool      `json:"isPinned"`
+	IsCategoryPage   bool      `json:"isCategoryPage"`
+	SortChildrenDesc bool      `json:"sortChildrenDesc"`
 }
 
 func (p *Page) GetValue(field string) string {
@@ -41,6 +43,10 @@ func (p *Page) GetValue(field string) string {
 		return strconv.FormatBool(p.IsProtected)
 	case "IsPinned":
 		return strconv.FormatBool(p.IsPinned)
+	case "IsCategoryPage":
+		return strconv.FormatBool(p.IsCategoryPage)
+	case "SortChildrenDesc":
+		return strconv.FormatBool(p.SortChildrenDesc)
 	}
 	return ""
 }

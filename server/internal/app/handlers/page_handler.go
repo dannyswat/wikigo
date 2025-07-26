@@ -124,14 +124,16 @@ func (h *PageHandler) GetLatestRevision(e echo.Context) error {
 }
 
 type CreatePageRequest struct {
-	Url         string   `json:"url" validate:"required,max=100"`
-	Title       string   `json:"title" validate:"required,max=100"`
-	Content     string   `json:"content" validate:"required"`
-	ShortDesc   string   `json:"shortDesc" validate:"max=300"`
-	ParentID    *int     `json:"parentId"`
-	Tags        []string `json:"tags" validate:"max=10"`
-	IsPinned    bool     `json:"isPinned"`
-	IsProtected bool     `json:"isProtected"`
+	Url              string   `json:"url" validate:"required,max=100"`
+	Title            string   `json:"title" validate:"required,max=100"`
+	Content          string   `json:"content" validate:"required"`
+	ShortDesc        string   `json:"shortDesc" validate:"max=300"`
+	ParentID         *int     `json:"parentId"`
+	Tags             []string `json:"tags" validate:"max=10"`
+	IsPinned         bool     `json:"isPinned"`
+	IsProtected      bool     `json:"isProtected"`
+	IsCategoryPage   bool     `json:"isCategoryPage"`
+	SortChildrenDesc bool     `json:"sortChildrenDesc"`
 }
 
 func (h *PageHandler) CreatePage(e echo.Context) error {
@@ -152,6 +154,8 @@ func (h *PageHandler) CreatePage(e echo.Context) error {
 	page.Tags = req.Tags
 	page.IsPinned = req.IsPinned
 	page.IsProtected = req.IsProtected
+	page.IsCategoryPage = req.IsCategoryPage
+	page.SortChildrenDesc = req.SortChildrenDesc
 	if err := h.PageService.CreatePage(page, apihelper.GetUserId(e)); err != nil {
 		return apihelper.ReturnErrorResponse(e, err)
 	}
@@ -159,15 +163,17 @@ func (h *PageHandler) CreatePage(e echo.Context) error {
 }
 
 type UpdatePageRequest struct {
-	ID          int      `json:"id" validate:"required"`
-	Url         string   `json:"url" validate:"required,max=100"`
-	Title       string   `json:"title" validate:"required,max=100"`
-	Content     string   `json:"content" validate:"required"`
-	ShortDesc   string   `json:"shortDesc" validate:"max=300"`
-	ParentID    *int     `json:"parentId"`
-	Tags        []string `json:"tags" validate:"max=10"`
-	IsPinned    bool     `json:"isPinned"`
-	IsProtected bool     `json:"isProtected"`
+	ID               int      `json:"id" validate:"required"`
+	Url              string   `json:"url" validate:"required,max=100"`
+	Title            string   `json:"title" validate:"required,max=100"`
+	Content          string   `json:"content" validate:"required"`
+	ShortDesc        string   `json:"shortDesc" validate:"max=300"`
+	ParentID         *int     `json:"parentId"`
+	Tags             []string `json:"tags" validate:"max=10"`
+	IsPinned         bool     `json:"isPinned"`
+	IsProtected      bool     `json:"isProtected"`
+	IsCategoryPage   bool     `json:"isCategoryPage"`
+	SortChildrenDesc bool     `json:"sortChildrenDesc"`
 }
 
 func (h *PageHandler) UpdatePage(e echo.Context) error {
@@ -188,6 +194,8 @@ func (h *PageHandler) UpdatePage(e echo.Context) error {
 	page.Tags = req.Tags
 	page.IsPinned = req.IsPinned
 	page.IsProtected = req.IsProtected
+	page.IsCategoryPage = req.IsCategoryPage
+	page.SortChildrenDesc = req.SortChildrenDesc
 	if err := h.PageService.UpdatePage(page, apihelper.GetUserId(e)); err != nil {
 		return apihelper.ReturnErrorResponse(e, err)
 	}

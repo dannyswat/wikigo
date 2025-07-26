@@ -1,46 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getAllPages, PageMeta } from "../pages/pageApi";
+import { getAllPages } from "../pages/pageApi";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../auth/UserProvider";
+import { buildTree, findItemInTree, PageMetaObject } from "../pages/pageTree";
 
 interface SideNavProps extends React.HTMLAttributes<HTMLDivElement> {
   headerComponent?: React.ReactNode;
   footerComponent?: React.ReactNode;
   navigate: (url: string) => void;
-}
-
-interface PageMetaObject extends PageMeta {
-  children: PageMetaObject[];
-}
-
-function buildTree(pages: PageMeta[]): PageMetaObject[] {
-  pages.sort(function (a, b) {
-    if (a.isPinned && !b.isPinned) return -1;
-    if (!a.isPinned && b.isPinned) return 1;
-    return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
-  });
-  const allPages: PageMetaObject[] = pages.map((page) => ({
-    ...page,
-    children: [],
-  }));
-
-  return buildTreeInternal(allPages, undefined);
-}
-
-function buildTreeInternal(
-  allPages: PageMetaObject[],
-  parent?: PageMetaObject
-): PageMetaObject[] {
-  const pages = allPages.filter(
-    (page) => page.parentId === (parent ? parent.id : null)
-  );
-  for (const page of pages) {
-    page.children = buildTreeInternal(allPages, page);
-    parent?.children.push(page);
-  }
-  return pages;
 }
 
 export default function SideNav({
@@ -154,13 +123,4 @@ export default function SideNav({
       {footerComponent}
     </nav>
   );
-}
-
-function findItemInTree(tree: PageMetaObject[], url: string): PageMetaObject[] {
-  for (const item of tree) {
-    if (item.url === url) return [item];
-    const found = findItemInTree(item.children, url);
-    if (found.length) return [item, ...found];
-  }
-  return [];
 }
