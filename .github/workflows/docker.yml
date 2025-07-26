@@ -33,7 +33,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: https://hub.docker.com/dannyswat/wikigo
+          images: dannyswat/wikigo
           tags: |
             type=ref,event=tag
             type=raw,value=latest,enable={{is_default_branch}}
