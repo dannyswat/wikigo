@@ -60,12 +60,10 @@ export default function Page() {
             />
           </div>
         )}
-        {data.content && (
-          <div className="hidden lg:block flex-shrink-0 w-64">
-            <TableOfContent title={data.title} content={data.content} />
-          </div>
-        )}
       </div>
+      {data.content && (
+        <TableOfContent title={data.title} content={data.content} />
+      )}
     </div>
   );
 }
