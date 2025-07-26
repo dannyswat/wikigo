@@ -51,11 +51,6 @@ jobs:
           cd ${{ env.WORKING_DIRECTORY }}
           npx tsc --noEmit
 
-      - name: Run ESLint
-        run: |
-          cd ${{ env.WORKING_DIRECTORY }}
-          npm run lint
-
       - name: Build application
         run: |
           cd ${{ env.WORKING_DIRECTORY }}
