@@ -1,14 +1,13 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { MouseEvent, useContext, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { getPublicKeyApi, loginApi, LoginRequest } from "./authApi";
 import { UserContext } from "./UserProvider";
 import { useTheme } from "../../contexts/ThemeProvider";
 
 export default function LoginPage() {
-  const navigate = useNavigate();
   const { theme } = useTheme();
-  const { isLoggedIn, setUsername: updateUsername } = useContext(UserContext);
+  const { isLoggedIn } = useContext(UserContext);
   const urlParams = new URLSearchParams(window.location.search);
   const returnUrl = urlParams.get("returnUrl");
   const [username, setUsername] = useState("");
