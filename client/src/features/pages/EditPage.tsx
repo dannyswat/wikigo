@@ -173,6 +173,25 @@ export default function EditPage() {
           }
         />
       </section>
+      <section className="flex flex-row items-center">
+        <label className="basis-1/4">Category</label>
+        <ToggleButton
+          label="Category Page"
+          checked={data.isCategoryPage}
+          className="ms-4"
+          onChange={(value) =>
+            setData((prev) => ({ ...prev, isCategoryPage: value }))
+          }
+        />
+        <ToggleButton
+          label="Reverse Order"
+          checked={data.sortChildrenDesc}
+          className="ms-4"
+          onChange={(value) =>
+            setData((prev) => ({ ...prev, sortChildrenDesc: value }))
+          }
+        />
+      </section>
       <section>
         <HtmlEditor
           content={data.content}
@@ -193,22 +212,6 @@ export default function EditPage() {
           className="ms-4"
           onChange={(value) =>
             setData((prev) => ({ ...prev, isPinned: value }))
-          }
-        />
-        <ToggleButton
-          label="Category Page"
-          checked={data.isCategoryPage}
-          className="ms-4"
-          onChange={(value) =>
-            setData((prev) => ({ ...prev, isCategoryPage: value }))
-          }
-        />
-        <ToggleButton
-          label="Reverse Sort"
-          checked={data.sortChildrenDesc}
-          className="ms-4"
-          onChange={(value) =>
-            setData((prev) => ({ ...prev, sortChildrenDesc: value }))
           }
         />
       </section>

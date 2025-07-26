@@ -1,3 +1,4 @@
+import { IconLock } from "@tabler/icons-react";
 import { PageMetaObject } from "./pageTree";
 
 interface PageListProps {
@@ -40,12 +41,9 @@ export default function PageList({ pages, onPageClick }: PageListProps) {
                                         <div className="w-2 h-2 bg-teal-500 dark:bg-teal-400 rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-200"></div>
                                     </div>
                                     <div className="min-w-0 flex-1">
-                                        <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors duration-200 truncate">
-                                            {page.title}
+                                        <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors duration-200">
+                                            {page.title} {page.isProtected && <IconLock className="inline-block ml-1 text-gray-400 dark:text-gray-500" />}
                                         </h4>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">
-                                            {page.url}
-                                        </p>
                                     </div>
                                 </div>
 

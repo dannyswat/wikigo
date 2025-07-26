@@ -131,13 +131,38 @@ export default function NewPage() {
           }
         />
       </section>
+      <section className="flex flex-row items-center">
+        <label className="basis-1/4">Category</label>
+        <ToggleButton
+          label="Category Page"
+          checked={data.isCategoryPage ?? false}
+          className="ms-4"
+          onChange={(value) =>
+            setData((prev) => ({
+              ...prev,
+              isCategoryPage: value,
+            }))
+          }
+        />
+        <ToggleButton
+          label="Reverse Order"
+          checked={data.sortChildrenDesc ?? false}
+          className="ms-4"
+          onChange={(value) =>
+            setData((prev) => ({
+              ...prev,
+              sortChildrenDesc: value,
+            }))
+          }
+        />
+      </section>
       <section>
         <HtmlEditor
           content={data.content}
           onChange={(content) => setData((prev) => ({ ...prev, content }))}
         />
       </section>
-      <section>
+      <section className="flex flex-row items-center">
         <ToggleButton
           label="Protected"
           checked={data.isProtected}
@@ -151,28 +176,6 @@ export default function NewPage() {
           className="ms-4"
           onChange={(value) =>
             setData((prev) => ({ ...prev, isPinned: value }))
-          }
-        />
-        <ToggleButton
-          label="Category Page"
-          checked={data.isCategoryPage ?? false}
-          className="ms-4"
-          onChange={(value) =>
-            setData((prev) => ({
-              ...prev,
-              isCategoryPage: value,
-            }))
-          }
-        />
-        <ToggleButton
-          label="Reverse Sort"
-          checked={data.sortChildrenDesc ?? false}
-          className="ms-4"
-          onChange={(value) =>
-            setData((prev) => ({
-              ...prev,
-              sortChildrenDesc: value,
-            }))
           }
         />
       </section>
