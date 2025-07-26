@@ -58,6 +58,5 @@ jobs:
 
       - name: Check build output
         run: |
-          cd ${{ env.WORKING_DIRECTORY }}
-          ls -la dist/
-          du -sh dist/
+          ls -la build/public
+          du -sh build/public
