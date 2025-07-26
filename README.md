@@ -1,5 +1,7 @@
 # WikiGO
 
+[![Go](https://github.com/dannyswat/wikigo/actions/workflows/go.yml/badge.svg)](https://github.com/dannyswat/wikigo/actions/workflows/go.yml)
+
 A lightweight, file-based wiki application written in Go with a React front-end. It supports markdown editing, page revisions, user authentication, and inline Excalidraw diagrams.
 
 ## Features
