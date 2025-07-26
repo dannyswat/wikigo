@@ -1,0 +1,68 @@
+name: React Client CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'client/**'
+      - '.github/workflows/react.yml'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'client/**'
+      - '.github/workflows/react.yml'
+
+env:
+  NODE_VERSION: '20'
+  WORKING_DIRECTORY: './client'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            client/node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('client/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: |
+          cd ${{ env.WORKING_DIRECTORY }}
+          npm ci
+
+      - name: Check for TypeScript errors
+        run: |
+          cd ${{ env.WORKING_DIRECTORY }}
+          npx tsc --noEmit
+
+      - name: Run ESLint
+        run: |
+          cd ${{ env.WORKING_DIRECTORY }}
+          npm run lint
+
+      - name: Build application
+        run: |
+          cd ${{ env.WORKING_DIRECTORY }}
+          npm run build
+
+      - name: Check build output
+        run: |
+          cd ${{ env.WORKING_DIRECTORY }}
+          ls -la dist/
+          du -sh dist/
