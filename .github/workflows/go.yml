@@ -28,4 +28,4 @@ jobs:
       run: cd server && go build -v ./cmd/web/main.go
 
     - name: Test
-      run: cd server && go test -v ./cmd/web/main.go
+      run: cd server && go test -v ./...
