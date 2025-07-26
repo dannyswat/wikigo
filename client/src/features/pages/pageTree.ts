@@ -4,13 +4,22 @@ export interface PageMetaObject extends PageMeta {
     children: PageMetaObject[];
 }
 
-export function findItemInTree(tree: PageMetaObject[], url: string): PageMetaObject[] {
+export function findItemHierarchyInTree(tree: PageMetaObject[], url: string): PageMetaObject[] {
     for (const item of tree) {
         if (item.url === url) return [item];
-        const found = findItemInTree(item.children, url);
+        const found = findItemHierarchyInTree(item.children, url);
         if (found.length) return [item, ...found];
     }
     return [];
+}
+
+export function findItemInTree(tree: PageMetaObject[], url: string): PageMetaObject | null {
+    for (const item of tree) {
+        if (item.url === url) return item;
+        const found = findItemInTree(item.children, url);
+        if (found) return found;
+    }
+    return null;
 }
 
 export function buildTree(pages: PageMeta[]): PageMetaObject[] {

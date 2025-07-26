@@ -8,12 +8,14 @@ import { UserContext } from "../auth/UserProvider";
 import { buildTree, findItemInTree } from "./pageTree";
 import { IconFidgetSpinner } from "@tabler/icons-react";
 import PageList from "./PageList";
+import { SettingContext } from "../setup/SettingProvider";
 
 export default function Page() {
   const { id } = useParams();
   const navigate = useNavigate();
   const pageId = id ? window.location.pathname.substring(3) : "home";
   const { isLoggedIn } = useContext(UserContext);
+  const { setting } = useContext(SettingContext);
   const { data, isLoading, isError } = useQuery({
     queryKey: ["page", pageId],
     queryFn: () => getPageByUrl(pageId),
@@ -24,10 +26,12 @@ export default function Page() {
     enabled: data?.isCategoryPage,
   });
   const pageMeta = useMemo(() => (allPages && data ?
-    findItemInTree(buildTree(allPages), data.url) : []), [allPages, data]);
+    findItemInTree(buildTree(allPages), data.url) : null), [allPages, data]);
 
   useEffect(() => {
-    if (data?.title) document.title = data.title + " - Wiki GO";
+    const siteName = setting?.site_name || "Wiki GO";
+    if (data?.title) document.title = data.title + " - " + siteName;
+    else document.title = siteName;
   }, [data?.title]);
 
   if (isLoading) return <div>Loading...</div>;
@@ -50,10 +54,10 @@ export default function Page() {
             <IconFidgetSpinner className="animate-spin text-gray-500" />
           </div>
         )}
-        {data.isCategoryPage && pageMeta && pageMeta.length > 0 && pageMeta[0].children.length > 0 && (
+        {data.isCategoryPage && pageMeta && pageMeta.children.length > 0 && (
           <div className="mt-4">
             <PageList
-              pages={pageMeta[0].children}
+              pages={pageMeta.children}
               onPageClick={(page) => {
                 navigate("/p" + page.url);
               }}

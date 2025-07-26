@@ -4,7 +4,7 @@ import { getAllPages } from "../pages/pageApi";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../auth/UserProvider";
-import { buildTree, findItemInTree, PageMetaObject } from "../pages/pageTree";
+import { buildTree, findItemHierarchyInTree, PageMetaObject } from "../pages/pageTree";
 
 interface SideNavProps extends React.HTMLAttributes<HTMLDivElement> {
   headerComponent?: React.ReactNode;
@@ -33,7 +33,7 @@ export default function SideNav({
 
   useEffect(() => {
     if (menu.length === 0) return;
-    const hierarchy = findItemInTree(menu, "/" + pageId);
+    const hierarchy = findItemHierarchyInTree(menu, "/" + pageId);
     if (hierarchy.length) {
       lastRoot.current = [];
       for (let i = 0; i < hierarchy.length - 2; i++) {
