@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SideNav from "./SideNav";
 import { NavLink, Outlet, useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../auth/UserProvider";
@@ -6,6 +6,7 @@ import { IconClearAll, IconMenu2, IconSearch } from "@tabler/icons-react";
 import { Footer } from "./Footer";
 import { SettingMenu } from "./SettingMenu";
 import SiteLogo from "../../components/SiteLogo";
+import { SettingContext } from "../setup/SettingProvider";
 
 interface LayoutProps {
   isPage?: boolean;
@@ -14,8 +15,16 @@ interface LayoutProps {
 export default function LayoutMain({ isPage }: LayoutProps) {
   const navigate = useNavigate();
   const { isLoggedIn, canEdit } = useContext(UserContext);
+  const { setting } = useContext(SettingContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { id } = useParams();
+
+  useEffect(() => {
+    if (setting && setting.is_site_protected && !isLoggedIn) {
+      navigate(`/login`);
+    }
+  }, []);
+
   const pageId = isPage
     ? id
       ? window.location.pathname.substring(3)

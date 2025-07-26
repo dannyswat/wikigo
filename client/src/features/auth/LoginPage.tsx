@@ -8,7 +8,7 @@ import { useTheme } from "../../contexts/ThemeProvider";
 export default function LoginPage() {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { isLoggedIn } = useContext(UserContext);
+  const { isLoggedIn, setUsername: updateUsername } = useContext(UserContext);
   const urlParams = new URLSearchParams(window.location.search);
   const returnUrl = urlParams.get("returnUrl");
   const [username, setUsername] = useState("");
@@ -20,7 +20,9 @@ export default function LoginPage() {
   });
   const login = useMutation({
     mutationFn: async (request: LoginRequest) => await loginApi(request),
-    onSuccess: () => navigate(returnUrl ?? "/"),
+    onSuccess: () => {
+      window.location.href = returnUrl || "/";
+    }
   });
 
   if (isLoggedIn) {

@@ -8,6 +8,7 @@ export default function CreateSetting() {
         theme: "default",
         footer: "All rights reserved © Wiki Go",
         language: "en",
+        is_site_protected: false,
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -25,7 +26,7 @@ export default function CreateSetting() {
         try {
             await createSetting(form);
             setSuccess("Setting created successfully.");
-            setForm({ site_name: "", logo: "", theme: "", footer: "", language: "" });
+            setForm({ site_name: "", logo: "", theme: "", footer: "", language: "", is_site_protected: false });
             await new Promise(resolve => setTimeout(resolve, 2000));
             window.location.replace('/');
         } catch (err: any) {
@@ -92,6 +93,16 @@ export default function CreateSetting() {
                         className="w-full border rounded px-3 py-2"
                         required
                     />
+                </div>
+                <div className="flex items-center">
+                    <input
+                        type="checkbox"
+                        name="is_site_protected"
+                        checked={form.is_site_protected}
+                        onChange={(e) => setForm({ ...form, is_site_protected: e.target.checked })}
+                        className="mr-2"
+                    />
+                    <label className="text-sm">Protect Site</label>
                 </div>
                 {error && <div className="text-red-600 dark:text-red-400">{error}</div>}
                 {success && <div className="text-green-600 dark:text-green-400">{success}</div>}

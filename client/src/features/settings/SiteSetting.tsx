@@ -102,6 +102,16 @@ export default function SiteSetting() {
                         required
                     />
                 </div>
+                <div className="flex items-center">
+                    <input
+                        type="checkbox"
+                        name="is_site_protected"
+                        checked={form.is_site_protected}
+                        onChange={(e) => setForm({ ...form, is_site_protected: e.target.checked })}
+                        className="mr-2"
+                    />
+                    <label className="text-sm">Protect Site (Enable this to restrict access to authorized users only)</label>
+                </div>
                 {mutation.isError && <div className="text-red-600 dark:text-red-400">{(mutation.error as Error).message}</div>}
                 {mutation.isSuccess && <div className="text-green-600 dark:text-green-400">Settings updated!</div>}
                 <button

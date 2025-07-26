@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"os"
 	"time"
+	"wikigo/internal/common"
 	"wikigo/internal/setting"
 	"wikigo/internal/users"
 
@@ -80,11 +80,6 @@ func (h *SetupHandler) CreateSetting(c echo.Context) error {
 		return c.JSON(500, map[string]string{"error": "Failed to create setting"})
 	}
 
-	go exitApplication()
+	go common.ExitApplication()
 	return c.JSON(201, map[string]string{"message": "Setting created successfully"})
-}
-
-func exitApplication() {
-	time.Sleep(1 * time.Second) // Give the response time to flush
-	os.Exit(0)
 }

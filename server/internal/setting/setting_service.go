@@ -1,10 +1,14 @@
 package setting
 
-import "wikigo/internal/common/caching"
+import (
+	"wikigo/internal/common"
+	"wikigo/internal/common/caching"
+)
 
 type SettingService struct {
-	DB    SettingRepository
-	Cache *caching.SimpleCache[*SecuritySetting]
+	DB            SettingRepository
+	Cache         *caching.SimpleCache[*Setting]
+	SecurityCache *caching.SimpleCache[*SecuritySetting]
 }
 
 func (s *SettingService) Init(initial *Setting, initialSecurity *SecuritySetting) error {
@@ -29,7 +33,17 @@ func (s *SettingService) UpdateSetting(setting *Setting) error {
 	if err := ValidateSetting(setting); err != nil {
 		return err
 	}
-	return s.DB.UpdateSetting(setting)
+	err := s.DB.UpdateSetting(setting)
+	if err == nil {
+		cached, ok := s.Cache.Get()
+		if ok && cached != nil {
+			if cached.IsSiteProtected != setting.IsSiteProtected {
+				go common.ExitApplication()
+			}
+		}
+		s.Cache.Set(setting)
+	}
+	return err
 }
 func (s *SettingService) UpdateSecuritySetting(securitySetting *SecuritySetting) error {
 	if err := ValidateSecuritySetting(securitySetting); err != nil {
@@ -37,7 +51,7 @@ func (s *SettingService) UpdateSecuritySetting(securitySetting *SecuritySetting)
 	}
 	err := s.DB.UpdateSecuritySetting(securitySetting)
 	if err == nil {
-		s.Cache.Set(securitySetting)
+		s.SecurityCache.Set(securitySetting)
 	}
 	return err
 }

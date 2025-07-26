@@ -6,6 +6,7 @@ export interface Setting {
     theme: string;
     footer: string;
     language: string;
+    is_site_protected: boolean;
 }
 
 interface SettingResponse {

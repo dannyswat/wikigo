@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { useQuery } from "@tanstack/react-query";
 import { getUserRoleApi } from "./authApi";
 import { queryClient } from "../../common/query";
+import Loading from "../layout/Loading";
 
 export type UserContextType = {
   username?: string;
@@ -14,7 +15,7 @@ export type UserContextType = {
 };
 
 const defaultUserContext: UserContextType = {
-  setUsername: () => {},
+  setUsername: () => { },
   isLoggedIn: false,
   canEdit: false,
   isAdmin: false,
@@ -24,7 +25,7 @@ export const UserContext = createContext<UserContextType>(defaultUserContext);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [username, setUsername] = useState(Cookies.get("user"));
-  const { data: dataRole } = useQuery({
+  const { data: dataRole, isLoading } = useQuery({
     queryKey: ["role", username],
     queryFn: async () => {
       if (username) {
@@ -49,6 +50,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       window.clearInterval(timer);
     };
   }, [username]);
+
+  if (isLoading) return <Loading />;
 
   return (
     <UserContext.Provider

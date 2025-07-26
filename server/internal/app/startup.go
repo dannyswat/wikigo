@@ -43,6 +43,7 @@ type WikiStartUp struct {
 	jwt                  *middlewares.JWT
 	reactPage            *pages.ReactPageMeta
 	validator            *validator.Validate
+	settingCache         *caching.SimpleCache[*setting.Setting]
 	securitySettingCache *caching.SimpleCache[*setting.SecuritySetting]
 }
 
@@ -67,9 +68,15 @@ func (s *WikiStartUp) Setup() error {
 	isSiteSetup := siteSetting != nil
 
 	s.securitySettingCache = caching.NewSimpleCache[*setting.SecuritySetting]()
+	s.settingCache = caching.NewSimpleCache[*setting.Setting]()
+	s.settingCache.Set(siteSetting)
 
 	s.userService = &users.UserService{DB: s.dbManager.Users()}
-	s.settingService = &setting.SettingService{DB: s.dbManager.Settings(), Cache: s.securitySettingCache}
+	s.settingService = &setting.SettingService{
+		DB:            s.dbManager.Settings(),
+		Cache:         s.settingCache,
+		SecurityCache: s.securitySettingCache,
+	}
 
 	s.validator = validator.New()
 
@@ -143,12 +150,16 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 
 	e.GET("/p/:id", s.pageHandler.Page)
 	api := e.Group(s.BaseRoute)
-	api.GET("/page/:id", s.pageHandler.GetPageByID)
-	api.GET("/page/url/:url", s.pageHandler.GetPageByUrl)
-	api.GET("/pages/list", s.pageHandler.GetPagesByParentID)
-	api.GET("/pages/list/:id", s.pageHandler.GetPagesByParentID)
-	api.GET("/pages/listall", s.pageHandler.GetAllPages)
-	api.GET("/pages/search", s.pageHandler.SearchPages)
+	content := api.Group("")
+	if setting, ok := s.settingCache.Get(); ok && setting != nil && setting.IsSiteProtected {
+		content.Use(middlewares.AuthorizeMiddleware())
+	}
+	content.GET("/page/:id", s.pageHandler.GetPageByID)
+	content.GET("/page/url/:url", s.pageHandler.GetPageByUrl)
+	content.GET("/pages/list", s.pageHandler.GetPagesByParentID)
+	content.GET("/pages/list/:id", s.pageHandler.GetPagesByParentID)
+	content.GET("/pages/listall", s.pageHandler.GetAllPages)
+	content.GET("/pages/search", s.pageHandler.SearchPages)
 
 	editor := api.Group("/editor")
 	editor.Use(middlewares.EditorMiddleware())

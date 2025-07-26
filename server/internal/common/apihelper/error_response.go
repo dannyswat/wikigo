@@ -51,6 +51,10 @@ func NewUnauthorizedError(message string) ErrorResponse {
 	return ErrorResponse{Message: message, Code: ErrCodeUnauthorized}
 }
 
+func NewForbiddenError(message string) ErrorResponse {
+	return ErrorResponse{Message: message, Code: ErrCodeForbidden}
+}
+
 func NewRateLimitError(message string) ErrorResponse {
 	return ErrorResponse{Message: message, Code: ErrCodeRateLimit}
 }
@@ -76,6 +80,10 @@ func ReturnErrorResponse(e echo.Context, err error) error {
 		return e.JSON(400, NewInvalidRequestError(err.Error()))
 	case *errors.AggregateValidationError:
 		return e.JSON(400, NewInvalidResponseErrorWithDetails(err.Error(), err.Errors))
+	case *errors.ForbiddenError:
+		return e.JSON(403, NewForbiddenError(err.Error()))
+	case *errors.NotFoundError:
+		return e.JSON(404, NewNotFoundError(err.Error()))
 	default:
 		log.Println(err)
 		return e.JSON(500, NewInternalError("Internal server error"))

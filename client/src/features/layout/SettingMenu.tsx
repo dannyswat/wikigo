@@ -4,7 +4,6 @@ import { useContext, useEffect, useState } from "react";
 import { logoutApi } from "../auth/authApi";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../auth/UserProvider";
-import { queryClient } from "../../common/query";
 
 export function SettingMenu({ returnUrl }: { returnUrl?: string }) {
   const navigate = useNavigate();
@@ -13,8 +12,7 @@ export function SettingMenu({ returnUrl }: { returnUrl?: string }) {
   const logout = useMutation({
     mutationFn: logoutApi,
     onSuccess: () => {
-      queryClient.clear();
-      navigate(returnUrl ?? "/");
+      window.location.href = returnUrl || "/";
     },
   });
 
