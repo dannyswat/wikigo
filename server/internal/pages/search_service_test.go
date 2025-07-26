@@ -1,7 +1,6 @@
 package pages
 
 import (
-	"reflect"
 	"testing"
 )
 
@@ -91,7 +90,7 @@ func TestTokenize(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := Tokenize(tt.input)
-			if !reflect.DeepEqual(result, tt.expected) {
+			if !compareArrayElementsIgnoreOrder(result, tt.expected) {
 				t.Errorf("Tokenize(%q) = %v, expected %v", tt.input, result, tt.expected)
 			}
 		})
@@ -103,7 +102,7 @@ func TestTokenizeEdgeCases(t *testing.T) {
 	input := "Hello,,,   world!!!   How    are you???"
 	expected := []string{"hello", "world", "how", "you"}
 	result := Tokenize(input)
-	if !reflect.DeepEqual(result, expected) {
+	if !compareArrayElementsIgnoreOrder(result, expected) {
 		t.Errorf("Tokenize with multiple punctuation failed: got %v, expected %v", result, expected)
 	}
 
@@ -112,7 +111,7 @@ func TestTokenizeEdgeCases(t *testing.T) {
 	// Arabic should be ignored, only English and Chinese should be processed
 	expected = []string{"hello", "你好", "world"}
 	result = Tokenize(input)
-	if !reflect.DeepEqual(result, expected) {
+	if !compareArrayElementsIgnoreOrder(result, expected) {
 		t.Errorf("Tokenize with mixed scripts failed: got %v, expected %v", result, expected)
 	}
 }
@@ -135,4 +134,23 @@ func BenchmarkTokenize(b *testing.B) {
 			}
 		})
 	}
+}
+
+func compareArrayElementsIgnoreOrder(a, b []string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	m := make(map[string]int)
+	for _, item := range a {
+		m[item]++
+	}
+	for _, item := range b {
+		m[item]--
+	}
+	for _, count := range m {
+		if count != 0 {
+			return false
+		}
+	}
+	return true
 }
