@@ -1,6 +1,6 @@
 # WikiGO
 
-[![Go](https://github.com/dannyswat/wikigo/actions/workflows/go.yml/badge.svg)](https://github.com/dannyswat/wikigo/actions/workflows/go.yml) [![React Client CI](https://github.com/dannyswat/wikigo/actions/workflows/react.yml/badge.svg)](https://github.com/dannyswat/wikigo/actions/workflows/react.yml)
+[![Go Server CI](https://github.com/dannyswat/wikigo/actions/workflows/go.yml/badge.svg)](https://github.com/dannyswat/wikigo/actions/workflows/go.yml) [![React Client CI](https://github.com/dannyswat/wikigo/actions/workflows/react.yml/badge.svg)](https://github.com/dannyswat/wikigo/actions/workflows/react.yml) [![Docker Build](https://github.com/dannyswat/wikigo/actions/workflows/docker.yml/badge.svg)](https://github.com/dannyswat/wikigo/actions/workflows/docker.yml)
 
 A lightweight, file-based wiki application written in Go with a React front-end. It supports markdown editing, page revisions, user authentication, and inline Excalidraw diagrams.
 
