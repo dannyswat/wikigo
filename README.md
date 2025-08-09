@@ -32,6 +32,7 @@ docker run -d \
   -p 8080:8080 \
   -v $(pwd)/server/data:/app/data \
   -v $(pwd)/server/media:/app/media \
+  -v $(pwd)/server/conf:/app/conf \
   dannyswat/wikigo:latest
 ```
 
@@ -111,6 +112,7 @@ The application reads files from:
 
 - **Data**: `server/data` (mounted in Docker or local folder)
 - **Media**: `server/media` (for diagram JSON, SVG, and uploads)
+- **Conf**: `server/conf` (for configuration)
 - **Views**: `server/views` (HTML templates)
 - **Public**: `server/public` (static assets from React build)
 

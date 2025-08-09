@@ -8,6 +8,7 @@ import (
 
 	"wikigo/internal/app/handlers"
 	"wikigo/internal/app/middlewares"
+	"wikigo/internal/common"
 	"wikigo/internal/common/caching"
 	"wikigo/internal/filemanager"
 	"wikigo/internal/keymgmt"
@@ -23,9 +24,10 @@ import (
 )
 
 type WikiStartUp struct {
-	DataPath  string
-	MediaPath string
-	BaseRoute string
+	DataPath   string
+	ConfigPath string
+	MediaPath  string
+	BaseRoute  string
 
 	dbManager            DBManager
 	userService          *users.UserService
@@ -47,6 +49,7 @@ type WikiStartUp struct {
 	validator            *validator.Validate
 	settingCache         *caching.SimpleCache[*setting.Setting]
 	securitySettingCache *caching.SimpleCache[*setting.SecuritySetting]
+	fido2Setting         *setting.Fido2Setting
 }
 
 var (
@@ -120,6 +123,12 @@ func (s *WikiStartUp) Setup() error {
 		s.reactPage = pages.GetReactPageMeta(string(reactFile))
 	}
 
+	fido2Setting, err := common.GetJsonFile[setting.Fido2Setting](filepath.Join(s.ConfigPath, "fido2.json"))
+	if err != nil {
+		return err
+	}
+	s.fido2Setting = fido2Setting
+
 	return nil
 }
 
@@ -146,9 +155,9 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 
 	// Initialize WebAuthn
 	wconfig := &webauthn.Config{
-		RPDisplayName: "WikiGo",
-		RPID:          "localhost",                                                // Change this to your domain in production
-		RPOrigins:     []string{"http://localhost:3000", "http://localhost:8080"}, // Change this to your URL in production
+		RPDisplayName: s.fido2Setting.DisplayName,
+		RPID:          s.fido2Setting.ID,
+		RPOrigins:     s.fido2Setting.Hosts,
 	}
 
 	webAuthn, err := webauthn.New(wconfig)

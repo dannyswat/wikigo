@@ -1,24 +1,14 @@
 services:
   wikigo:
     build:
-      context: . # Use the current directory as the build context
-      dockerfile: Dockerfile # Specify the Dockerfile name
-    image: dannyswat/wikigo:latest # You can tag the image built by compose
+      context: .
+      dockerfile: Dockerfile
+    image: dannyswat/wikigo:latest
     container_name: wikigo
     ports:
-      - "8080:8080" # Map host port 8080 to container port 8080 (adjust if your app uses a different port)
+      - "8080:8080"
     volumes:
-      # Mount server data for persistence
-      # Host path: ./server/data (relative to this docker-compose.yml file)
-      # Container path: /app/data (where the Go application expects it, based on WORKDIR and COPY in Dockerfile)
       - ./server/data:/app/data
-      # Mount media uploads for persistence
-      # Host path: ./server/media (relative to this docker-compose.yml file)
-      # Container path: /app/media (ensure your Go application uses this path for storing/accessing media)
       - ./server/media:/app/media
+      - ./server/conf:/app/conf
     restart: unless-stopped
-    # If your application requires specific environment variables, you can define them here:
-    # environment:
-    #   - GIN_MODE=release
-    #   - APP_PORT=8080
-    #   - DATABASE_URL=sqlite:///app/data/wikigo.db

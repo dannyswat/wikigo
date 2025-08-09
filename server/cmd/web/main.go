@@ -21,9 +21,10 @@ func main() {
 	fmt.Printf("Current working directory: %s\n", currentDir)
 
 	app := &wiki.WikiStartUp{
-		DataPath:  "data",
-		BaseRoute: "/api",
-		MediaPath: "media",
+		DataPath:   "data",
+		BaseRoute:  "/api",
+		MediaPath:  "media",
+		ConfigPath: "conf",
 	}
 	isSetupComplete := true
 	if err := app.Setup(); err == wiki.ErrSetupIncomplete {

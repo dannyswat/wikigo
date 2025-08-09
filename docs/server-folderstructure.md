@@ -12,6 +12,8 @@
   - handlers
   - repositories
   - utils
+- conf
+  - Config files
 - data
   - Application data
 - media
