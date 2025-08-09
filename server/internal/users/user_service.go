@@ -1,7 +1,8 @@
 package users
 
 type UserService struct {
-	DB UserRepository
+	DB       UserRepository
+	DeviceDB UserDeviceRepository
 }
 
 func (s *UserService) Login(username, password string) (*User, error) {

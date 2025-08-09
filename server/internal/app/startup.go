@@ -17,6 +17,7 @@ import (
 	"wikigo/internal/users"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/go-webauthn/webauthn/webauthn"
 	"github.com/labstack/echo/v4"
 	"github.com/microcosm-cc/bluemonday"
 )
@@ -37,6 +38,7 @@ type WikiStartUp struct {
 	fileManager          filemanager.FileManager
 	pageHandler          *handlers.PageHandler
 	authHandler          *handlers.AuthHandler
+	fido2Handler         *handlers.Fido2Handler
 	uploadHandler        *handlers.UploadHandler
 	usersHandler         *handlers.UsersHandler
 	settingHandler       *handlers.SettingHandler
@@ -71,7 +73,10 @@ func (s *WikiStartUp) Setup() error {
 	s.settingCache = caching.NewSimpleCache[*setting.Setting]()
 	s.settingCache.Set(siteSetting)
 
-	s.userService = &users.UserService{DB: s.dbManager.Users()}
+	s.userService = &users.UserService{
+		DB:       s.dbManager.Users(),
+		DeviceDB: s.dbManager.UserDevices(),
+	}
 	s.settingService = &setting.SettingService{
 		DB:            s.dbManager.Settings(),
 		Cache:         s.settingCache,
@@ -138,6 +143,26 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 		ReactPage:           s.reactPage,
 	}
 	s.authHandler = &handlers.AuthHandler{UserService: s.userService, KeyStore: s.keyStore}
+
+	// Initialize WebAuthn
+	wconfig := &webauthn.Config{
+		RPDisplayName: "WikiGo",
+		RPID:          "localhost",                                                // Change this to your domain in production
+		RPOrigins:     []string{"http://localhost:3000", "http://localhost:8080"}, // Change this to your URL in production
+	}
+
+	webAuthn, err := webauthn.New(wconfig)
+	if err != nil {
+		log.Fatalf("Failed to initialize WebAuthn: %v", err)
+	}
+
+	s.fido2Handler = &handlers.Fido2Handler{
+		UserService:  s.userService,
+		WebAuthn:     webAuthn,
+		KeyStore:     s.keyStore,
+		SessionStore: handlers.NewSessionStore(),
+	}
+
 	s.uploadHandler = &handlers.UploadHandler{FileManager: s.fileManager}
 	s.usersHandler = &handlers.UsersHandler{UserService: s.userService}
 	s.settingHandler = &handlers.SettingHandler{SettingService: s.settingService}
@@ -192,9 +217,19 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	users.GET("/role", s.authHandler.GetRole)
 	users.POST("/changepassword", s.authHandler.ChangePassword)
 
+	// FIDO2/WebAuthn routes for authenticated users
+	users.POST("/passkey/begin-register", s.fido2Handler.BeginRegistration)
+	users.POST("/passkey/finish-register", s.fido2Handler.FinishRegistration)
+	users.GET("/passkey/devices", s.fido2Handler.GetUserDevices)
+	users.DELETE("/passkey/devices/:id", s.fido2Handler.DeleteDevice)
+
 	api.POST("/auth/login", s.authHandler.Login)
 	api.GET("/auth/publickey/:id", s.authHandler.GetPublicKey)
 	api.POST("/auth/logout", s.authHandler.Logout)
+
+	// FIDO2/WebAuthn public routes
+	api.POST("/auth/passkey/begin-login", s.fido2Handler.BeginLogin)
+	api.POST("/auth/passkey/finish-login", s.fido2Handler.FinishLogin)
 }
 
 func logIfError(err error) {

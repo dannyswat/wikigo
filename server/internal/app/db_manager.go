@@ -13,6 +13,7 @@ import (
 type DBManager interface {
 	Init() error
 	Users() users.UserRepository
+	UserDevices() users.UserDeviceRepository
 	Pages() pages.PageRepository
 	Keys() keymgmt.KeyRepository
 	PageRevisions() revisions.RevisionRepository[*pages.Page]
@@ -22,6 +23,7 @@ type DBManager interface {
 
 type dbManager struct {
 	users         users.UserRepository
+	userDevices   users.UserDeviceRepository
 	pages         pages.PageRepository
 	keys          keymgmt.KeyRepository
 	pageRevisions revisions.RevisionRepository[*pages.Page]
@@ -32,6 +34,7 @@ type dbManager struct {
 func NewDBManager(path string) DBManager {
 	return &dbManager{
 		users:         repositories.NewUserDB(path + "/users"),
+		userDevices:   repositories.NewUserDeviceDB(path + "/user_devices"),
 		pages:         repositories.NewPageDB(path + "/pages"),
 		keys:          repositories.NewKeyDB(path + "/keys"),
 		pageRevisions: repositories.NewRevisionRepository[*pages.Page](path + "/revisions"),
@@ -42,6 +45,9 @@ func NewDBManager(path string) DBManager {
 
 func (m *dbManager) Init() error {
 	if err := m.users.Init(); err != nil {
+		return err
+	}
+	if err := m.userDevices.Init(); err != nil {
 		return err
 	}
 	if err := m.pages.Init(); err != nil {
@@ -61,6 +67,10 @@ func (m *dbManager) Init() error {
 
 func (m *dbManager) Users() users.UserRepository {
 	return m.users
+}
+
+func (m *dbManager) UserDevices() users.UserDeviceRepository {
+	return m.userDevices
 }
 
 func (m *dbManager) Pages() pages.PageRepository {
