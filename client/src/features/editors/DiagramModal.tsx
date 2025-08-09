@@ -42,7 +42,6 @@ export default function DiagramModal({
     enabled: !!id,
     staleTime: 0,
   });
-  console.log(data);
 
   function handleClose() {
     if (drawApi) {

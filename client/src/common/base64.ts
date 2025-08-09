@@ -32,7 +32,6 @@ export function base64urlToBuffer(input: any): ArrayBuffer {
 
     // Convert to string and process
     const base64url = String(input);
-    console.log('Converting base64url:', base64url); // Debug log
 
     if (!base64url || base64url === 'undefined') {
         throw new Error("Invalid base64url string: " + base64url);

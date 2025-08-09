@@ -25,12 +25,7 @@ export default function PassKeyConnect({ className }: PassKeyConnectProps) {
             }
 
             const { options, sessionKey } = await beginPasskeyRegistration(deviceName.trim());
-            console.log('Registration response:', { options, sessionKey }); // Debug log
             const key = options.publicKey || options;
-            // The options should be the PublicKeyCredentialCreationOptions directly
-            console.log('Options:', options); // Debug log
-            console.log('Challenge type:', typeof key.challenge, key.challenge); // Debug log
-            console.log('User ID type:', typeof key.user?.id, key.user?.id); // Debug log
 
             // Ensure the response has the expected structure
             if (!key || !key.challenge || !key.user || !key.user.id) {
