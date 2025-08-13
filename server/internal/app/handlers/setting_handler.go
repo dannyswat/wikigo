@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"net/http"
 	"wikigo/internal/setting"
 
 	"github.com/labstack/echo/v4"
@@ -29,21 +30,35 @@ func (h *SettingHandler) GetSecuritySetting(c echo.Context) error {
 func (h *SettingHandler) UpdateSetting(c echo.Context) error {
 	var setting setting.Setting
 	if err := c.Bind(&setting); err != nil {
-		return c.JSON(400, map[string]string{"error": "Invalid input"})
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid input")
 	}
 	if err := h.SettingService.UpdateSetting(&setting); err != nil {
-		return c.JSON(400, map[string]string{"error": err.Error()})
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	return c.NoContent(204)
 }
 
 func (h *SettingHandler) UpdateSecuritySetting(c echo.Context) error {
 	var securitySetting setting.SecuritySetting
-	if err := c.Bind(&securitySetting); err != nil {
-		return c.JSON(400, map[string]string{"error": "Invalid input"})
+
+	if c.QueryParam("defaults") == "true" {
+		securitySetting = setting.SecuritySetting{
+			AllowCors:               false,
+			FrameOptions:            setting.DefaultFrameOptions,
+			ReferrerPolicy:          setting.DefaultReferrerPolicy,
+			StrictTransportSecurity: setting.DefaultStrictTransportSecurity,
+			ContentSecurityPolicy:   setting.DefaultContentSecurityPolicy,
+			XContentTypeOptions:     setting.DefaultXContentTypeOptions,
+			XSSProtection:           setting.DefaultXSSProtection,
+			XRobotsTag:              setting.DefaultXRobotsTag,
+		}
+	} else {
+		if err := c.Bind(&securitySetting); err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid input")
+		}
 	}
 	if err := h.SettingService.UpdateSecuritySetting(&securitySetting); err != nil {
-		return c.JSON(400, map[string]string{"error": err.Error()})
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	return c.NoContent(204)
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"os"
+	"strings"
 
 	wiki "wikigo/internal/app"
 	"wikigo/internal/app/handlers"
@@ -40,6 +41,28 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Gzip())
 	e.Use(middleware.Recover())
+	if isSetupComplete {
+		ss, ok := app.SecuritySettingCache.Get()
+		if !ok {
+			panic("Failed to get security settings")
+		}
+		if ss.AllowCors {
+			e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+				AllowOrigins:     ss.AllowedCorsOrigins,
+				AllowMethods:     strings.Split(ss.AllowedCorsMethods, ","),
+				AllowHeaders:     []string{"*"},
+				AllowCredentials: true,
+			}))
+		}
+		e.Use(middleware.SecureWithConfig(middleware.SecureConfig{
+			XSSProtection:         ss.XSSProtection,
+			ContentTypeNosniff:    ss.XContentTypeOptions,
+			XFrameOptions:         ss.FrameOptions,
+			ReferrerPolicy:        ss.ReferrerPolicy,
+			ContentSecurityPolicy: ss.ContentSecurityPolicy,
+			HSTSMaxAge:            3600,
+		}))
+	}
 	e.Static("/media", app.MediaPath)
 	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 		Root:       "public",

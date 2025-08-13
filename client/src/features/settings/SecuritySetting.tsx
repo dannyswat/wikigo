@@ -35,13 +35,27 @@ export default function SecuritySetting() {
 
     const mutation = useMutation({
         mutationFn: async (data: SecuritySetting) => {
-            const response = await fetch('/api/securitysetting', {
+            const response = await fetch('/api/admin/securitysetting', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
             });
             if (!response.ok) {
                 throw new Error('Failed to update security setting');
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['security-setting'] });
+        },
+    });
+
+    const mutationReset = useMutation({
+        mutationFn: async () => {
+            const response = await fetch('/api/admin/securitysetting?defaults=true', {
+                method: 'POST',
+            });
+            if (!response.ok) {
+                throw new Error('Failed to reset security setting');
             }
         },
         onSuccess: () => {
@@ -78,6 +92,11 @@ export default function SecuritySetting() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (form) mutation.mutate(form);
+    };
+
+    const handleReset = () => {
+        mutationReset.mutate();
+        setForm(null);
     };
 
     if (isLoading) return <div>Loading...</div>;
@@ -201,6 +220,14 @@ export default function SecuritySetting() {
                     disabled={mutation.status === 'pending'}
                 >
                     {mutation.status === 'pending' ? "Saving..." : "Save Settings"}
+                </button>
+                <button
+                    type="button"
+                    className="w-full bg-gray-600 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 text-white py-2 rounded disabled:opacity-50"
+                    onClick={handleReset}
+                    disabled={mutation.status === 'pending'}
+                >
+                    Reset
                 </button>
             </form>
         </div>

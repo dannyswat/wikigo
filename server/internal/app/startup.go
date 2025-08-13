@@ -47,8 +47,8 @@ type WikiStartUp struct {
 	jwt                  *middlewares.JWT
 	reactPage            *pages.ReactPageMeta
 	validator            *validator.Validate
-	settingCache         *caching.SimpleCache[*setting.Setting]
-	securitySettingCache *caching.SimpleCache[*setting.SecuritySetting]
+	SettingCache         *caching.SimpleCache[*setting.Setting]
+	SecuritySettingCache *caching.SimpleCache[*setting.SecuritySetting]
 	fido2Setting         *setting.Fido2Setting
 }
 
@@ -72,9 +72,17 @@ func (s *WikiStartUp) Setup() error {
 	isAdminSetup := adminUser != nil
 	isSiteSetup := siteSetting != nil
 
-	s.securitySettingCache = caching.NewSimpleCache[*setting.SecuritySetting]()
-	s.settingCache = caching.NewSimpleCache[*setting.Setting]()
-	s.settingCache.Set(siteSetting)
+	s.SecuritySettingCache = caching.NewSimpleCache[*setting.SecuritySetting]()
+	s.SettingCache = caching.NewSimpleCache[*setting.Setting]()
+	s.SettingCache.Set(siteSetting)
+
+	if isSiteSetup {
+		securitySetting, err := s.dbManager.Settings().GetSecuritySetting()
+		if err != nil {
+			panic(err)
+		}
+		s.SecuritySettingCache.Set(securitySetting)
+	}
 
 	s.userService = &users.UserService{
 		DB:       s.dbManager.Users(),
@@ -82,8 +90,8 @@ func (s *WikiStartUp) Setup() error {
 	}
 	s.settingService = &setting.SettingService{
 		DB:            s.dbManager.Settings(),
-		Cache:         s.settingCache,
-		SecurityCache: s.securitySettingCache,
+		Cache:         s.SettingCache,
+		SecurityCache: s.SecuritySettingCache,
 	}
 
 	s.validator = validator.New()
@@ -179,13 +187,12 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	e.Validator = &handlers.CustomValidator{Validator: s.validator}
 
 	s.jwt = &middlewares.JWT{KeyStore: s.keyStore}
-	e.Use(middlewares.NewSecurityMiddleware(s.settingService).EchoSecurityMiddleware())
 	e.Use(s.jwt.AuthMiddleware())
 
 	e.GET("/p/:id", s.pageHandler.Page)
 	api := e.Group(s.BaseRoute)
 	content := api.Group("")
-	if setting, ok := s.settingCache.Get(); ok && setting != nil && setting.IsSiteProtected {
+	if setting, ok := s.SettingCache.Get(); ok && setting != nil && setting.IsSiteProtected {
 		content.Use(middlewares.AuthorizeMiddleware())
 	}
 	content.GET("/page/:id", s.pageHandler.GetPageByID)

@@ -31,6 +31,23 @@ const (
 	ErrCodeForbidden      ErrorCode = "FORBIDDEN"
 )
 
+func GetErrorCode(status int) ErrorCode {
+	switch status {
+	case 400:
+		return ErrCodeInvalidRequest
+	case 401:
+		return ErrCodeUnauthorized
+	case 403:
+		return ErrCodeForbidden
+	case 404:
+		return ErrCodeNotFound
+	case 429:
+		return ErrCodeRateLimit
+	default:
+		return ErrCodeInternalError
+	}
+}
+
 func NewInvalidRequestError(message string) ErrorResponse {
 	return ErrorResponse{Message: message, Code: ErrCodeInvalidRequest}
 }
@@ -74,6 +91,11 @@ func GetErrorStatus(err error) int {
 
 func ReturnErrorResponse(e echo.Context, err error) error {
 	switch err := err.(type) {
+	case *echo.HTTPError:
+		return e.JSON(err.Code, ErrorResponse{
+			Message: err.Message.(string),
+			Code:    GetErrorCode(err.Code),
+		})
 	case *users.UnauthorizedError:
 		return e.JSON(401, NewUnauthorizedError(err.Error()))
 	case *errors.ValidationError:

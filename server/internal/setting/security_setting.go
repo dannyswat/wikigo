@@ -12,3 +12,13 @@ type SecuritySetting struct {
 	XSSProtection           string   `json:"x_xss_protection"`
 	XRobotsTag              string   `json:"x_robots_tag"` // e.g., "noindex, nofollow", "index, follow"
 }
+
+const (
+	DefaultFrameOptions            = "SAMEORIGIN"
+	DefaultReferrerPolicy          = "strict-origin-when-cross-origin"
+	DefaultStrictTransportSecurity = "max-age=31536000; includeSubDomains"
+	DefaultContentSecurityPolicy   = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self';"
+	DefaultXContentTypeOptions     = "nosniff"
+	DefaultXSSProtection           = "1; mode=block"
+	DefaultXRobotsTag              = "noindex, nofollow"
+)
