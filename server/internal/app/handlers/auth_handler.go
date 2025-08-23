@@ -5,7 +5,6 @@ import (
 	stderrors "errors"
 	"log"
 	"net/http"
-	"sync"
 	"time"
 
 	"wikigo/internal/common/apihelper"
@@ -21,6 +20,7 @@ import (
 type AuthHandler struct {
 	UserService *users.UserService
 	KeyStore    *keymgmt.KeyMgmtService
+	RateLimiter *apihelper.RateLimiter
 }
 
 type PublicKeyResponse struct {
@@ -56,9 +56,6 @@ type LoginResponse struct {
 	Token string `json:"token"`
 }
 
-var loginAttemptMutex sync.Mutex
-var lastLoginAttempt = make(map[string]time.Time)
-
 func (h *AuthHandler) Login(e echo.Context) error {
 	req := new(LoginRequest)
 	if err := e.Bind(req); err != nil {
@@ -67,16 +64,10 @@ func (h *AuthHandler) Login(e echo.Context) error {
 	if err := validator.New().Struct(req); err != nil {
 		return e.JSON(400, apihelper.NewInvalidRequestError("invalid request"))
 	}
-	// Rate limit: allow login for each username every 2 seconds
-	loginAttemptMutex.Lock()
-	last, exists := lastLoginAttempt[req.UserName]
-	now := time.Now()
-	if exists && now.Sub(last) < 2*time.Second {
-		loginAttemptMutex.Unlock()
+
+	if h.RateLimiter != nil && !h.RateLimiter.AllowRequest(req.UserName) {
 		return e.JSON(429, apihelper.NewRateLimitError("Too many login attempts. Please wait a moment."))
 	}
-	lastLoginAttempt[req.UserName] = now
-	loginAttemptMutex.Unlock()
 
 	pwdBytes, err := base64.StdEncoding.DecodeString(req.Password)
 	if err != nil {

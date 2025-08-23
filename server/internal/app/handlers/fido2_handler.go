@@ -25,6 +25,7 @@ type Fido2Handler struct {
 	WebAuthn     *webauthn.WebAuthn
 	KeyStore     *keymgmt.KeyMgmtService
 	SessionStore *SessionStore
+	RateLimiter  *apihelper.RateLimiter
 }
 
 // Simple in-memory session store for WebAuthn sessions
@@ -287,6 +288,10 @@ func (h *Fido2Handler) BeginLogin(e echo.Context) error {
 	assertion, sessionData, err := h.WebAuthn.BeginDiscoverableLogin()
 	if err != nil {
 		return e.JSON(500, map[string]string{"error": "failed to begin login"})
+	}
+
+	if h.RateLimiter != nil && !h.RateLimiter.AllowRequest(e.RealIP()) {
+		return e.JSON(429, map[string]string{"error": "too many login attempts. Please wait a moment."})
 	}
 
 	// Store session data in session store with 5 minute TTL

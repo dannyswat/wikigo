@@ -9,6 +9,7 @@ import (
 	"wikigo/internal/app/handlers"
 	"wikigo/internal/app/middlewares"
 	"wikigo/internal/common"
+	"wikigo/internal/common/apihelper"
 	"wikigo/internal/common/caching"
 	"wikigo/internal/filemanager"
 	"wikigo/internal/keymgmt"
@@ -50,6 +51,7 @@ type WikiStartUp struct {
 	SettingCache         *caching.SimpleCache[*setting.Setting]
 	SecuritySettingCache *caching.SimpleCache[*setting.SecuritySetting]
 	fido2Setting         *setting.Fido2Setting
+	loginRateLimiter     *apihelper.RateLimiter
 }
 
 var (
@@ -136,6 +138,7 @@ func (s *WikiStartUp) Setup() error {
 		return err
 	}
 	s.fido2Setting = fido2Setting
+	s.loginRateLimiter = apihelper.NewRateLimiter(5, 1) // 5 requests per minute, refill 1 token per minute
 
 	return nil
 }
@@ -159,7 +162,11 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 		PageRevisionService: s.pageRevisionService,
 		ReactPage:           s.reactPage,
 	}
-	s.authHandler = &handlers.AuthHandler{UserService: s.userService, KeyStore: s.keyStore}
+	s.authHandler = &handlers.AuthHandler{
+		UserService: s.userService,
+		KeyStore:    s.keyStore,
+		RateLimiter: s.loginRateLimiter,
+	}
 
 	// Initialize WebAuthn
 	wconfig := &webauthn.Config{
@@ -178,6 +185,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 		WebAuthn:     webAuthn,
 		KeyStore:     s.keyStore,
 		SessionStore: handlers.NewSessionStore(),
+		RateLimiter:  s.loginRateLimiter,
 	}
 
 	s.uploadHandler = &handlers.UploadHandler{FileManager: s.fileManager}
