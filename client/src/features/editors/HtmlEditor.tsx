@@ -32,9 +32,11 @@ import {
 
 import { FullScreen } from "./FullScreenPlugin";
 import { Diagram } from "./DiagramPlugin"; // Import the new plugin
+import { ImageBrowser } from "./ImageBrowserPlugin"; // Import the image browser plugin
 import { SimplePasteCleanup } from "./SimplePasteCleanupPlugin";
 import { useRef, useState } from "react";
 import DiagramModal from "./DiagramModal";
+import ImageBrowserModal from "./ImageBrowserModal";
 
 interface Props {
   content: string;
@@ -43,6 +45,7 @@ interface Props {
 
 export function HtmlEditor({ content, onChange }: Props) {
   const [isDiagramModalOpen, setIsDiagramModalOpen] = useState(false);
+  const [isImageBrowserModalOpen, setIsImageBrowserModalOpen] = useState(false);
   const [diagramUrl, setDiagramUrl] = useState<string>();
   const editorRef = useRef<ClassicEditor>();
 
@@ -55,6 +58,9 @@ export function HtmlEditor({ content, onChange }: Props) {
           editor.on("openDiagramModal", (_, args) => {
             setDiagramUrl(args && typeof args === "string" ? args : undefined);
             setIsDiagramModalOpen(true);
+          });
+          editor.on("openImageBrowserModal", () => {
+            setIsImageBrowserModalOpen(true);
           });
         }}
         editor={ClassicEditor}
@@ -74,6 +80,7 @@ export function HtmlEditor({ content, onChange }: Props) {
               "alignment",
               "|",
               "imageUpload",
+              "imageBrowser",
               "diagramPlugin",
               "|",
               "bulletedList",
@@ -121,6 +128,7 @@ export function HtmlEditor({ content, onChange }: Props) {
             ImageInsert,
             TodoList,
             FullScreen,
+            ImageBrowser, // Add the image browser plugin
             Diagram, // Add the plugin to the plugins list
             SimplePasteCleanup, // Add the paste cleanup plugin
           ],
@@ -185,6 +193,33 @@ export function HtmlEditor({ content, onChange }: Props) {
                 } else {
                   // Fallback if selection is not clear, e.g., insert at end of document
                   // This might need adjustment based on desired behavior if selection is lost.
+                  editor.model.insertContent(imageElement);
+                }
+              });
+            }
+          }}
+        />
+      )}
+      {isImageBrowserModalOpen && (
+        <ImageBrowserModal
+          onClose={(selectedImageUrl?: string) => {
+            setIsImageBrowserModalOpen(false);
+            if (!selectedImageUrl) return;
+            const editor = editorRef.current;
+            if (editor) {
+              editor.model.change((writer) => {
+                const imageElement = writer.createElement("imageBlock", {
+                  src: selectedImageUrl + "?t=" + Date.now(),
+                });
+
+                // Insert the image at the current selection or at the end of the selection's first range.
+                const insertAt =
+                  editor.model.document.selection.getFirstPosition();
+                if (insertAt) {
+                  editor.model.deleteContent(editor.model.document.selection);
+                  editor.model.insertContent(imageElement, insertAt);
+                } else {
+                  // Fallback if selection is not clear, e.g., insert at end of document
                   editor.model.insertContent(imageElement);
                 }
               });
