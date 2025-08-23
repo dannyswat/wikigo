@@ -12,6 +12,7 @@ import (
 	"wikigo/internal/common/apihelper"
 	"wikigo/internal/common/caching"
 	"wikigo/internal/filemanager"
+	"wikigo/internal/images"
 	"wikigo/internal/keymgmt"
 	"wikigo/internal/pages"
 	"wikigo/internal/revisions"
@@ -53,6 +54,7 @@ type WikiStartUp struct {
 	SecuritySettingCache *caching.SimpleCache[*setting.SecuritySetting]
 	fido2Setting         *setting.Fido2Setting
 	loginRateLimiter     *apihelper.RateLimiter
+	imageResizer         images.ImageResizer
 }
 
 var (
@@ -140,7 +142,7 @@ func (s *WikiStartUp) Setup() error {
 	}
 	s.fido2Setting = fido2Setting
 	s.loginRateLimiter = apihelper.NewRateLimiter(5, 1) // 5 requests per minute, refill 1 token per minute
-
+	s.imageResizer = images.NewImageResizer(100, 100, images.ResizeModeFit)
 	return nil
 }
 
@@ -189,7 +191,10 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 		RateLimiter:  s.loginRateLimiter,
 	}
 
-	s.uploadHandler = &handlers.UploadHandler{FileManager: s.fileManager}
+	s.uploadHandler = &handlers.UploadHandler{
+		FileManager:  s.fileManager,
+		ImageResizer: s.imageResizer,
+	}
 	s.fileHandler = &handlers.FileHandler{FileManager: s.fileManager}
 	s.usersHandler = &handlers.UsersHandler{UserService: s.userService}
 	s.settingHandler = &handlers.SettingHandler{SettingService: s.settingService}
@@ -220,6 +225,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	editor.GET("/pagerevision/:id", s.pageHandler.GetLatestRevision)
 	editor.POST("/upload", s.uploadHandler.UploadFile)
 	editor.POST("/ckeditor/upload", s.uploadHandler.CKEditorUpload)
+	editor.POST("/ckeditor/upload/regeneratethumbnail", s.uploadHandler.ResizeAllImages)
 	editor.POST("/createpath", s.uploadHandler.CreatePath)
 	editor.POST("/diagram/upload", s.uploadHandler.SaveDiagram)
 	editor.GET("/diagram/source/:id", s.uploadHandler.GetDiagramSource)

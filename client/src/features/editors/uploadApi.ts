@@ -48,3 +48,13 @@ export async function uploadImage(
   const data = await res.json();
   return { imageUrl: data.imageUrl };
 }
+
+export async function rebuildThumbnails() {
+  const res = await fetch(baseApiUrl + "/editor/ckeditor/upload/regeneratethumbnail", {
+    method: "POST",
+  });
+  if (!res.ok) {
+    throw new Error("Failed to rebuild thumbnails");
+  }
+  return await res.json();
+}

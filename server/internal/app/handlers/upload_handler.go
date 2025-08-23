@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"log"
 	"mime"
 	"path/filepath"
 	"regexp"
@@ -13,12 +14,14 @@ import (
 
 	"wikigo/internal/common/apihelper"
 	"wikigo/internal/filemanager"
+	"wikigo/internal/images"
 
 	"github.com/labstack/echo/v4"
 )
 
 type UploadHandler struct {
-	FileManager filemanager.FileManager
+	FileManager  filemanager.FileManager
+	ImageResizer images.ImageResizer
 }
 
 type UploadFileRequest struct {
@@ -90,11 +93,58 @@ func (uh *UploadHandler) CKEditorUpload(e echo.Context) error {
 		return e.JSON(400, err)
 	}
 
-	return e.JSON(200, map[string]interface{}{
+	// Resize the image
+	if uh.ImageResizer != nil {
+		resizedImage, err := uh.ImageResizer.ResizeImage(fileBinary)
+		if err == nil {
+			err = uh.FileManager.SaveFile(resizedImage, fileName, path+"/thumbnails")
+			if err != nil {
+				log.Println("failed to save thumbnail:", err)
+			}
+		} else {
+			log.Println("failed to resize image:", err)
+		}
+	}
+
+	return e.JSON(200, map[string]any{
 		"uploaded": 1,
 		"fileName": fileName,
 		"url":      "/media" + path + "/" + fileName,
 	})
+}
+
+func (uh *UploadHandler) ResizeAllImages(e echo.Context) error {
+	// List all files in the uploads directory
+	files, err := uh.FileManager.ListFiles("/uploads")
+	if err != nil {
+		return e.JSON(500, "failed to list files: "+err.Error())
+	}
+
+	count := 0
+	for _, fileName := range files {
+		ext := strings.ToLower(filepath.Ext(fileName))
+		if !slices.Contains(allowedExtensions, ext) {
+			continue
+		}
+		fileBinary, err := uh.FileManager.ReadFile(fileName, "/uploads")
+		if err != nil {
+			log.Println("failed to read file:", fileName, err)
+			continue
+		}
+		resizedImage, err := uh.ImageResizer.ResizeImage(fileBinary)
+		if err != nil {
+			log.Println("failed to resize image:", fileName, err)
+			continue
+		}
+		err = uh.FileManager.SaveFile(resizedImage, fileName, "/uploads/thumbnails")
+		if err != nil {
+			log.Println("failed to save thumbnail:", fileName, err)
+			continue
+		}
+		count++
+	}
+
+	return e.JSON(200, fmt.Sprintf("Resized %d images", count))
 }
 
 func (uh *UploadHandler) CreatePath(e echo.Context) error {
