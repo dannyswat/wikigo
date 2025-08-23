@@ -21,6 +21,7 @@ import SiteSetting from "./features/settings/SiteSetting";
 import SecuritySetting from "./features/settings/SecuritySetting";
 import Search from "./features/pages/Search";
 import RebuildSearch from "./features/pages/RebuildSearch";
+import FileBrowser from "./features/filemanager/FileBrowser";
 
 export function WikiGoRoutes() {
   return (
@@ -44,6 +45,7 @@ export function WikiGoRoutes() {
           </Route>
           <Route element={<AdminRoute />}>
             <Route element={<LayoutAdmin />}>
+              <Route path="/filebrowser" element={<FileBrowser />} />
               <Route path="/users" element={<Users />} />
               <Route path="/users/create" element={<UsersCreate />} />
               <Route path="/users/:id" element={<UsersEdit />} />

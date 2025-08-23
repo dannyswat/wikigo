@@ -43,6 +43,7 @@ type WikiStartUp struct {
 	authHandler          *handlers.AuthHandler
 	fido2Handler         *handlers.Fido2Handler
 	uploadHandler        *handlers.UploadHandler
+	fileHandler          *handlers.FileHandler
 	usersHandler         *handlers.UsersHandler
 	settingHandler       *handlers.SettingHandler
 	jwt                  *middlewares.JWT
@@ -189,6 +190,7 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	}
 
 	s.uploadHandler = &handlers.UploadHandler{FileManager: s.fileManager}
+	s.fileHandler = &handlers.FileHandler{FileManager: s.fileManager}
 	s.usersHandler = &handlers.UsersHandler{UserService: s.userService}
 	s.settingHandler = &handlers.SettingHandler{SettingService: s.settingService}
 
@@ -221,6 +223,9 @@ func (s *WikiStartUp) RegisterHandlers(e *echo.Echo) {
 	editor.POST("/createpath", s.uploadHandler.CreatePath)
 	editor.POST("/diagram/upload", s.uploadHandler.SaveDiagram)
 	editor.GET("/diagram/source/:id", s.uploadHandler.GetDiagramSource)
+	editor.GET("/files/list", s.fileHandler.ListFiles)
+	editor.GET("/files/read", s.fileHandler.ReadFile)
+	editor.GET("/files/info", s.fileHandler.GetFileInfo)
 
 	admin := api.Group("/admin")
 	admin.Use(middlewares.AdminMiddleware())
