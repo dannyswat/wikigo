@@ -157,6 +157,29 @@
     @apply text-gray-500 dark:text-gray-400;
     content: "Page Break";
   }
+
+.ck-content .image.image-style-align-right,
+.ck-content .image.image-style-align-left {
+  @apply mt-0;
+}
+}
+
+@media (max-width: 640px) {
+  .ck-content figure.table {
+    @apply w-full;
+  }
+
+  .ck-content table {
+    @apply w-full;
+  }
+
+  .ck-content .image.image-style-align-right,
+    .ck-content .image.image-style-align-left {
+  @apply mt-2;
+  @apply float-none;
+  @apply mx-auto;
+  @apply w-full;
+  }
 }
 
 /* Additional responsive rules for ck-content */

@@ -69,12 +69,14 @@ export class SimplePasteCleanup extends Plugin {
         // Allowed attributes for specific elements
         const allowedAttributes: { [key: string]: string[] } = {
             'a': ['href', 'title'],
-            'img': ['src', 'alt', 'title', 'width', 'height'],
+            'img': ['src', 'alt', 'title', 'width', 'height', 'style'],
             'table': ['border', 'cellpadding', 'cellspacing'],
             'td': ['colspan', 'rowspan'],
             'th': ['colspan', 'rowspan'],
             'ol': ['start', 'type'],
             'ul': ['type'],
+            'figure': ['class'],
+            'figcaption': ['class'],
         };
 
         allElements.forEach(element => {
@@ -108,7 +110,6 @@ export class SimplePasteCleanup extends Plugin {
         const unwantedPatterns = [
             'on', // onclick, onmouseover, etc.
             'data-', // data attributes (mostly tracking)
-            'class',
             'id',
             'style', // We'll handle styles separately
             'contenteditable',
@@ -132,7 +133,10 @@ export class SimplePasteCleanup extends Plugin {
         const allowedStyles = [
             'color',
             'font-style',
-            'text-decoration'
+            'text-decoration',
+            'aspect-ratio',
+            'width',
+            'height',
         ];
 
         elementsWithStyle.forEach(element => {

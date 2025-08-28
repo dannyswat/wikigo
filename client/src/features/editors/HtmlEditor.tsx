@@ -28,6 +28,9 @@ import {
   TodoList,
   Alignment,
   ImageCaption,
+  ImageStyle,
+  ImageResize,
+  ImageToolbar,
 } from "ckeditor5";
 
 import { FullScreen } from "./FullScreenPlugin";
@@ -121,11 +124,14 @@ export function HtmlEditor({ content, onChange }: Props) {
             SimpleUploadAdapter,
             ImageBlock,
             ImageCaption,
+            ImageToolbar,
             Table,
             TableProperties,
             TableToolbar,
             FontColor,
             ImageInsert,
+            ImageStyle,
+            ImageResize,
             TodoList,
             FullScreen,
             ImageBrowser, // Add the image browser plugin
