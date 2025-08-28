@@ -16,6 +16,12 @@ A lightweight, file-based wiki application written in Go with a React front-end.
 
 ---
 
+## Live Demo
+
+- URL: [https://demo.wikigo.site/](https://demo.wikigo.site/)
+- Username: admin
+- Password: WikiGoAdmin123
+
 ## Quick Start (Docker)
 
 An official Docker image is available on Docker Hub: `dannyswat/wikigo`
