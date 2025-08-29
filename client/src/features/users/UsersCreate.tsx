@@ -5,8 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { queryClient } from "../../common/query";
 import { IconFidgetSpinner } from "@tabler/icons-react";
 import { createUserApi, CreateUserRequest, getRolesApi } from "./userApi";
+import { useTranslation } from "react-i18next";
 
 export default function UsersCreate() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [data, setData] = useState<CreateUserRequest>({
         username: '',
@@ -37,22 +39,22 @@ export default function UsersCreate() {
 
     return <div className="w-full flex flex-col gap-4">
         <section className="flex flex-row items-center">
-            <label className="basis-1/4">Login Name</label>
+            <label className="basis-1/4">{t('forms.loginName')}</label>
             <input className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" autoComplete="secret" type="text" value={data.username}
                 onChange={(e) => setData((prev) => ({ ...prev, username: e.target.value }))} />
         </section>
         <section className="flex flex-row items-center">
-            <label className="basis-1/4">Email</label>
+            <label className="basis-1/4">{t('forms.email')}</label>
             <input className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" autoComplete="secret" type="text" value={data.email}
                 onChange={(e) => setData((prev) => ({ ...prev, email: e.target.value }))} />
         </section>
         <section className="flex flex-row items-center">
-            <label className="basis-1/4">New Password</label>
+            <label className="basis-1/4">{t('forms.newPassword')}</label>
             <input className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" autoComplete="secret" type="password" value={data.password}
                 onChange={(e) => setData((prev) => ({ ...prev, password: e.target.value }))} />
         </section>
         <section className="flex flex-row items-center">
-            <label className="basis-1/4">Role</label>
+            <label className="basis-1/4">{t('forms.role')}</label>
             <select className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value={data.role}
                 onChange={(e) => setData((prev) => ({ ...prev, role: e.target.value }))}>
                 {roles?.map((role) => <option key={role.role} value={role.role}>{role.name}</option>)}
@@ -61,12 +63,12 @@ export default function UsersCreate() {
         <section className="flex flex-row justify-items-end">
             <button disabled={createUser.isPending} onClick={handleSubmitClick}
                 className="basis-1/2 sm:basis-1/6 bg-lime-700 hover:bg-lime-800 dark:bg-lime-600 dark:hover:bg-lime-700 text-white rounded-md py-2 px-5">
-                {createUser.isPending ? <IconFidgetSpinner className="animate-spin mx-auto" /> : 'Create'}
+                {createUser.isPending ? <IconFidgetSpinner className="animate-spin mx-auto" /> : t('buttons.create')}
             </button>
             <button onClick={() => {
-                if (!data.username || confirm('Are you sure to leave?'))
+                if (!data.username || confirm(t('messages.confirmLeave')))
                     navigate('/users')
-            }} className="basis-1/2 sm:basis-1/6 bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-md py-2 px-5 ms-4">Cancel</button>
+            }} className="basis-1/2 sm:basis-1/6 bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-md py-2 px-5 ms-4">{t('buttons.cancel')}</button>
         </section>
     </div>;
 }

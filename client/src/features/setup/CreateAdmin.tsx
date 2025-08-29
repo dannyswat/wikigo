@@ -2,8 +2,10 @@ import React, { useContext, useState } from "react";
 import { createAdmin } from "./setupApi";
 import { SettingContext } from "./SettingProvider";
 import { Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function CreateAdmin() {
+    const { t } = useTranslation();
     const setting = useContext(SettingContext);
     const [form, setForm] = useState({
         user_name: "admin",
@@ -25,11 +27,11 @@ export default function CreateAdmin() {
         setSuccess(null);
         try {
             await createAdmin(form);
-            setSuccess("Admin account created successfully.");
+            setSuccess(t('messages.adminCreated'));
             setForm({ user_name: "", email: "", password: "" });
             setting.updateAdminCreated();
         } catch (err: any) {
-            setError(err.message || "Failed to create admin account.");
+            setError(err.message || t('messages.adminCreationFailed'));
         } finally {
             setLoading(false);
         }
@@ -41,10 +43,10 @@ export default function CreateAdmin() {
 
     return (
         <div className="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded shadow">
-            <h2 className="text-2xl font-bold mb-4">Create Admin Account</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('setup.createAdminAccount')}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="block mb-1 font-medium">Username</label>
+                    <label className="block mb-1 font-medium">{t('forms.username')}</label>
                     <input
                         type="text"
                         name="user_name"
@@ -57,7 +59,7 @@ export default function CreateAdmin() {
                     />
                 </div>
                 <div>
-                    <label className="block mb-1 font-medium">Email</label>
+                    <label className="block mb-1 font-medium">{t('forms.email')}</label>
                     <input
                         type="email"
                         name="email"
@@ -68,7 +70,7 @@ export default function CreateAdmin() {
                     />
                 </div>
                 <div>
-                    <label className="block mb-1 font-medium">Password</label>
+                    <label className="block mb-1 font-medium">{t('forms.password')}</label>
                     <input
                         type="password"
                         name="password"
@@ -87,7 +89,7 @@ export default function CreateAdmin() {
                     className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white py-2 rounded disabled:opacity-50"
                     disabled={loading}
                 >
-                    {loading ? "Creating..." : "Create Admin"}
+                    {loading ? t('setup.creating') : t('setup.createAdmin')}
                 </button>
             </form>
         </div>

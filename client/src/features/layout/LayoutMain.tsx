@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import SideNav from "./SideNav";
 import { NavLink, Outlet, useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../auth/UserProvider";
@@ -13,6 +14,7 @@ interface LayoutProps {
 }
 
 export default function LayoutMain({ isPage }: LayoutProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { isLoggedIn, canEdit } = useContext(UserContext);
   const { setting } = useContext(SettingContext);
@@ -61,7 +63,7 @@ export default function LayoutMain({ isPage }: LayoutProps) {
               to={"/login" + returnUrlQuery}
               className="bg-blue-500 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-800 text-white font-bold py-2 px-4 rounded"
             >
-              Login
+              {t("Login")}
             </NavLink>
           )}
           {isLoggedIn && canEdit && (
@@ -69,7 +71,7 @@ export default function LayoutMain({ isPage }: LayoutProps) {
               to="/create"
               className="bg-green-500 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-800 text-white font-bold py-2 px-4 rounded"
             >
-              Create
+              {t("Create")}
             </NavLink>
           )}
           {isLoggedIn && isPage && pageId && canEdit && (
@@ -77,7 +79,7 @@ export default function LayoutMain({ isPage }: LayoutProps) {
               to={`/edit/${pageId}`}
               className="bg-yellow-500 hover:bg-yellow-700 dark:bg-yellow-600 dark:hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded"
             >
-              Edit
+              {t("Edit")}
             </NavLink>
           )}
           {isLoggedIn && (

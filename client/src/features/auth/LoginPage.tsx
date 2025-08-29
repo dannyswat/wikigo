@@ -1,12 +1,14 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { MouseEvent, useContext, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { getPublicKeyApi, loginApi, LoginRequest } from "./authApi";
 import { beginPasskeyLogin, finishPasskeyLogin } from "./fido2Api";
 import { UserContext } from "./UserProvider";
 import { useTheme } from "../../contexts/ThemeProvider";
 
 export default function LoginPage() {
+  const { t } = useTranslation();
   const { theme } = useTheme();
   const { isLoggedIn } = useContext(UserContext);
   const urlParams = new URLSearchParams(window.location.search);
@@ -93,17 +95,17 @@ export default function LoginPage() {
       }}
     >
       <div className="w-96 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-4 rounded shadow-lg">
-        <h1 className="text-2xl font-bold mb-4">Login</h1>
+        <h1 className="text-2xl font-bold mb-4">{t("Login")}</h1>
         <input
           type="text"
-          placeholder="Username"
+          placeholder={t("Username")}
           className="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded mb-4"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
         <input
           type="password"
-          placeholder="Password"
+          placeholder={t("Password")}
           className="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded mb-4"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -112,15 +114,15 @@ export default function LoginPage() {
           className="w-full bg-blue-500 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-800 text-white p-2 rounded"
           onClick={handleLoginClick}
         >
-          Login
+          {t("Login")}
         </button>
-        <div className="mt-4 text-center text-gray-600 dark:text-gray-400">or</div>
+        <div className="mt-4 text-center text-gray-600 dark:text-gray-400">{t("or")}</div>
         <button
           className="w-full bg-green-500 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-800 text-white p-2 rounded mt-4"
           onClick={() => passkeyLogin.mutate()}
           disabled={passkeyLogin.isPending}
         >
-          {passkeyLogin.isPending ? "Authenticating..." : "Login with PassKey"}
+          {passkeyLogin.isPending ? t("Authenticating") : t("Login with PassKey")}
         </button>
         {(login.error || passkeyLogin.error) && (
           <div className="mt-4 text-red-700 dark:text-red-400">

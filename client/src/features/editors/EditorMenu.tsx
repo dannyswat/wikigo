@@ -2,8 +2,10 @@ import { IconSettings } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useAutoSaveStore } from "./AutoSaveStore";
 import ToggleButton from "../../components/ToggleButton";
+import { useTranslation } from "react-i18next";
 
 export default function EditorMenu() {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   const { isAutoSaveEnabled, setAutoSave } = useAutoSaveStore();
@@ -32,7 +34,7 @@ export default function EditorMenu() {
       >
         <div className="flex items-center justify-between px-4 py-2 text-gray-800 dark:text-gray-200">
           <ToggleButton
-            label="Auto Save"
+            label={t('Auto Save')}
             checked={isAutoSaveEnabled}
             className="ms-4"
             onChange={() => setAutoSave(!isAutoSaveEnabled)}

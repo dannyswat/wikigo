@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { getAllPages, getPageByUrl } from "./pageApi";
 import { useContext, useEffect, useMemo } from "react";
@@ -11,6 +12,7 @@ import PageList from "./PageList";
 import { SettingContext } from "../setup/SettingProvider";
 
 export default function Page() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const pageId = id ? window.location.pathname.substring(3) : "home";
@@ -34,9 +36,9 @@ export default function Page() {
     else document.title = siteName;
   }, [data?.title]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error loading page</div>;
-  if (!data) return <div>Page not found</div>;
+  if (isLoading) return <div>{t("Loading")}</div>;
+  if (isError) return <div>{t("Error loading page")}</div>;
+  if (!data) return <div>{t("Page not found")}</div>;
 
   return (
     <div className="flex gap-6">

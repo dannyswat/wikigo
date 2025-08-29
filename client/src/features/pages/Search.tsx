@@ -1,8 +1,10 @@
 import { ChangeEvent, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { PageMeta, searchPages } from "./pageApi";
 import { IconFidgetSpinner } from "@tabler/icons-react";
 
 export default function Search() {
+    const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState('');
     const [activeSearchQuery, setActiveSearchQuery] = useState<string>('');
     const [searchResults, setSearchResults] = useState<PageMeta[]>();
@@ -30,7 +32,7 @@ export default function Search() {
             const results = await searchPages(searchQuery);
             setSearchResults(results);
         } catch (err) {
-            setError('Failed to fetch search results');
+            setError(t('Failed to fetch search results'));
             setSearchResults([]);
         } finally {
             setLoading(false);
@@ -44,7 +46,7 @@ export default function Search() {
                     type="text"
                     value={searchQuery}
                     onChange={handleSearchQueryChange}
-                    placeholder="Enter search query..."
+                    placeholder={t("Enter search query")}
                     className="basis-3/4 border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md p-2"
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />
@@ -57,7 +59,7 @@ export default function Search() {
                         {loading ? (
                             <IconFidgetSpinner className="animate-spin mx-auto" />
                         ) : (
-                            "Search"
+                            t("Search")
                         )}
                     </button>
                 </div>
@@ -74,7 +76,7 @@ export default function Search() {
             {searchResults && searchResults.length > 0 && (
                 <section>
                     <h2 className="text-lg font-semibold mb-4">
-                        Search Results for "{activeSearchQuery}" ({searchResults.length})
+                        {t("Search Results for")} "{activeSearchQuery}" ({searchResults.length})
                     </h2>
                     <div className="space-y-3">
                         {searchResults.map((page) => (
@@ -99,7 +101,7 @@ export default function Search() {
             {searchQuery && !loading && searchResults?.length === 0 && !error && (
                 <section className="flex flex-row">
                     <div className="w-full text-center py-8 text-gray-500 dark:text-gray-400 border-2 border-gray-200 dark:border-gray-700 rounded-md">
-                        No pages found for "{activeSearchQuery}"
+                        {t("No pages found for")} "{activeSearchQuery}"
                     </div>
                 </section>
             )}

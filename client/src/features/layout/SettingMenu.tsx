@@ -4,9 +4,11 @@ import { useContext, useEffect, useState } from "react";
 import { logoutApi } from "../auth/authApi";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../auth/UserProvider";
+import { useTranslation } from "react-i18next";
 
 export function SettingMenu({ returnUrl }: { returnUrl?: string }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { isAdmin } = useContext(UserContext);
   const [isOpen, setIsOpen] = useState(false);
   const logout = useMutation({
@@ -44,40 +46,42 @@ export function SettingMenu({ returnUrl }: { returnUrl?: string }) {
               onClick={() => navigate("/users")}
               className="w-full box-border px-4 py-2 text-left text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
             >
-              Users
+              {t('Users')}
             </button>
             <button onClick={() => navigate("/site-setting")}
               className="w-full box-border px-4 py-2 text-left text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
             >
-              Site Setting
+              {t('Site Setting')}
             </button>
             <button
               onClick={() => navigate("/security-setting")}
               className="w-full box-border px-4 py-2 text-left text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
             >
-              Security Setting
+              {t('Security Setting')}
             </button>
             <button onClick={() => navigate("/filebrowser")}
               className="w-full box-border px-4 py-2 text-left text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
             >
-              File Browser
+              {t('File Browser')}
             </button>
             <button onClick={() => navigate('/page-admin')}
               className="w-full box-border px-4 py-2 text-left text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
-            >Admin Operations</button>
+            >
+              {t('Admin Operations')}
+            </button>
           </>
         )}
         <button
           onClick={() => navigate("/change-password")}
           className="w-full box-border px-4 py-2 text-left text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
         >
-          Change Password
+          {t('Change Password')}
         </button>
         <button
           onClick={() => logout.mutate()}
           className="w-full box-border px-4 py-2 text-left text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700"
         >
-          Logout
+          {t('Logout')}
         </button>
       </div>
     </div>

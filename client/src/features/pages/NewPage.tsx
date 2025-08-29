@@ -9,8 +9,10 @@ import { queryClient } from "../../common/query";
 import { clearCache, PageDropDown } from "../editors/PageDropDown";
 import { IconFidgetSpinner } from "@tabler/icons-react";
 import ToggleButton from "../../components/ToggleButton";
+import { useTranslation } from "react-i18next";
 
 export default function NewPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
   const parentUrl = urlParams.get("parent");
@@ -90,17 +92,17 @@ export default function NewPage() {
   return (
     <div className="w-full flex flex-col gap-4">
       <section className="flex flex-row items-center">
-        <label className="basis-1/4">Title</label>
+        <label className="basis-1/4">{t('Title')}</label>
         <input
           className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           type="text"
-          placeholder="Title"
+          placeholder={t('Title')}
           value={data.title}
           onChange={(e) => handleTitleChange(e.target.value)}
         />
       </section>
       <section className="flex flex-row items-center">
-        <label className="basis-1/4">Parent Page</label>
+        <label className="basis-1/4">{t('Parent Page')}</label>
         <PageDropDown
           className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           value={data.parentId ?? undefined}
@@ -108,11 +110,11 @@ export default function NewPage() {
         />
       </section>
       <section className="flex flex-row items-center">
-        <label className="basis-1/4">URL</label>
+        <label className="basis-1/4">{t('URL')}</label>
         <input
           className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           type="text"
-          placeholder="URL"
+          placeholder={t('URL')}
           value={data.url}
           onChange={(e) =>
             setData((prev) => ({ ...prev, url: e.target.value }))
@@ -120,11 +122,11 @@ export default function NewPage() {
         />
       </section>
       <section className="flex flex-row items-center">
-        <label className="basis-1/4">Short Description</label>
+        <label className="basis-1/4">{t('Short Description')}</label>
         <input
           className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           type="text"
-          placeholder="Short Description"
+          placeholder={t('Short Description')}
           value={data.shortDesc}
           onChange={(e) =>
             setData((prev) => ({ ...prev, shortDesc: e.target.value }))
@@ -132,9 +134,9 @@ export default function NewPage() {
         />
       </section>
       <section className="flex flex-row items-center">
-        <label className="basis-1/4">Category</label>
+        <label className="basis-1/4">{t('Category')}</label>
         <ToggleButton
-          label="Category Page"
+          label={t('Category Page')}
           checked={data.isCategoryPage ?? false}
           className="ms-4"
           onChange={(value) =>
@@ -145,7 +147,7 @@ export default function NewPage() {
           }
         />
         <ToggleButton
-          label="Reverse Order"
+          label={t('Reverse Order')}
           checked={data.sortChildrenDesc ?? false}
           className="ms-4"
           onChange={(value) =>
@@ -164,14 +166,14 @@ export default function NewPage() {
       </section>
       <section className="flex flex-row items-center">
         <ToggleButton
-          label="Protected"
+          label={t('Protected')}
           checked={data.isProtected}
           onChange={(value) =>
             setData((prev) => ({ ...prev, isProtected: value }))
           }
         />
         <ToggleButton
-          label="Pinned"
+          label={t('Pinned')}
           checked={data.isPinned}
           className="ms-4"
           onChange={(value) =>
@@ -188,17 +190,17 @@ export default function NewPage() {
           {createPageApi.isPending ? (
             <IconFidgetSpinner className="animate-spin mx-auto" />
           ) : (
-            "Create"
+            t('Create')
           )}
         </button>
         <button
           onClick={() => {
-            if (!data.content || confirm("Are you sure to leave?"))
+            if (!data.content || confirm(t('Are you sure to leave')))
               navigate("/");
           }}
           className="basis-1/2 sm:basis-1/6 bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-md py-2 px-5 ms-4"
         >
-          Cancel
+          {t('Cancel')}
         </button>
       </section>
     </div>

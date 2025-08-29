@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 import { getAllPages } from "../pages/pageApi";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
@@ -19,6 +20,7 @@ export default function SideNav({
   navigate,
   ...props
 }: SideNavProps) {
+  const { t } = useTranslation();
   const { id } = useParams();
   const pageId = id ? window.location.pathname.substring(3) : "home";
   const { isLoggedIn } = useContext(UserContext);
@@ -79,7 +81,7 @@ export default function SideNav({
               className="w-full text-left box-border hover:bg-gray-300 dark:hover:bg-gray-700 py-2 px-5 rounded"
             >
               <i className="mr-2">&larr;</i>
-              Back
+              {t("Back")}
             </button>
           </li>
           <li>
@@ -116,7 +118,7 @@ export default function SideNav({
             }
             className="w-full text-left text-gray-500 dark:text-gray-400 box-border hover:bg-gray-300 dark:hover:bg-gray-700 py-2 px-5 rounded"
           >
-            + Create New Page
+            {t("Create New Page")}
           </button>
         </li>}
       </ul>

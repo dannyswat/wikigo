@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 import { getUsersApi } from "./userApi";
 import { IconLock } from "@tabler/icons-react";
 import { NavLink } from "react-router-dom";
 
 export default function Users() {
+    const { t } = useTranslation();
     const { data: users, isLoading, isError } = useQuery({
         queryKey: ['users'],
         queryFn: async () => {
@@ -12,22 +14,22 @@ export default function Users() {
         }
     });
 
-    if (isLoading) return <div>Loading...</div>;
-    if (isError) return <div>Error loading users...</div>;
+    if (isLoading) return <div>{t("Loading")}</div>;
+    if (isError) return <div>{t("Error loading users")}</div>;
 
     return <div className="w-full">
-        <h1 className="text-2xl font-semibold">Users</h1>
+        <h1 className="text-2xl font-semibold">{t("Users")}</h1>
         <div className="flex justify-end">
-            <NavLink to="/users/create" className="bg-blue-500 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-800 text-white font-bold py-2 px-4 rounded">Add User</NavLink>
+            <NavLink to="/users/create" className="bg-blue-500 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-800 text-white font-bold py-2 px-4 rounded">{t("Add User")}</NavLink>
         </div>
         <div className="table w-full my-2">
             <div className="table-header-group">
                 <div className="table-row bg-gray-700 dark:bg-gray-800 text-white">
 
-                    <div className="table-cell border border-gray-400 dark:border-gray-600 px-4 py-2 font-bold">Username</div>
-                    <div className="hidden sm:table-cell border border-gray-400 dark:border-gray-600 px-4 py-2 font-bold">Email</div>
-                    <div className="table-cell border border-gray-400 dark:border-gray-600 px-4 py-2 font-bold">Role</div>
-                    <div className="table-cell border border-gray-400 dark:border-gray-600 px-4 py-2 font-bold">Status</div>
+                    <div className="table-cell border border-gray-400 dark:border-gray-600 px-4 py-2 font-bold">{t("Username")}</div>
+                    <div className="hidden sm:table-cell border border-gray-400 dark:border-gray-600 px-4 py-2 font-bold">{t("Email")}</div>
+                    <div className="table-cell border border-gray-400 dark:border-gray-600 px-4 py-2 font-bold">{t("Role")}</div>
+                    <div className="table-cell border border-gray-400 dark:border-gray-600 px-4 py-2 font-bold">{t("Status")}</div>
                     <div className="table-cell border border-gray-400 dark:border-gray-600 px-4 py-2 font-bold"></div>
                 </div>
             </div>
@@ -39,7 +41,7 @@ export default function Users() {
                         <div className="table-cell border border-gray-400 dark:border-gray-600 px-4 py-2">{user.role}</div>
                         <div className="table-cell border border-gray-400 dark:border-gray-600 px-4 py-2 text-center">{user.isLockedOut && <IconLock size={24} />}</div>
                         <div className="table-cell border border-gray-400 dark:border-gray-600 px-4 py-2 text-center">
-                            <NavLink to={`/users/${user.id}`} className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">Edit</NavLink>
+                            <NavLink to={`/users/${user.id}`} className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">{t("Edit")}</NavLink>
                         </div>
                     </div>
                 ))}

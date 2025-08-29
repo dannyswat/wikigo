@@ -15,8 +15,10 @@ import { IconFidgetSpinner } from "@tabler/icons-react";
 import ToggleButton from "../../components/ToggleButton";
 import MenuButton from "../layout/MenuButton";
 import { useAutoSaveStore } from "../editors/AutoSaveStore";
+import { useTranslation } from "react-i18next";
 
 export default function EditPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const pageId = id ? window.location.pathname.substring(6) : "home";
   const { isAutoSaveEnabled } = useAutoSaveStore();
@@ -111,8 +113,8 @@ export default function EditPage() {
     localStorage.setItem(localStorageKey, JSON.stringify(saveData));
   }, [data, localStorageKey, isAutoSaveEnabled]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Page does not exist...</div>;
+  if (isLoading) return <div>{t('Loading...')}</div>;
+  if (isError) return <div>{t('Page not found')}</div>;
 
   function handleSubmitClick(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
@@ -122,17 +124,17 @@ export default function EditPage() {
   async function loadLastRevision() {
     const revision = await getLatestPageRevisionByUrl(data.id);
     if (revision) setData(revision.record);
-    else alert("There is no revision available.");
+    else alert(t('No revision available'));
   }
 
   return (
     <div className="w-full flex flex-col gap-4">
       <section className="flex flex-row items-center">
-        <label className="basis-1/4">Title</label>
+        <label className="basis-1/4">{t('Title')}</label>
         <input
           className="basis-3/4 border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-md p-2"
           type="text"
-          placeholder="Title"
+          placeholder={t('Title')}
           value={data.title}
           onChange={(e) =>
             setData((prev) => ({ ...prev, title: e.target.value }))
@@ -140,7 +142,7 @@ export default function EditPage() {
         />
       </section>
       <section className="flex flex-row items-center">
-        <label className="basis-1/4">Parent Page</label>
+        <label className="basis-1/4">{t('Parent Page')}</label>
         <PageDropDown
           className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           value={data.parentId || undefined}
@@ -150,11 +152,11 @@ export default function EditPage() {
         />
       </section>
       <section className="flex flex-row items-center">
-        <label className="basis-1/4">URL</label>
+        <label className="basis-1/4">{t('URL')}</label>
         <input
           className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           type="text"
-          placeholder="URL"
+          placeholder={t('URL')}
           value={data.url}
           onChange={(e) =>
             setData((prev) => ({ ...prev, url: e.target.value }))
@@ -162,11 +164,11 @@ export default function EditPage() {
         />
       </section>
       <section className="flex flex-row items-center">
-        <label className="basis-1/4">Short Description</label>
+        <label className="basis-1/4">{t('Short Description')}</label>
         <input
           className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           type="text"
-          placeholder="Short Description"
+          placeholder={t('Short Description')}
           value={data.shortDesc}
           onChange={(e) =>
             setData((prev) => ({ ...prev, shortDesc: e.target.value }))
@@ -174,9 +176,9 @@ export default function EditPage() {
         />
       </section>
       <section className="flex flex-row items-center">
-        <label className="basis-1/4">Category</label>
+        <label className="basis-1/4">{t('Category')}</label>
         <ToggleButton
-          label="Category Page"
+          label={t('Category Page')}
           checked={data.isCategoryPage}
           className="ms-4"
           onChange={(value) =>
@@ -184,7 +186,7 @@ export default function EditPage() {
           }
         />
         <ToggleButton
-          label="Reverse Order"
+          label={t('Reverse Order')}
           checked={data.sortChildrenDesc}
           className="ms-4"
           onChange={(value) =>
@@ -200,14 +202,14 @@ export default function EditPage() {
       </section>
       <section>
         <ToggleButton
-          label="Protected"
+          label={t('Protected')}
           checked={data.isProtected}
           onChange={(value) =>
             setData((prev) => ({ ...prev, isProtected: value }))
           }
         />
         <ToggleButton
-          label="Pinned"
+          label={t('Pinned')}
           checked={data.isPinned}
           className="ms-4"
           onChange={(value) =>
@@ -223,14 +225,14 @@ export default function EditPage() {
           {updatePageApi.isPending ? (
             <IconFidgetSpinner className="animate-spin mx-auto" />
           ) : (
-            "Save"
+            t('Save')
           )}
         </button>
         <button
           onClick={() => {
             if (
               data.content === initialData?.content ||
-              confirm("Are you sure to leave? Unsaved content will be lost.")
+              confirm(t('Are you sure to leave? Unsaved content will be lost.'))
             ) {
               localStorage.removeItem(localStorageKey);
               navigate(initialData ? "/p" + initialData.url : "/");
@@ -238,7 +240,7 @@ export default function EditPage() {
           }}
           className="basis-1/2 sm:basis-1/6 bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-md py-2 px-5 ms-4"
         >
-          Cancel
+          {t('Cancel')}
         </button>
         <MenuButton className="basis-1/4 sm:basis-1/12 ms-4">
           <div className="p-2">
@@ -246,16 +248,16 @@ export default function EditPage() {
               onClick={loadLastRevision}
               className="bg-blue-950 hover:bg-blue-900 dark:bg-blue-800 dark:hover:bg-blue-700 w-full box-border text-white rounded-md py-2 px-5 my-2"
             >
-              Revert
+              {t('Revert')}
             </button>
             <button
               onClick={() => {
-                if (confirm("Are you sure to delete the page?"))
+                if (confirm(t('Are you sure to delete this page?')))
                   deletePageApi.mutate(data);
               }}
               className="bg-red-700 hover:bg-red-800 dark:bg-red-600 dark:hover:bg-red-700 text-white w-full box-border rounded-md py-2 px-5 mb-2"
             >
-              Delete
+              {t('Delete')}
             </button>
           </div>
         </MenuButton>
