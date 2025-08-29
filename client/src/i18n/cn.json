@@ -126,6 +126,15 @@
         "Failed to rebuild search index. Please try again later": "搜索索引重建失败。请稍后再试。",
         "Admin account created successfully": "管理员账号创建成功。",
         "Failed to create admin account": "管理员账号创建失败。",
-        "Revert": "还原"
+        "Revert": "还原",
+        "Please enter a device name": "请输入设备名称",
+        "Invalid registration options received from server": "从服务器收到无效的注册选项",
+        "No credential received": "未收到凭据",
+        "PassKey Management": "通行密钥管理",
+        "Registering": "注册中...",
+        "Connect with PassKey": "使用通行密钥连接",
+        "Your PassKeys": "您的通行密钥",
+        "Added": "添加时间",
+        "Last used": "最后使用"
     }
 }

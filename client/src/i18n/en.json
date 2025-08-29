@@ -124,6 +124,15 @@
         "Search Results for": "Search Results for",
         "No pages found for": "No pages found for",
         "Failed to fetch search results": "Failed to fetch search results",
-        "Revert": "Revert"
+        "Revert": "Revert",
+        "Please enter a device name": "Please enter a device name",
+        "Invalid registration options received from server": "Invalid registration options received from server",
+        "No credential received": "No credential received",
+        "PassKey Management": "PassKey Management",
+        "Registering": "Registering...",
+        "Connect with PassKey": "Connect with PassKey",
+        "Your PassKeys": "Your PassKeys",
+        "Added": "Added",
+        "Last used": "Last used"
     }
 }

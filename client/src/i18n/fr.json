@@ -124,6 +124,15 @@
         "Search Results for": "Résultats de recherche pour",
         "No pages found for": "Aucune page trouvée pour",
         "Failed to fetch search results": "Échec de récupération des résultats de recherche",
-        "Revert": "Annuler"
+        "Revert": "Annuler",
+        "Please enter a device name": "Veuillez entrer un nom d'appareil",
+        "Invalid registration options received from server": "Options d'enregistrement invalides reçues du serveur",
+        "No credential received": "Aucune authentification reçue",
+        "PassKey Management": "Gestion des PassKeys",
+        "Registering": "Enregistrement...",
+        "Connect with PassKey": "Se connecter avec PassKey",
+        "Your PassKeys": "Vos PassKeys",
+        "Added": "Ajouté",
+        "Last used": "Dernière utilisation"
     }
 }

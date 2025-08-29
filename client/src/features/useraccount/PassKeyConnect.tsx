@@ -3,12 +3,14 @@ import { useContext, useState } from "react";
 import { UserContext } from "../auth/UserProvider";
 import { beginPasskeyRegistration, finishPasskeyRegistration, getUserPasskeyDevices, deletePasskeyDevice } from "../auth/fido2Api";
 import { base64urlToBuffer } from "../../common/base64";
+import { useTranslation } from "react-i18next";
 
 interface PassKeyConnectProps {
     className?: string;
 }
 
 export default function PassKeyConnect({ className }: PassKeyConnectProps) {
+    const { t } = useTranslation();
     const { username } = useContext(UserContext);
     const [deviceName, setDeviceName] = useState('');
 
@@ -21,7 +23,7 @@ export default function PassKeyConnect({ className }: PassKeyConnectProps) {
     const registerPasskey = useMutation({
         mutationFn: async () => {
             if (!deviceName.trim()) {
-                throw new Error("Please enter a device name");
+                throw new Error(t("Please enter a device name"));
             }
 
             const { options, sessionKey } = await beginPasskeyRegistration(deviceName.trim());
@@ -30,7 +32,7 @@ export default function PassKeyConnect({ className }: PassKeyConnectProps) {
             // Ensure the response has the expected structure
             if (!key || !key.challenge || !key.user || !key.user.id) {
                 console.error('Invalid options structure:', key);
-                throw new Error("Invalid registration options received from server");
+                throw new Error(t("Invalid registration options received from server"));
             }
 
             // Convert base64url strings to ArrayBuffers for the browser API
@@ -52,7 +54,7 @@ export default function PassKeyConnect({ className }: PassKeyConnectProps) {
 
             const credential = await navigator.credentials.create(credentialCreationOptions) as PublicKeyCredential;
             if (!credential) {
-                throw new Error("No credential received");
+                throw new Error(t("No credential received"));
             }
 
             await finishPasskeyRegistration(credential, deviceName.trim(), sessionKey);
@@ -74,12 +76,12 @@ export default function PassKeyConnect({ className }: PassKeyConnectProps) {
 
     return (
         <div className={className}>
-            <h2 className="text-lg font-semibold mb-4">PassKey Management</h2>
+            <h2 className="text-lg font-semibold mb-4">{t('PassKey Management')}</h2>
 
             <div className="mb-4">
                 <input
                     className="w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded mb-2"
-                    placeholder="Device name (e.g., iPhone, Windows Hello)"
+                    placeholder={t('Device name')}
                     value={deviceName}
                     onChange={(e) => setDeviceName(e.target.value)}
                 />
@@ -88,20 +90,20 @@ export default function PassKeyConnect({ className }: PassKeyConnectProps) {
                     onClick={() => registerPasskey.mutate()}
                     disabled={registerPasskey.isPending || !deviceName.trim()}
                 >
-                    {registerPasskey.isPending ? "Registering..." : "Connect with PassKey"}
+                    {registerPasskey.isPending ? t("Registering...") : t("Connect with PassKey")}
                 </button>
             </div>
 
             {devices && devices.length > 0 && (
                 <div className="mb-4">
-                    <h3 className="text-sm font-medium mb-2">Your PassKeys:</h3>
+                    <h3 className="text-sm font-medium mb-2">{t('Your PassKeys')}:</h3>
                     {devices.map((device) => (
                         <div key={device.id} className="flex justify-between items-center p-2 border border-gray-300 dark:border-gray-600 rounded mb-2">
                             <div>
                                 <div className="font-medium">{device.name}</div>
                                 <div className="text-xs text-gray-600 dark:text-gray-400">
-                                    Added: {new Date(device.createdAt).toLocaleDateString()}
-                                    {device.lastUsedAt && ` • Last used: ${new Date(device.lastUsedAt).toLocaleDateString()}`}
+                                    {t('Added')}: {new Date(device.createdAt).toLocaleDateString()}
+                                    {device.lastUsedAt && ` • ${t('Last used')}: ${new Date(device.lastUsedAt).toLocaleDateString()}`}
                                 </div>
                             </div>
                             <button
@@ -109,7 +111,7 @@ export default function PassKeyConnect({ className }: PassKeyConnectProps) {
                                 onClick={() => deleteDevice.mutate(device.id)}
                                 disabled={deleteDevice.isPending}
                             >
-                                Delete
+                                {t('Delete')}
                             </button>
                         </div>
                     ))}

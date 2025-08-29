@@ -124,6 +124,15 @@
         "Search Results for": "検索結果",
         "No pages found for": "見つかりませんでした",
         "Failed to fetch search results": "検索結果の取得に失敗しました",
-        "Revert": "元に戻す"
+        "Revert": "元に戻す",
+        "Please enter a device name": "デバイス名を入力してください",
+        "Invalid registration options received from server": "サーバーから無効な登録オプションを受信しました",
+        "No credential received": "認証情報を受信できませんでした",
+        "PassKey Management": "パスキー管理",
+        "Registering": "登録中...",
+        "Connect with PassKey": "パスキーで接続",
+        "Your PassKeys": "あなたのパスキー",
+        "Added": "追加日",
+        "Last used": "最終使用日"
     }
 }
