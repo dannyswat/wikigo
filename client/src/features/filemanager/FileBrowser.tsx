@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import {
     IconFolder,
     IconFile,
@@ -28,6 +29,7 @@ export default function FileBrowser({
     allowedExtensions,
     showFileContent = false
 }: FileBrowserProps) {
+    const { t } = useTranslation();
     const [currentPath, setCurrentPath] = useState("/");
     const [selectedFile, setSelectedFile] = useState<FileItem | null>(null);
     const [fileContent, setFileContent] = useState<string>("");
@@ -95,9 +97,9 @@ export default function FileBrowser({
     };
 
     const formatFileSize = (bytes: number): string => {
-        if (bytes === 0) return "0 Bytes";
+        if (bytes === 0) return `0 ${t('Bytes')}`;
         const k = 1024;
-        const sizes = ["Bytes", "KB", "MB", "GB"];
+        const sizes = [t('Bytes'), t('KB'), t('MB'), t('GB')];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
     };
@@ -126,7 +128,7 @@ export default function FileBrowser({
                 ext.toLowerCase() === file.extension?.toLowerCase()
             );
             if (!isAllowed) {
-                alert(`File type ${file.extension} is not allowed`);
+                alert(t('File type {{extension}} is not allowed', { extension: file.extension }));
                 return;
             }
         }
@@ -151,7 +153,7 @@ export default function FileBrowser({
                     setFileContent(fileData.content);
                 } catch (error) {
                     console.error("Failed to load file content:", error);
-                    setFileContent("Error loading file content");
+                    setFileContent(t('Error loading file content'));
                 } finally {
                     setIsLoadingContent(false);
                 }
@@ -168,7 +170,7 @@ export default function FileBrowser({
         return (
             <div className={`flex justify-center items-center h-64 ${className}`}>
                 <IconFidgetSpinner className="animate-spin text-gray-500" size={24} />
-                <span className="ml-2 text-gray-600 dark:text-gray-400">Loading files...</span>
+                <span className="ml-2 text-gray-600 dark:text-gray-400">{t('Loading files')}</span>
             </div>
         );
     }
@@ -176,12 +178,12 @@ export default function FileBrowser({
     if (error) {
         return (
             <div className={`p-4 text-red-600 dark:text-red-400 ${className}`}>
-                Error loading files: {(error as Error).message}
+                {t('Error loading files')}: {(error as Error).message}
                 <button
                     onClick={() => refetch()}
                     className="ml-2 px-2 py-1 bg-red-100 dark:bg-red-900 rounded text-sm hover:bg-red-200 dark:hover:bg-red-800"
                 >
-                    Retry
+                    {t('Retry')}
                 </button>
             </div>
         );
@@ -193,13 +195,13 @@ export default function FileBrowser({
             <div className="p-4 border-b border-gray-300 dark:border-gray-600">
                 <div className="flex items-center justify-between mb-2">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                        File Browser
+                        {t('File Browser')}
                     </h3>
                     <div className="flex items-center space-x-2">
                         <button
                             onClick={() => navigateToPath("/")}
                             className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                            title="Go to root"
+                            title={t('Go to root')}
                         >
                             <IconHome size={18} className="text-gray-600 dark:text-gray-400" />
                         </button>
@@ -207,7 +209,7 @@ export default function FileBrowser({
                             <button
                                 onClick={navigateUp}
                                 className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                                title="Go up"
+                                title={t('Go up')}
                             >
                                 <IconArrowLeft size={18} className="text-gray-600 dark:text-gray-400" />
                             </button>
@@ -221,7 +223,7 @@ export default function FileBrowser({
                         onClick={() => navigateToPath("/")}
                         className="hover:text-blue-600 dark:hover:text-blue-400"
                     >
-                        root
+                        {t('root')}
                     </button>
                     {getBreadcrumbs().map((segment, index) => {
                         const path = "/" + getBreadcrumbs().slice(0, index + 1).join("/");
@@ -278,7 +280,7 @@ export default function FileBrowser({
                 ) : (
                     <div className="p-8 text-center text-gray-500 dark:text-gray-400">
                         <IconFolder size={48} className="mx-auto mb-2 opacity-50" />
-                        <p>No files found in this directory</p>
+                        <p>{t('No files found in this directory')}</p>
                     </div>
                 )}
             </div>
@@ -287,17 +289,17 @@ export default function FileBrowser({
             {showFileContent && selectedFile && !selectedFile.isDir && (
                 <div className="border-t border-gray-300 dark:border-gray-600 p-4">
                     <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
-                        Preview: {selectedFile.name}
+                        {t('Preview')}: {selectedFile.name}
                     </h4>
                     {isLoadingContent ? (
                         <div className="flex items-center justify-center h-32">
                             <IconFidgetSpinner className="animate-spin text-gray-500" size={20} />
-                            <span className="ml-2 text-gray-600 dark:text-gray-400">Loading content...</span>
+                            <span className="ml-2 text-gray-600 dark:text-gray-400">{t('Loading content')}</span>
                         </div>
                     ) : (
                         <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded border max-h-48 overflow-y-auto">
                             <pre className="text-xs text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                                {fileContent || "No content available"}
+                                {fileContent || t('No content available')}
                             </pre>
                         </div>
                     )}

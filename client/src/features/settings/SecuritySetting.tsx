@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface SecuritySetting {
     allow_cors: boolean;
@@ -15,13 +16,14 @@ interface SecuritySetting {
 }
 
 export default function SecuritySetting() {
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
     const { data: securitySetting, isLoading, error } = useQuery({
         queryKey: ['security-setting'],
         queryFn: async () => {
             const response = await fetch('/api/securitysetting');
             if (!response.ok) {
-                throw new Error('Failed to fetch security setting');
+                throw new Error(t('Failed to fetch security setting'));
             }
             return response.json();
         },
@@ -41,7 +43,7 @@ export default function SecuritySetting() {
                 body: JSON.stringify(data),
             });
             if (!response.ok) {
-                throw new Error('Failed to update security setting');
+                throw new Error(t('Failed to update security setting'));
             }
         },
         onSuccess: () => {
@@ -55,7 +57,7 @@ export default function SecuritySetting() {
                 method: 'POST',
             });
             if (!response.ok) {
-                throw new Error('Failed to reset security setting');
+                throw new Error(t('Failed to reset security setting'));
             }
         },
         onSuccess: () => {
@@ -99,16 +101,16 @@ export default function SecuritySetting() {
         setForm(null);
     };
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <div>{t('Loading')}</div>;
     if (error) return <div className="text-red-600 dark:text-red-400">{(error as Error).message}</div>;
     if (!form) return null;
 
     return (
         <div className="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded shadow">
-            <h2 className="text-2xl font-bold mb-4">Security Settings</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('Security Settings')}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="block mb-1 font-medium">Allow CORS</label>
+                    <label className="block mb-1 font-medium">{t('Allow CORS')}</label>
                     <input
                         type="checkbox"
                         name="allow_cors"
@@ -118,7 +120,7 @@ export default function SecuritySetting() {
                     />
                 </div>
                 <div>
-                    <label className="block mb-1 font-medium">Allowed CORS Origins</label>
+                    <label className="block mb-1 font-medium">{t('Allowed CORS Origins')}</label>
                     {(form.allowed_cors_origins ?? []).map((origin, idx) => (
                         <div key={idx} className="flex mb-1">
                             <input
@@ -127,13 +129,13 @@ export default function SecuritySetting() {
                                 onChange={e => handleOriginsChange(e, idx)}
                                 className="flex-1 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                             />
-                            <button type="button" onClick={() => removeOrigin(idx)} className="ml-2 text-red-600 dark:text-red-400">Remove</button>
+                            <button type="button" onClick={() => removeOrigin(idx)} className="ml-2 text-red-600 dark:text-red-400">{t('Remove')}</button>
                         </div>
                     ))}
-                    <button type="button" onClick={addOrigin} className="mt-1 text-blue-600 dark:text-blue-400">Add Origin</button>
+                    <button type="button" onClick={addOrigin} className="mt-1 text-blue-600 dark:text-blue-400">{t('Add Origin')}</button>
                 </div>
                 <div>
-                    <label className="block mb-1 font-medium">Allowed CORS Methods</label>
+                    <label className="block mb-1 font-medium">{t('Allowed CORS Methods')}</label>
                     <input
                         type="text"
                         name="allowed_cors_methods"
@@ -143,7 +145,7 @@ export default function SecuritySetting() {
                     />
                 </div>
                 <div>
-                    <label className="block mb-1 font-medium">X-Frame-Options</label>
+                    <label className="block mb-1 font-medium">{t('X-Frame-Options')}</label>
                     <input
                         type="text"
                         name="frame_options"
@@ -153,7 +155,7 @@ export default function SecuritySetting() {
                     />
                 </div>
                 <div>
-                    <label className="block mb-1 font-medium">Referrer-Policy</label>
+                    <label className="block mb-1 font-medium">{t('Referrer-Policy')}</label>
                     <input
                         type="text"
                         name="referrer_policy"
@@ -163,7 +165,7 @@ export default function SecuritySetting() {
                     />
                 </div>
                 <div>
-                    <label className="block mb-1 font-medium">Strict-Transport-Security</label>
+                    <label className="block mb-1 font-medium">{t('Strict-Transport-Security')}</label>
                     <input
                         type="text"
                         name="strict_transport_security"
@@ -173,7 +175,7 @@ export default function SecuritySetting() {
                     />
                 </div>
                 <div>
-                    <label className="block mb-1 font-medium">Content-Security-Policy</label>
+                    <label className="block mb-1 font-medium">{t('Content-Security-Policy')}</label>
                     <input
                         type="text"
                         name="content_security_policy"
@@ -183,7 +185,7 @@ export default function SecuritySetting() {
                     />
                 </div>
                 <div>
-                    <label className="block mb-1 font-medium">X-Content-Type-Options</label>
+                    <label className="block mb-1 font-medium">{t('X-Content-Type-Options')}</label>
                     <input
                         type="text"
                         name="x_content_type_options"
@@ -193,7 +195,7 @@ export default function SecuritySetting() {
                     />
                 </div>
                 <div>
-                    <label className="block mb-1 font-medium">X-XSS-Protection</label>
+                    <label className="block mb-1 font-medium">{t('X-XSS-Protection')}</label>
                     <input
                         type="text"
                         name="x_xss_protection"
@@ -213,13 +215,13 @@ export default function SecuritySetting() {
                     />
                 </div>
                 {mutation.isError && <div className="text-red-600 dark:text-red-400">{(mutation.error as Error).message}</div>}
-                {mutation.isSuccess && <div className="text-green-600 dark:text-green-400">Settings updated!</div>}
+                {mutation.isSuccess && <div className="text-green-600 dark:text-green-400">{t('Settings updated!')}</div>}
                 <button
                     type="submit"
                     className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white py-2 rounded disabled:opacity-50"
                     disabled={mutation.status === 'pending'}
                 >
-                    {mutation.status === 'pending' ? "Saving..." : "Save Settings"}
+                    {mutation.status === 'pending' ? t("Saving...") : t("Save Settings")}
                 </button>
                 <button
                     type="button"
@@ -227,7 +229,7 @@ export default function SecuritySetting() {
                     onClick={handleReset}
                     disabled={mutation.status === 'pending'}
                 >
-                    Reset
+                    {t('Reset')}
                 </button>
             </form>
         </div>
