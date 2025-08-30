@@ -1,4 +1,5 @@
 import { PageMeta } from "./pageApi";
+import { smartCompare } from "./smartCompare";
 
 export interface PageMetaObject extends PageMeta {
     children: PageMetaObject[];
@@ -26,7 +27,7 @@ export function buildTree(pages: PageMeta[]): PageMetaObject[] {
     pages.sort(function (a, b) {
         if (a.isPinned && !b.isPinned) return -1;
         if (!a.isPinned && b.isPinned) return 1;
-        return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+        return smartCompare(a.title, b.title);
     });
     const allPages: PageMetaObject[] = pages.map((page) => ({
         ...page,
