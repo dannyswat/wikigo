@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { getSetting, Setting } from "./setupApi";
 import Loading from "../layout/Loading";
+import { useTranslation } from "react-i18next";
 
 interface SettingContextValues {
     setting: Setting | undefined;
@@ -17,6 +18,7 @@ interface SettingProviderProps {
 }
 
 export default function SettingProvider({ children, setup }: SettingProviderProps) {
+    const { i18n } = useTranslation();
     const [setting, setSetting] = useState(getSettingFromLocalStorage);
     const [isAdminCreated, setIsAdminCreated] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -28,6 +30,7 @@ export default function SettingProvider({ children, setup }: SettingProviderProp
                 updateSetting(res.setting);
                 document.title = res.setting.site_name || "Wiki Go";
                 document.documentElement.lang = res.setting.language || "en";
+                i18n.changeLanguage(res.setting.language || "en");
 
             } else {
                 setIsAdminCreated(res.is_admin_created);

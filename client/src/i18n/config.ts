@@ -9,7 +9,6 @@ import cn from "./cn.json";
 i18next
     .use(initReactI18next)
     .init({
-        lng: "zh",
         resources: {
             en,
             zh,
