@@ -135,6 +135,19 @@
         "Connect with PassKey": "使用通行金鑰連接",
         "Your PassKeys": "您的通行金鑰",
         "Added": "新增時間",
-        "Last used": "最後使用"
+        "Last used": "最後使用",
+        "Reader": "讀者",
+        "Editor": "編輯者",
+        "Admin": "管理員",
+        "Logo URL": "Logo 網址",
+        "Clear Image": "清除圖片",
+        "Protect Site (Enable this to restrict access to authorized users only)": "保護網站（啟用此選項僅允許授權使用者存取）",
+        "Settings updated!": "設定已更新！",
+        "Saving...": "儲存中...",
+        "Site Settings": "網站設定",
+        "Failed to update site setting": "網站設定更新失敗",
+        "Auto Theme": "自動主題",
+        "Light": "淺色",
+        "Dark": "深色"
     }
 }

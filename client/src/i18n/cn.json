@@ -135,6 +135,19 @@
         "Connect with PassKey": "使用通行密钥连接",
         "Your PassKeys": "您的通行密钥",
         "Added": "添加时间",
-        "Last used": "最后使用"
+        "Last used": "最后使用",
+        "Reader": "读者",
+        "Editor": "编辑者",
+        "Admin": "管理员",
+        "Logo URL": "Logo 网址",
+        "Clear Image": "清除图片",
+        "Protect Site (Enable this to restrict access to authorized users only)": "保护站点（启用此选项仅允许授权用户访问）",
+        "Settings updated!": "设置已更新！",
+        "Saving...": "保存中...",
+        "Site Settings": "站点设置",
+        "Failed to update site setting": "站点设置更新失败",
+        "Auto Theme": "自动主题",
+        "Light": "浅色",
+        "Dark": "深色"
     }
 }

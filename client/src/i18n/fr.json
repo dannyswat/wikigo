@@ -133,6 +133,19 @@
         "Connect with PassKey": "Se connecter avec PassKey",
         "Your PassKeys": "Vos PassKeys",
         "Added": "Ajouté",
-        "Last used": "Dernière utilisation"
+        "Last used": "Dernière utilisation",
+        "Reader": "Lecteur",
+        "Editor": "Éditeur",
+        "Admin": "Administrateur",
+        "Logo URL": "URL du logo",
+        "Clear Image": "Effacer l'image",
+        "Protect Site (Enable this to restrict access to authorized users only)": "Protéger le site (Activez cette option pour restreindre l'accès aux utilisateurs autorisés uniquement)",
+        "Settings updated!": "Paramètres mis à jour !",
+        "Saving...": "Enregistrement...",
+        "Site Settings": "Paramètres du site",
+        "Failed to update site setting": "Échec de la mise à jour des paramètres du site",
+        "Auto Theme": "Thème automatique",
+        "Light": "Clair",
+        "Dark": "Sombre"
     }
 }

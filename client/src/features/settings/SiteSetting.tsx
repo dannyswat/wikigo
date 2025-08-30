@@ -1,8 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import ImageInput from "../../components/ImageInput";
+import { useTranslation } from "react-i18next";
+import LanguageDropDown from "../../i18n/LanguageDropDown";
+import ThemeDropDown from "../../components/ThemeDropDown";
 
 export default function SiteSetting() {
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
     const { data: siteSetting, isLoading, error } = useQuery({
         queryKey: ['site-setting'],
@@ -29,7 +33,7 @@ export default function SiteSetting() {
                 body: JSON.stringify(data),
             });
             if (!response.ok) {
-                throw new Error('Failed to update site setting');
+                throw new Error(t('Failed to update site setting'));
             }
         },
         onSuccess: () => {
@@ -46,16 +50,16 @@ export default function SiteSetting() {
         if (form) mutation.mutate(form);
     };
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <div>{t('Loading...')}</div>;
     if (error) return <div className="text-red-600 dark:text-red-400">{(error as Error).message}</div>;
     if (!form) return null;
 
     return (
         <div className="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded shadow">
-            <h2 className="text-2xl font-bold mb-4">Site Settings</h2>
+            <h2 className="text-2xl font-bold mb-4">{t('Site Settings')}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="block mb-1 font-medium">Site Name</label>
+                    <label className="block mb-1 font-medium">{t('Site Name')}</label>
                     <input
                         type="text"
                         name="site_name"
@@ -66,22 +70,15 @@ export default function SiteSetting() {
                     />
                 </div>
                 <div>
-                    <label className="block mb-1 font-medium">Logo URL</label>
+                    <label className="block mb-1 font-medium">{t('Logo URL')}</label>
                     <ImageInput value={form.logo || ''} onChange={(value) => setForm({ ...form, logo: value })} />
                 </div>
                 <div>
-                    <label className="block mb-1 font-medium">Theme</label>
-                    <input
-                        type="text"
-                        name="theme"
-                        value={form.theme || ''}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                        required
-                    />
+                    <label className="block mb-1 font-medium">{t('Theme')}</label>
+                    <ThemeDropDown className="w-full" value={form.theme || ''} onChange={(theme) => setForm({ ...form, theme })} />
                 </div>
                 <div>
-                    <label className="block mb-1 font-medium">Footer</label>
+                    <label className="block mb-1 font-medium">{t('Footer')}</label>
                     <input
                         type="text"
                         name="footer"
@@ -92,11 +89,19 @@ export default function SiteSetting() {
                     />
                 </div>
                 <div>
-                    <label className="block mb-1 font-medium">Language</label>
+                    <label className="block mb-1 font-medium">{t('Language')}</label>
+                    <LanguageDropDown
+                        className="w-full"
+                        value={form.language || ''}
+                        onChange={(lang) => setForm({ ...form, language: lang })}
+                    />
+                </div>
+                <div>
+                    <label className="block mb-1 font-medium">{t('Footer')}</label>
                     <input
                         type="text"
-                        name="language"
-                        value={form.language || ''}
+                        name="footer"
+                        value={form.footer || ''}
                         onChange={handleChange}
                         className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                         required
@@ -110,16 +115,16 @@ export default function SiteSetting() {
                         onChange={(e) => setForm({ ...form, is_site_protected: e.target.checked })}
                         className="mr-2"
                     />
-                    <label className="text-sm">Protect Site (Enable this to restrict access to authorized users only)</label>
+                    <label className="text-sm">{t('Protect Site (Enable this to restrict access to authorized users only)')}</label>
                 </div>
                 {mutation.isError && <div className="text-red-600 dark:text-red-400">{(mutation.error as Error).message}</div>}
-                {mutation.isSuccess && <div className="text-green-600 dark:text-green-400">Settings updated!</div>}
+                {mutation.isSuccess && <div className="text-green-600 dark:text-green-400">{t('Settings updated!')}</div>}
                 <button
                     type="submit"
                     className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white py-2 rounded disabled:opacity-50"
                     disabled={mutation.status === 'pending'}
                 >
-                    {mutation.status === 'pending' ? "Saving..." : "Save Settings"}
+                    {mutation.status === 'pending' ? t('Saving...') : t('Save Settings')}
                 </button>
             </form>
         </div>

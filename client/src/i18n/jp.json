@@ -133,6 +133,19 @@
         "Connect with PassKey": "パスキーで接続",
         "Your PassKeys": "あなたのパスキー",
         "Added": "追加日",
-        "Last used": "最終使用日"
+        "Last used": "最終使用日",
+        "Reader": "読者",
+        "Editor": "編集者",
+        "Admin": "管理者",
+        "Logo URL": "ロゴURL",
+        "Clear Image": "画像をクリア",
+        "Protect Site (Enable this to restrict access to authorized users only)": "サイト保護（有効にすると認証されたユーザーのみアクセス可能）",
+        "Settings updated!": "設定が更新されました！",
+        "Saving...": "保存中...",
+        "Site Settings": "サイト設定",
+        "Failed to update site setting": "サイト設定の更新に失敗しました",
+        "Auto Theme": "自動テーマ",
+        "Light": "ライト",
+        "Dark": "ダーク"
     }
 }

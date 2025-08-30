@@ -39,36 +39,38 @@ export default function UsersCreate() {
 
     return <div className="w-full flex flex-col gap-4">
         <section className="flex flex-row items-center">
-            <label className="basis-1/4">{t('forms.loginName')}</label>
+            <label className="basis-1/4">{t('Login Name')}</label>
             <input className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" autoComplete="secret" type="text" value={data.username}
                 onChange={(e) => setData((prev) => ({ ...prev, username: e.target.value }))} />
         </section>
         <section className="flex flex-row items-center">
-            <label className="basis-1/4">{t('forms.email')}</label>
+            <label className="basis-1/4">{t('Email')}</label>
             <input className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" autoComplete="secret" type="text" value={data.email}
                 onChange={(e) => setData((prev) => ({ ...prev, email: e.target.value }))} />
         </section>
         <section className="flex flex-row items-center">
-            <label className="basis-1/4">{t('forms.newPassword')}</label>
+            <label className="basis-1/4">{t('New Password')}</label>
             <input className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" autoComplete="secret" type="password" value={data.password}
                 onChange={(e) => setData((prev) => ({ ...prev, password: e.target.value }))} />
         </section>
         <section className="flex flex-row items-center">
-            <label className="basis-1/4">{t('forms.role')}</label>
+            <label className="basis-1/4">{t('Role')}</label>
             <select className="basis-3/4 border-2 border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" value={data.role}
                 onChange={(e) => setData((prev) => ({ ...prev, role: e.target.value }))}>
-                {roles?.map((role) => <option key={role.role} value={role.role}>{role.name}</option>)}
+                {roles?.map((role) => <option key={role.role} value={role.role}>{t(role.name)}</option>)}
             </select>
         </section>
         <section className="flex flex-row justify-items-end">
             <button disabled={createUser.isPending} onClick={handleSubmitClick}
                 className="basis-1/2 sm:basis-1/6 bg-lime-700 hover:bg-lime-800 dark:bg-lime-600 dark:hover:bg-lime-700 text-white rounded-md py-2 px-5">
-                {createUser.isPending ? <IconFidgetSpinner className="animate-spin mx-auto" /> : t('buttons.create')}
+                {createUser.isPending ? <IconFidgetSpinner className="animate-spin mx-auto" /> : t('Create')}
             </button>
             <button onClick={() => {
-                if (!data.username || confirm(t('messages.confirmLeave')))
+                if (!data.username || confirm(t('Are you sure to leave')))
                     navigate('/users')
-            }} className="basis-1/2 sm:basis-1/6 bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-md py-2 px-5 ms-4">{t('buttons.cancel')}</button>
+            }} className="basis-1/2 sm:basis-1/6 bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 text-white rounded-md py-2 px-5 ms-4">
+                {t('Cancel')}
+            </button>
         </section>
     </div>;
 }

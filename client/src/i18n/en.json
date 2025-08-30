@@ -133,6 +133,19 @@
         "Connect with PassKey": "Connect with PassKey",
         "Your PassKeys": "Your PassKeys",
         "Added": "Added",
-        "Last used": "Last used"
+        "Last used": "Last used",
+        "Reader": "Reader",
+        "Editor": "Editor",
+        "Admin": "Admin",
+        "Logo URL": "Logo URL",
+        "Clear Image": "Clear Image",
+        "Protect Site (Enable this to restrict access to authorized users only)": "Protect Site (Enable this to restrict access to authorized users only)",
+        "Settings updated!": "Settings updated!",
+        "Saving...": "Saving...",
+        "Site Settings": "Site Settings",
+        "Failed to update site setting": "Failed to update site setting",
+        "Auto Theme": "Auto Theme",
+        "Light": "Light",
+        "Dark": "Dark"
     }
 }
