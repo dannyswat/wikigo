@@ -65,6 +65,91 @@ describe('smartCompare', () => {
         });
     });
 
+    describe('Ordered list comparison', () => {
+        it('should compare ordered lists with dots correctly', () => {
+            expect(smartCompare('1. First item', '2. Second item')).toBeLessThan(0);
+            expect(smartCompare('2. Second item', '1. First item')).toBeGreaterThan(0);
+            expect(smartCompare('1. First item', '1. First item')).toBe(0);
+        });
+
+        it('should compare ordered lists with parentheses correctly', () => {
+            expect(smartCompare('1) First item', '2) Second item')).toBeLessThan(0);
+            expect(smartCompare('2) Second item', '1) First item')).toBeGreaterThan(0);
+            expect(smartCompare('1) First item', '1) First item')).toBe(0);
+        });
+
+        it('should handle double-digit ordered lists', () => {
+            expect(smartCompare('9. Ninth item', '10. Tenth item')).toBeLessThan(0);
+            expect(smartCompare('2. Second item', '11. Eleventh item')).toBeLessThan(0);
+            expect(smartCompare('11. Eleventh item', '2. Second item')).toBeGreaterThan(0);
+        });
+
+        it('should handle ordered lists with extra spaces', () => {
+            expect(smartCompare('1.  Item with spaces', '2.   Item with more spaces')).toBeLessThan(0);
+            expect(smartCompare('1)    Item with many spaces', '2) Normal item')).toBeLessThan(0);
+        });
+
+        it('should handle mixed ordered list formats when both use numbers', () => {
+            expect(smartCompare('1. Dot format', '2) Parentheses format')).toBeLessThan(0);
+            expect(smartCompare('10) Parentheses', '11. Dot format')).toBeLessThan(0);
+        });
+
+        it('should fall back to text comparison when only one is ordered list', () => {
+            expect(smartCompare('1. Ordered item', 'Unordered item')).toBeLessThan(0); // '1' < 'U'
+            expect(smartCompare('Regular text', '2) Ordered item')).toBeGreaterThan(0); // 'R' > '2'
+        });
+
+        it('should handle large ordered list numbers', () => {
+            expect(smartCompare('999. Item', '1000. Item')).toBeLessThan(0);
+            expect(smartCompare('1000) Item', '999) Item')).toBeGreaterThan(0);
+        });
+
+        it('should sort ordered list array correctly', () => {
+            const items = [
+                '11. Eleventh item',
+                '2. Second item',
+                '1. First item',
+                '10) Tenth item',
+                '3) Third item'
+            ];
+
+            const sorted = items.sort(smartCompare);
+
+            expect(sorted).toEqual([
+                '1. First item',
+                '2. Second item',
+                '3) Third item',
+                '10) Tenth item',
+                '11. Eleventh item'
+            ]);
+        });
+
+        it('should handle ordered lists mixed with non-ordered content', () => {
+            const items = [
+                '5. Fifth item',
+                'apple',
+                '1. First item',
+                'banana',
+                '2. Second item'
+            ];
+
+            const sorted = items.sort(smartCompare);
+
+            // Ordered items should be sorted numerically among themselves
+            const firstIndex = sorted.indexOf('1. First item');
+            const secondIndex = sorted.indexOf('2. Second item');
+            const fifthIndex = sorted.indexOf('5. Fifth item');
+
+            expect(firstIndex).toBeLessThan(secondIndex);
+            expect(secondIndex).toBeLessThan(fifthIndex);
+
+            // Text items should be sorted alphabetically among themselves
+            const appleIndex = sorted.indexOf('apple');
+            const bananaIndex = sorted.indexOf('banana');
+            expect(appleIndex).toBeLessThan(bananaIndex);
+        });
+    });
+
     describe('Text comparison (fallback)', () => {
         it('should compare strings alphabetically (case-insensitive)', () => {
             expect(smartCompare('apple', 'banana')).toBeLessThan(0);

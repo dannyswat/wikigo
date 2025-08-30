@@ -1,6 +1,7 @@
 export function smartCompare(a: string, b: string): number {
     return dateCompare(a, b) ??
         versionCompare(a, b) ??
+        orderListCompare(a, b) ??
         a.toLowerCase().localeCompare(b.toLowerCase());
 }
 
@@ -78,4 +79,21 @@ function versionCompare(a: string, b: string): (number | null) {
         }
     }
     return 0;
+}
+
+function orderListCompare(a: string, b: string): (number | null) {
+    // Extract ordered list patterns from strings (e.g., "1.", "2)", "11.", "12)")
+    const orderListRegex = /^(\d+)[\.)]\s*/;
+    const matchA = a.match(orderListRegex);
+    const matchB = b.match(orderListRegex);
+
+    if (!matchA || !matchB) return null;
+
+    const numA = parseInt(matchA[1], 10);
+    const numB = parseInt(matchB[1], 10);
+
+    // If any part is NaN, it's not a valid ordered list
+    if (isNaN(numA) || isNaN(numB)) return null;
+
+    return numA - numB;
 }
