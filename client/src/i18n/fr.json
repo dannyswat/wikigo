@@ -171,6 +171,8 @@
         "Go up": "Remonter",
         "root": "racine",
         "Loading content": "Chargement du contenu...",
-        "No content available": "Aucun contenu disponible"
+        "No content available": "Aucun contenu disponible",
+        "Site URL": "URL du site",
+        "Site URL description": "L'URL de base de votre site, ex : https://example.com"
     }
 }

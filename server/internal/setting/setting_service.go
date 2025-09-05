@@ -1,8 +1,10 @@
 package setting
 
 import (
+	"strings"
 	"wikigo/internal/common"
 	"wikigo/internal/common/caching"
+	"wikigo/internal/common/errors"
 )
 
 type SettingService struct {
@@ -57,6 +59,11 @@ func (s *SettingService) UpdateSecuritySetting(securitySetting *SecuritySetting)
 }
 
 func ValidateSetting(setting *Setting) error {
+	if setting.SiteURL != "" {
+		if !strings.HasPrefix(setting.SiteURL, "http://") && !strings.HasPrefix(setting.SiteURL, "https://") {
+			return errors.NewValidationError("SiteURL must start with http:// or https://", "SiteURL")
+		}
+	}
 	return nil
 }
 

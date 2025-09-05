@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"wikigo/internal/common/apihelper"
+	"wikigo/internal/common/errors"
 	"wikigo/internal/users"
 
 	"github.com/labstack/echo/v4"
@@ -34,7 +35,7 @@ func ToUserResponse(user *users.User) *UserResponse {
 func (h *UsersHandler) GetUsers(e echo.Context) error {
 	users, err := h.UserService.ListAll()
 	if err != nil {
-		return e.JSON(500, err)
+		return err
 	}
 	usersResp := make([]*UserResponse, len(users))
 	for i, user := range users {
@@ -46,18 +47,18 @@ func (h *UsersHandler) GetUsers(e echo.Context) error {
 func (h *UsersHandler) GetUser(e echo.Context) error {
 	sId := e.Param("id")
 	if sId == "" {
-		return e.JSON(400, "invalid request")
+		return errors.BadRequest("invalid request")
 	}
 	userId, err := strconv.Atoi(sId)
 	if err != nil {
-		return e.JSON(400, "invalid request")
+		return errors.BadRequest("invalid request")
 	}
 	user, err := h.UserService.DB.GetUserByID(userId)
 	if err != nil {
-		return e.JSON(500, err)
+		return err
 	}
 	if user == nil {
-		return e.JSON(404, "user not found")
+		return errors.NotFound("user not found")
 	}
 	return e.JSON(200, ToUserResponse(user))
 }
@@ -65,14 +66,14 @@ func (h *UsersHandler) GetUser(e echo.Context) error {
 func (h *UsersHandler) GetCurrentUser(e echo.Context) error {
 	userId := apihelper.GetUserId(e)
 	if userId == "" {
-		return e.JSON(400, "invalid request")
+		return errors.BadRequest("invalid request")
 	}
 	user, err := h.UserService.DB.GetUserByUserName(userId)
 	if err != nil {
-		return e.JSON(500, err)
+		return err
 	}
 	if user == nil {
-		return e.JSON(404, "user not found")
+		return errors.NotFound("user not found")
 	}
 	return e.JSON(200, ToUserResponse(user))
 }
@@ -87,7 +88,7 @@ type CreateUserRequest struct {
 func (h *UsersHandler) CreateUser(e echo.Context) error {
 	userReq := new(CreateUserRequest)
 	if err := e.Bind(userReq); err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 	user := &users.User{
 		UserName: userReq.UserName,
@@ -95,10 +96,10 @@ func (h *UsersHandler) CreateUser(e echo.Context) error {
 		Role:     userReq.Role,
 	}
 	if err := user.UpdatePassword(user.Password); err != nil {
-		return e.JSON(500, err)
+		return err
 	}
 	if err := h.UserService.CreateUser(user); err != nil {
-		return e.JSON(500, err)
+		return err
 	}
 	return e.JSON(201, user)
 }
@@ -113,33 +114,33 @@ type UpdateUserRequest struct {
 func (h *UsersHandler) UpdateUser(e echo.Context) error {
 	sId := e.Param("id")
 	if sId == "" {
-		return e.JSON(400, "invalid request")
+		return errors.BadRequest("invalid request")
 	}
 	userId, err := strconv.Atoi(sId)
 	if err != nil {
-		return e.JSON(400, "invalid request")
+		return errors.BadRequest("invalid request")
 	}
 	userReq := new(UpdateUserRequest)
 	if err := e.Bind(userReq); err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 	user, err := h.UserService.DB.GetUserByID(userId)
 	if err != nil {
-		return e.JSON(500, err)
+		return err
 	}
 	if user == nil {
-		return e.JSON(404, "user not found")
+		return errors.NotFound("user not found")
 	}
 	user.UserName = userReq.UserName
 	user.Email = userReq.Email
 	user.Role = userReq.Role
 	if userReq.NewPassword != "" {
 		if err := user.UpdatePassword(userReq.NewPassword); err != nil {
-			return e.JSON(500, err)
+			return err
 		}
 	}
 	if err := h.UserService.UpdateUser(user); err != nil {
-		return e.JSON(500, err)
+		return err
 	}
 	return e.JSON(200, user)
 }

@@ -6,12 +6,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 	"sync"
 	"time"
 
 	"wikigo/internal/common/apihelper"
+	"wikigo/internal/common/errors"
 	"wikigo/internal/keymgmt"
 	"wikigo/internal/users"
 
@@ -140,17 +142,17 @@ func (u WebAuthnUser) WebAuthnIcon() string {
 func (h *Fido2Handler) BeginRegistration(e echo.Context) error {
 	username := apihelper.GetUserId(e)
 	if username == "" {
-		return e.JSON(401, map[string]string{"error": "unauthorized"})
+		return errors.Unauthorized("unauthorized")
 	}
 
 	user, err := h.UserService.DB.GetUserByUserName(username)
 	if err != nil {
-		return e.JSON(500, map[string]string{"error": "user not found"})
+		return err
 	}
 
 	devices, err := h.UserService.DeviceDB.GetByUserID(user.ID)
 	if err != nil {
-		return e.JSON(500, map[string]string{"error": "failed to get user devices"})
+		return err
 	}
 
 	webAuthnUser := WebAuthnUser{
@@ -160,7 +162,7 @@ func (h *Fido2Handler) BeginRegistration(e echo.Context) error {
 
 	credentialCreation, sessionData, err := h.WebAuthn.BeginRegistration(webAuthnUser)
 	if err != nil {
-		return e.JSON(500, map[string]string{"error": "failed to begin registration"})
+		return err
 	}
 
 	// Store session data in session store with 5 minute TTL
@@ -180,35 +182,31 @@ func (h *Fido2Handler) BeginRegistration(e echo.Context) error {
 func (h *Fido2Handler) FinishRegistration(e echo.Context) error {
 	username := apihelper.GetUserId(e)
 	if username == "" {
-		return e.JSON(401, map[string]string{"error": "unauthorized"})
+		return errors.Unauthorized("unauthorized")
 	}
 
 	user, err := h.UserService.DB.GetUserByUserName(username)
 	if err != nil {
-		return e.JSON(500, map[string]string{"error": "user not found"})
+		return err
 	}
 
 	// Parse the full request body first
 	var fullRequest map[string]interface{}
 	if err := e.Bind(&fullRequest); err != nil {
 		fmt.Printf("Error binding full request: %v\n", err)
-		return e.JSON(400, map[string]string{"error": "invalid request: " + err.Error()})
+		return errors.BadRequest("invalid request: " + err.Error())
 	}
 
 	// Extract our custom fields
 	deviceName, ok := fullRequest["name"].(string)
 	if !ok {
-		fmt.Printf("Missing or invalid device name\n")
-		return e.JSON(400, map[string]string{"error": "device name is required"})
+		return errors.NewValidationError("device name is required", "name")
 	}
 
 	sessionKey := e.Request().Header.Get("X-Session-Key")
 	if sessionKey == "" {
-		fmt.Printf("Missing or invalid session key\n")
-		return e.JSON(400, map[string]string{"error": "session key is required"})
+		return errors.NewValidationError("session key is required", "sessionKey")
 	}
-
-	fmt.Printf("Parsed request - Name: %s, SessionKey: %s\n", deviceName, sessionKey)
 
 	// Remove our custom fields to get the raw WebAuthn credential
 	delete(fullRequest, "name")
@@ -216,7 +214,7 @@ func (h *Fido2Handler) FinishRegistration(e echo.Context) error {
 
 	devices, err := h.UserService.DeviceDB.GetByUserID(user.ID)
 	if err != nil {
-		return e.JSON(500, map[string]string{"error": "failed to get user devices"})
+		return err
 	}
 
 	webAuthnUser := WebAuthnUser{
@@ -224,27 +222,15 @@ func (h *Fido2Handler) FinishRegistration(e echo.Context) error {
 		devices: devices,
 	}
 
-	// Get session data from session store
-	fmt.Printf("Looking for session key: %s\n", sessionKey)
 	sessionData := h.SessionStore.Get(sessionKey)
 	if sessionData == nil {
-		fmt.Printf("Session not found or expired for key: %s\n", sessionKey)
-		// Debug: print all active sessions
-		h.SessionStore.mu.RLock()
-		fmt.Printf("Active sessions: %d\n", len(h.SessionStore.sessions))
-		for key := range h.SessionStore.sessions {
-			fmt.Printf("Session key: %s\n", key)
-		}
-		h.SessionStore.mu.RUnlock()
-		return e.JSON(400, map[string]string{"error": "no registration session found or session expired"})
+		return fmt.Errorf("no registration session found or session expired %s", sessionKey)
 	}
-	fmt.Printf("Session found successfully\n")
 
 	// Create a new request with only the WebAuthn credential data
 	credentialJSON, err := json.Marshal(fullRequest)
 	if err != nil {
-		fmt.Printf("Error marshalling credential data: %v\n", err)
-		return e.JSON(400, map[string]string{"error": "invalid credential data"})
+		return errors.Unauthorized("invalid credential data")
 	}
 
 	// Create a new HTTP request with the clean credential data
@@ -254,8 +240,7 @@ func (h *Fido2Handler) FinishRegistration(e echo.Context) error {
 
 	credential, err := h.WebAuthn.FinishRegistration(webAuthnUser, *sessionData, credentialRequest)
 	if err != nil {
-		fmt.Printf("Error finishing registration: %v\n", err)
-		return e.JSON(400, map[string]string{"error": "failed to finish registration: " + err.Error()})
+		return errors.Unauthorized("failed to finish registration: " + err.Error())
 	}
 
 	// Clean up session
@@ -277,17 +262,17 @@ func (h *Fido2Handler) FinishRegistration(e echo.Context) error {
 	}
 
 	if err := h.UserService.DeviceDB.CreateDevice(device); err != nil {
-		return e.JSON(500, map[string]string{"error": "failed to save device"})
+		return err
 	}
 
-	return e.JSON(200, map[string]string{"message": "passkey registered successfully"})
+	return apihelper.OkMessage(e, "passkey registered successfully")
 }
 
 // BeginLogin starts the passkey authentication process
 func (h *Fido2Handler) BeginLogin(e echo.Context) error {
 	assertion, sessionData, err := h.WebAuthn.BeginDiscoverableLogin()
 	if err != nil {
-		return e.JSON(500, map[string]string{"error": "failed to begin login"})
+		return err
 	}
 
 	if h.RateLimiter != nil && !h.RateLimiter.AllowRequest(e.RealIP()) {
@@ -312,63 +297,50 @@ func (h *Fido2Handler) FinishLogin(e echo.Context) error {
 	// Parse the full request body first
 	var fullRequest map[string]interface{}
 	if err := e.Bind(&fullRequest); err != nil {
-		fmt.Printf("Error binding login request: %v\n", err)
-		return e.JSON(400, map[string]string{"error": "invalid request: " + err.Error()})
+		return errors.BadRequest("invalid request: " + err.Error())
 	}
 
 	// Extract session key from request
 	sessionKey := e.Request().Header.Get("X-Session-Key")
 	if sessionKey == "" {
-		fmt.Printf("Missing or invalid session key in login request\n")
-		return e.JSON(400, map[string]string{"error": "session key is required"})
+		return errors.NewValidationError("session key is required", "sessionKey")
 	}
 
-	// Remove our custom field to get the raw WebAuthn credential
 	delete(fullRequest, "sessionKey")
 
-	// Get session data from session store
-	fmt.Printf("Looking for login session key: %s\n", sessionKey)
 	sessionData := h.SessionStore.Get(sessionKey)
 	if sessionData == nil {
-		fmt.Printf("Login session not found or expired for key: %s\n", sessionKey)
-		return e.JSON(400, map[string]string{"error": "no login session found or session expired"})
+		return errors.NewValidationError("no login session found or session expired", "sessionKey")
 	}
-	fmt.Printf("Login session found successfully\n")
 
 	// Define the discoverable user handler
 	handler := func(rawID, userHandle []byte) (webauthn.User, error) {
 		// Find the user device by credential ID
 		credentialID := base64.StdEncoding.EncodeToString(rawID)
-		fmt.Printf("Looking for device with credential ID: %s\n", credentialID)
 		device, err := h.UserService.DeviceDB.GetByCredentialID(credentialID)
 		if err != nil || device == nil {
-			fmt.Printf("Device not found for credential ID: %s\n", credentialID)
-			return nil, fmt.Errorf("credential not found")
+			return nil, errors.Unauthorized("credential not found")
 		}
 
 		if !device.IsActive {
-			fmt.Printf("Device is inactive: %s\n", device.Name)
-			return nil, fmt.Errorf("device is inactive")
+			return nil, errors.Unauthorized("device is inactive")
 		}
-
-		fmt.Printf("Found device: %s for user ID: %d\n", device.Name, device.UserID)
 
 		// Get the user
 		user, err := h.UserService.DB.GetUserByID(device.UserID)
 		if err != nil || user == nil {
-			fmt.Printf("User not found for device: %s\n", device.Name)
-			return nil, fmt.Errorf("user not found")
+			return nil, errors.Unauthorized("user not found")
 		}
 
 		if user.IsLockedOut {
 			fmt.Printf("User is locked out: %s\n", user.UserName)
-			return nil, fmt.Errorf("account is locked")
+			return nil, errors.Unauthorized("account is locked")
 		}
 
 		devices, err := h.UserService.DeviceDB.GetByUserID(user.ID)
 		if err != nil {
 			fmt.Printf("Failed to get user devices: %v\n", err)
-			return nil, fmt.Errorf("failed to get user devices")
+			return nil, errors.Unauthorized("failed to get user devices")
 		}
 		fmt.Printf("Returning user with %d devices\n", len(devices))
 		return WebAuthnUser{
@@ -380,8 +352,8 @@ func (h *Fido2Handler) FinishLogin(e echo.Context) error {
 	// Create a new request with only the WebAuthn credential data
 	credentialJSON, err := json.Marshal(fullRequest)
 	if err != nil {
-		fmt.Printf("Error marshalling login credential data: %v\n", err)
-		return e.JSON(400, map[string]string{"error": "invalid credential data"})
+		log.Printf("error marshalling login credential data: %v\n", err)
+		return errors.BadRequest("invalid credential data")
 	}
 
 	// Create a new HTTP request with the clean credential data
@@ -392,8 +364,7 @@ func (h *Fido2Handler) FinishLogin(e echo.Context) error {
 	// Finish the login process
 	user, credential, err := h.WebAuthn.FinishPasskeyLogin(handler, *sessionData, credentialRequest)
 	if err != nil {
-		fmt.Printf("Error finishing login: %v\n", err)
-		return e.JSON(401, map[string]string{"error": "authentication failed: " + err.Error()})
+		return errors.Unauthorized("authentication failed: " + err.Error())
 	}
 
 	// Clean up session
@@ -402,8 +373,7 @@ func (h *Fido2Handler) FinishLogin(e echo.Context) error {
 	// Get the actual user from our handler result
 	webAuthnUser, ok := user.(WebAuthnUser)
 	if !ok {
-		fmt.Printf("Failed to cast user to WebAuthnUser\n")
-		return e.JSON(500, map[string]string{"error": "internal error"})
+		return fmt.Errorf("failed to cast user to WebAuthnUser %s", user.WebAuthnName())
 	}
 
 	// Find the device to update
@@ -418,11 +388,10 @@ func (h *Fido2Handler) FinishLogin(e echo.Context) error {
 		device.LastUsedAt = &now
 		if err := h.UserService.DeviceDB.UpdateDevice(device); err != nil {
 			// Log error but don't fail the login
-			fmt.Printf("Failed to update device: %v\n", err)
+			log.Printf("Failed to update device: %v\n", err)
 		}
 	}
 
-	// Generate JWT token (similar to regular login)
 	tokenExpiry := time.Now().Add(time.Hour * 24)
 	signedToken, err := h.KeyStore.SignJWT(jwt.MapClaims{
 		"uid":   webAuthnUser.UserName,
@@ -432,7 +401,7 @@ func (h *Fido2Handler) FinishLogin(e echo.Context) error {
 	}, "auth")
 
 	if err != nil {
-		return e.JSON(500, map[string]string{"error": "failed to generate token"})
+		return err
 	}
 
 	e.SetCookie(&http.Cookie{
@@ -462,17 +431,17 @@ func (h *Fido2Handler) FinishLogin(e echo.Context) error {
 func (h *Fido2Handler) GetUserDevices(e echo.Context) error {
 	username := apihelper.GetUserId(e)
 	if username == "" {
-		return e.JSON(401, map[string]string{"error": "unauthorized"})
+		return errors.Unauthorized("unauthorized")
 	}
 
 	user, err := h.UserService.DB.GetUserByUserName(username)
 	if err != nil {
-		return e.JSON(500, map[string]string{"error": "user not found"})
+		return err
 	}
 
 	devices, err := h.UserService.DeviceDB.GetByUserID(user.ID)
 	if err != nil {
-		return e.JSON(500, map[string]string{"error": "failed to get user devices"})
+		return err
 	}
 
 	// Return devices without sensitive data
@@ -502,32 +471,32 @@ func (h *Fido2Handler) GetUserDevices(e echo.Context) error {
 func (h *Fido2Handler) DeleteDevice(e echo.Context) error {
 	username := apihelper.GetUserId(e)
 	if username == "" {
-		return e.JSON(401, map[string]string{"error": "unauthorized"})
+		return errors.Unauthorized("unauthorized")
 	}
 
 	deviceIDStr := e.Param("id")
 	deviceID, err := strconv.Atoi(deviceIDStr)
 	if err != nil {
-		return e.JSON(400, map[string]string{"error": "invalid device ID"})
+		return errors.BadRequest("invalid device ID")
 	}
 
 	user, err := h.UserService.DB.GetUserByUserName(username)
 	if err != nil {
-		return e.JSON(500, map[string]string{"error": "user not found"})
+		return err
 	}
 
 	device, err := h.UserService.DeviceDB.GetByID(deviceID)
 	if err != nil || device == nil {
-		return e.JSON(404, map[string]string{"error": "device not found"})
+		return errors.NotFound("device not found")
 	}
 
 	// Ensure the device belongs to the authenticated user
 	if device.UserID != user.ID {
-		return e.JSON(403, map[string]string{"error": "forbidden"})
+		return errors.Forbidden("forbidden")
 	}
 
 	if err := h.UserService.DeviceDB.DeleteDevice(deviceID); err != nil {
-		return e.JSON(500, map[string]string{"error": "failed to delete device"})
+		return err
 	}
 
 	return e.JSON(200, map[string]string{"message": "device deleted successfully"})

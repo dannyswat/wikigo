@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"wikigo/internal/common/apihelper"
+	"wikigo/internal/common/errors"
 	"wikigo/internal/filemanager"
 	"wikigo/internal/images"
 
@@ -34,16 +35,16 @@ func (uh *UploadHandler) UploadFile(e echo.Context) error {
 	// Get the file from the request
 	req := new(UploadFileRequest)
 	if err := e.Bind(req); err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 	// Save the file to the media path
 	fileBinary, err := base64.StdEncoding.DecodeString(req.FileBase64)
 	if err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 	err = uh.FileManager.SaveFile(fileBinary, req.FileName, req.Path)
 	if err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 
 	return e.JSON(200, "File uploaded successfully")
@@ -61,22 +62,22 @@ var (
 func (uh *UploadHandler) CKEditorUpload(e echo.Context) error {
 	req := new(CKEditorUploadRequest)
 	if err := e.Bind(req); err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 	upload := e.Request().MultipartForm.File["upload"][0]
 	file, err := upload.Open()
 	if err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 	defer file.Close()
 	fileBinary, err := io.ReadAll(file)
 	if err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 	disposition := upload.Header.Get("Content-Disposition")
 	_, mediaParams, err := mime.ParseMediaType(disposition)
 	if err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 	ext := filepath.Ext(mediaParams["filename"])
 	onlyFileName := strings.TrimSuffix(filepath.Base(mediaParams["filename"]), ext)
@@ -85,12 +86,12 @@ func (uh *UploadHandler) CKEditorUpload(e echo.Context) error {
 	path := "/uploads"
 
 	if !slices.Contains(allowedExtensions, ext) {
-		return e.JSON(400, "file extension not allowed")
+		return errors.BadRequest("file extension not allowed")
 	}
 
 	err = uh.FileManager.SaveFile(fileBinary, fileName, path)
 	if err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 
 	// Resize the image
@@ -151,7 +152,7 @@ func (uh *UploadHandler) CreatePath(e echo.Context) error {
 	path := e.QueryParam("path")
 	err := uh.FileManager.CreatePath(path)
 	if err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 	return e.JSON(200, "Path created successfully")
 }
@@ -172,23 +173,23 @@ type SaveDiagramResponse struct {
 func (uh *UploadHandler) SaveDiagram(e echo.Context) error {
 	req := new(SaveDiagramRequest)
 	if err := e.Bind(req); err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 	err := uh.FileManager.SaveFile([]byte(req.DiagramJson), req.Id+".json", "/dgsource")
 	if err != nil {
-		return e.JSON(500, err)
+		return err
 	}
 	pngBinary, err := getPngBinaryFromBase64DataUrl(req.PngContent)
 	if err != nil {
-		return e.JSON(400, "invalid PNG content: "+err.Error())
+		return errors.BadRequest("invalid PNG content: " + err.Error())
 	}
 	err = uh.FileManager.SaveFile(pngBinary, req.Id+".png", "/diagrams")
 	if err != nil {
-		return e.JSON(500, err)
+		return err
 	}
 	err = uh.FileManager.SaveFile([]byte(req.SvgContent), req.Id+".svg", "/diagrams")
 	if err != nil {
-		return e.JSON(500, err)
+		return err
 	}
 	return e.JSON(200, &SaveDiagramResponse{
 		Id:            req.Id,
@@ -200,7 +201,7 @@ func (uh *UploadHandler) SaveDiagram(e echo.Context) error {
 func (uh *UploadHandler) GetDiagramSource(e echo.Context) error {
 	id := e.Param("id")
 	if id == "" {
-		return e.JSON(400, "invalid diagram id")
+		return errors.BadRequest("invalid diagram id")
 	}
 	jsonBytes, err := uh.FileManager.ReadFile(id+".json", "/dgsource")
 	if err != nil {

@@ -98,6 +98,8 @@ func ReturnErrorResponse(e echo.Context, err error) error {
 		})
 	case *users.UnauthorizedError:
 		return e.JSON(401, NewUnauthorizedError(err.Error()))
+	case *errors.UnauthorizedError:
+		return e.JSON(401, NewUnauthorizedError(err.Error()))
 	case *errors.ValidationError:
 		return e.JSON(400, NewInvalidRequestError(err.Error()))
 	case *errors.AggregateValidationError:

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"wikigo/internal/common/apihelper"
+	"wikigo/internal/common/errors"
 	"wikigo/internal/filemanager"
 
 	"github.com/labstack/echo/v4"
@@ -93,7 +94,7 @@ func (fh *FileHandler) ReadFile(e echo.Context) error {
 	path := e.QueryParam("path")
 
 	if fileName == "" {
-		return e.JSON(400, map[string]string{"error": "fileName parameter is required"})
+		return errors.NewValidationError("fileName parameter is required", "fileName")
 	}
 
 	if path == "" {
@@ -143,7 +144,7 @@ func (fh *FileHandler) GetFileInfo(e echo.Context) error {
 	path := e.QueryParam("path")
 
 	if fileName == "" {
-		return e.JSON(400, map[string]string{"error": "fileName parameter is required"})
+		return errors.NewValidationError("fileName parameter is required", "fileName")
 	}
 
 	if path == "" {
@@ -158,7 +159,7 @@ func (fh *FileHandler) GetFileInfo(e echo.Context) error {
 	// Try to read the file to verify it exists
 	_, err := fh.FileManager.ReadFile(fileName, path)
 	if err != nil {
-		return e.JSON(404, map[string]string{"error": "file not found"})
+		return errors.NotFoundf("file %s not found in path", fileName)
 	}
 
 	var extension string

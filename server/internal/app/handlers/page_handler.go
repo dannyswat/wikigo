@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	"fmt"
+	"log"
 	"strconv"
 
 	"wikigo/internal/common/apihelper"
+	"wikigo/internal/common/errors"
 	"wikigo/internal/pages"
 	"wikigo/internal/revisions"
 
@@ -25,11 +26,11 @@ func (h *PageHandler) GetPageByID(e echo.Context) error {
 	idStr := e.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return e.JSON(400, "invalid page id")
+		return errors.BadRequest("invalid page id")
 	}
 	page, err := h.PageService.GetPageByID(id)
 	if err != nil {
-		return e.JSON(404, err)
+		return errors.NotFound("page not found")
 	}
 	return e.JSON(200, pages.NewReactPage(page, h.ReactPage))
 }
@@ -38,10 +39,10 @@ func (h *PageHandler) GetPageByUrl(e echo.Context) error {
 	url := e.Param("url")
 	page, err := h.PageService.GetPageByUrl("/" + url)
 	if err != nil {
-		return e.JSON(404, err)
+		return errors.NotFound("page not found")
 	}
 	if page.IsProtected && apihelper.GetUserId(e) == "" {
-		return e.JSON(403, "forbidden")
+		return errors.Forbidden("page is protected")
 	}
 	return e.JSON(200, page)
 }
@@ -50,7 +51,7 @@ func (h *PageHandler) GetPagesByAuthor(e echo.Context) error {
 	author := e.QueryParam("author")
 	pages, err := h.PageService.GetPagesByAuthor(author)
 	if err != nil {
-		return e.JSON(404, err)
+		return errors.NotFound("pages not found")
 	}
 	return e.JSON(200, pages)
 }
@@ -61,14 +62,14 @@ func (h *PageHandler) GetPagesByParentID(e echo.Context) error {
 	if idStr != "" {
 		idInt, err := strconv.Atoi(idStr)
 		if err != nil {
-			return e.JSON(400, "invalid page id")
+			return errors.BadRequest("invalid page id")
 		}
 		id = &idInt
 	}
 
 	pages, err := h.PageService.GetPagesByParentID(id)
 	if err != nil {
-		return e.JSON(404, err)
+		return errors.NotFound("pages not found")
 	}
 	return e.JSON(200, pages)
 }
@@ -77,7 +78,7 @@ func (h *PageHandler) GetAllPages(e echo.Context) error {
 	includeProtected := apihelper.GetUserId(e) != ""
 	pages, err := h.PageService.GetAllPages(includeProtected)
 	if err != nil {
-		return e.JSON(500, err)
+		return err
 	}
 	return e.JSON(200, pages)
 }
@@ -85,7 +86,7 @@ func (h *PageHandler) GetAllPages(e echo.Context) error {
 func (h *PageHandler) SearchPages(e echo.Context) error {
 	query := e.QueryParam("q")
 	if query == "" {
-		return e.JSON(400, "query parameter 'q' is required")
+		return errors.NewValidationError("query parameter 'q' is required", "q")
 	}
 	pages, err := h.SearchService.Search(query, 10)
 	if err != nil {
@@ -101,7 +102,7 @@ func (h *PageHandler) Page(e echo.Context) error {
 	idStr := e.Param("id")
 	page, err := h.PageService.GetPageByUrl("/" + idStr)
 	if err != nil || page == nil {
-		fmt.Println("Page not found:", err)
+		log.Println("Page not found:", err)
 		return e.Render(404, "404", nil)
 	}
 	if page.IsProtected && apihelper.GetUserId(e) == "" {
@@ -114,11 +115,11 @@ func (h *PageHandler) GetLatestRevision(e echo.Context) error {
 	idStr := e.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return e.JSON(400, "invalid page id")
+		return errors.NewValidationError("invalid page id", "id")
 	}
 	revision, err := h.PageRevisionService.GetLatestRevision(id)
 	if err != nil {
-		return e.JSON(404, err)
+		return errors.NotFound("revision not found")
 	}
 	return e.JSON(200, revision)
 }
@@ -140,10 +141,10 @@ func (h *PageHandler) CreatePage(e echo.Context) error {
 
 	req := new(CreatePageRequest)
 	if err := e.Bind(req); err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 	if err := validator.New().Struct(req); err != nil {
-		return e.JSON(400, "invalid request")
+		return errors.BadRequest("invalid request: " + err.Error())
 	}
 	page := new(pages.Page)
 	page.Url = req.Url
@@ -179,10 +180,10 @@ type UpdatePageRequest struct {
 func (h *PageHandler) UpdatePage(e echo.Context) error {
 	req := new(UpdatePageRequest)
 	if err := e.Bind(req); err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 	if err := validator.New().Struct(req); err != nil {
-		return e.JSON(400, "invalid request")
+		return errors.BadRequest("invalid request: " + err.Error())
 	}
 	page := new(pages.Page)
 	page.ID = req.ID
@@ -206,17 +207,17 @@ func (h *PageHandler) DeletePage(e echo.Context) error {
 	idStr := e.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return e.JSON(400, "invalid page id")
+		return errors.NewValidationError("invalid page id", "id")
 	}
 	if err := h.PageService.DeletePage(id); err != nil {
 		return apihelper.ReturnErrorResponse(e, err)
 	}
-	return e.JSON(200, "page deleted")
+	return apihelper.OkMessage(e, "page deleted")
 }
 
 func (h *PageHandler) RebuildSearchIndex(e echo.Context) error {
 	if err := h.SearchService.RebuildSearchIndex(); err != nil {
 		return apihelper.ReturnErrorResponse(e, err)
 	}
-	return e.JSON(200, "search index rebuilt")
+	return apihelper.OkMessage(e, "search index rebuilt")
 }

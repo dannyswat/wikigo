@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"encoding/base64"
-	stderrors "errors"
-	"log"
 	"net/http"
 	"time"
 
@@ -31,14 +29,14 @@ type PublicKeyResponse struct {
 func (h *AuthHandler) GetPublicKey(e echo.Context) error {
 	purpose := e.Param("id")
 	if purpose == "" {
-		return e.JSON(400, "invalid request")
+		return errors.BadRequest("invalid request")
 	}
 	if purpose != "login" && purpose != "changepassword" {
-		return e.JSON(400, "invalid request")
+		return errors.BadRequest("invalid request")
 	}
 	key, err := h.KeyStore.GetPublicKeyForEncryption(purpose)
 	if err != nil {
-		return e.JSON(500, err)
+		return err
 	}
 	return e.JSON(200, &PublicKeyResponse{
 		Key:       base64.StdEncoding.EncodeToString(key),
@@ -59,10 +57,10 @@ type LoginResponse struct {
 func (h *AuthHandler) Login(e echo.Context) error {
 	req := new(LoginRequest)
 	if err := e.Bind(req); err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 	if err := validator.New().Struct(req); err != nil {
-		return e.JSON(400, apihelper.NewInvalidRequestError("invalid request"))
+		return errors.BadRequest("invalid request")
 	}
 
 	if h.RateLimiter != nil && !h.RateLimiter.AllowRequest(req.UserName) {
@@ -71,25 +69,25 @@ func (h *AuthHandler) Login(e echo.Context) error {
 
 	pwdBytes, err := base64.StdEncoding.DecodeString(req.Password)
 	if err != nil {
-		return e.JSON(401, "invalid username or password")
+		return errors.Unauthorized("invalid username or password")
 	}
 	keyBytes, err := base64.StdEncoding.DecodeString(req.Key)
 	if err != nil {
-		return e.JSON(401, "invalid username or password")
+		return errors.Unauthorized("invalid username or password")
 	}
 	passwordWithTime, err := h.KeyStore.Decrypt("login", pwdBytes, keyBytes)
 	if err != nil {
-		return e.JSON(401, "invalid username or password")
+		return errors.Unauthorized("invalid username or password")
 	}
 	timestamp, password := string(passwordWithTime[:14]), string(passwordWithTime[14:])
 	pwdTime, err := time.Parse("20060102150405", timestamp)
 	if err != nil || pwdTime.Add(time.Minute*5).Before(time.Now()) {
-		return e.JSON(401, "invalid username or password")
+		return errors.Unauthorized("invalid username or password")
 	}
 
 	user, err := h.UserService.Login(req.UserName, password)
 	if err != nil {
-		return e.JSON(401, err)
+		return errors.Unauthorized("invalid username or password")
 	}
 	tokenExpiry := time.Now().Add(time.Hour * 24)
 	signedToken, err := h.KeyStore.SignJWT(jwt.MapClaims{
@@ -100,7 +98,7 @@ func (h *AuthHandler) Login(e echo.Context) error {
 	}, "auth")
 
 	if err != nil {
-		return e.JSON(500, err)
+		return err
 	}
 	e.SetCookie(&http.Cookie{
 		Name:     "user",
@@ -130,7 +128,7 @@ type ChangePasswordRequest struct {
 func (h *AuthHandler) ChangePassword(e echo.Context) error {
 	req := new(ChangePasswordRequest)
 	if err := e.Bind(req); err != nil {
-		return e.JSON(400, err)
+		return errors.BadRequest(err.Error())
 	}
 	if err := validator.New().Struct(req); err != nil {
 		return errors.NewValidationError("invalid request", "")
@@ -167,10 +165,9 @@ func (h *AuthHandler) ChangePassword(e echo.Context) error {
 	username := str(claims["uid"])
 	err = h.UserService.ChangePassword(username, string(password), string(newPassword))
 	if err != nil {
-		log.Println(err)
-		return stderrors.New("failed to change password")
+		return errors.Unauthorized("invalid password")
 	}
-	return e.JSON(200, "password updated")
+	return apihelper.OkMessage(e, "password updated")
 }
 
 type RoleResponse struct {
@@ -184,10 +181,10 @@ func (h *AuthHandler) GetRole(e echo.Context) error {
 
 func (h *AuthHandler) Logout(e echo.Context) error {
 	apihelper.RemoveAuthCookie(e)
-	return e.JSON(200, "success")
+	return apihelper.OkMessage(e, "logged out successfully")
 }
 
-func str(o interface{}) string {
+func str(o any) string {
 	s, ok := o.(string)
 	if !ok {
 		return ""

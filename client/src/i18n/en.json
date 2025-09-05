@@ -171,6 +171,8 @@
         "Go up": "Go up",
         "root": "root",
         "Loading content": "Loading content...",
-        "No content available": "No content available"
+        "No content available": "No content available",
+        "Site URL": "Site URL",
+        "Site URL description": "The base URL of your site, e.g., https://example.com"
     }
 }

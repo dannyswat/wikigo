@@ -173,6 +173,8 @@
         "Go up": "向上",
         "root": "根目錄",
         "Loading content": "載入內容中...",
-        "No content available": "無可用內容"
+        "No content available": "無可用內容",
+        "Site URL": "網站網址",
+        "Site URL description": "您網站的基礎網址，例如：https://example.com"
     }
 }

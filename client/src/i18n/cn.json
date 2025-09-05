@@ -173,6 +173,8 @@
         "Go up": "向上",
         "root": "根目录",
         "Loading content": "加载内容中...",
-        "No content available": "无可用内容"
+        "No content available": "无可用内容",
+        "Site URL": "站点网址",
+        "Site URL description": "您站点的基础网址，例如：https://example.com"
     }
 }

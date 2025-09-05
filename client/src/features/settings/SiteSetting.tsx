@@ -55,7 +55,7 @@ export default function SiteSetting() {
     if (!form) return null;
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded shadow">
+        <div className="max-w-md mx-auto mt-4 p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded shadow">
             <h2 className="text-2xl font-bold mb-4">{t('Site Settings')}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
@@ -68,6 +68,18 @@ export default function SiteSetting() {
                         className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                         required
                     />
+                </div>
+                <div>
+                    <label className="block mb-1 font-medium">{t('Site URL')}</label>
+                    <input
+                        type="text"
+                        name="site_url"
+                        value={form.site_url || ''}
+                        onChange={handleChange}
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                        required
+                    />
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{t('Site URL description')}</p>
                 </div>
                 <div>
                     <label className="block mb-1 font-medium">{t('Logo URL')}</label>
@@ -94,17 +106,6 @@ export default function SiteSetting() {
                         className="w-full"
                         value={form.language || ''}
                         onChange={(lang) => setForm({ ...form, language: lang })}
-                    />
-                </div>
-                <div>
-                    <label className="block mb-1 font-medium">{t('Footer')}</label>
-                    <input
-                        type="text"
-                        name="footer"
-                        value={form.footer || ''}
-                        onChange={handleChange}
-                        className="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                        required
                     />
                 </div>
                 <div className="flex items-center">

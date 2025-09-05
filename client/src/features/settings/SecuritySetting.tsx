@@ -106,7 +106,7 @@ export default function SecuritySetting() {
     if (!form) return null;
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded shadow">
+        <div className="max-w-md mx-auto mt-4 p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded shadow">
             <h2 className="text-2xl font-bold mb-4">{t('Security Settings')}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
