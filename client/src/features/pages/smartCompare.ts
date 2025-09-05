@@ -10,11 +10,11 @@ function dateCompare(a: string, b: string): (number | null) {
     const datePatterns = [
         /\b(\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z?)?)\b/, // ISO dates
         /\b(\d{4}\/\d{1,2}\/\d{1,2})\b/, // YYYY/MM/DD
-        /\b(\d{1,2}\/\d{1,2}\/\d{4})\b/, // MM/DD/YYYY
+        /\b(\d{1,2}\/\d{1,2}\/\d{4})\b/, // DD/MM/YYYY
         /\b(\d{8})\b/, // YYYYMMDD
         /\b(\d{13})\b/, // Timestamps (13 digits)
         /\b(\d{10})\b/, // Timestamps (10 digits)
-        /\b((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* \d{1,2}, \d{4})\b/i // "Jan 01, 2024"
+        /\b(\d{1,2} (?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* \d{4})\b/i // "01 Jan 2024"
     ];
 
     let dateA: Date | null = null;

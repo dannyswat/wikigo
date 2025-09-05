@@ -158,6 +158,7 @@ export function HtmlEditor({ content, onChange }: Props) {
             contentToolbar: ["tableColumn", "tableRow", "mergeTableCells"],
           },
           image: {
+            resizeUnit: "px",
             toolbar: [
               "imageTextAlternative",
               "|",
