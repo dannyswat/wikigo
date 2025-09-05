@@ -1,4 +1,5 @@
 import { baseApiUrl } from "../../common/baseApi";
+import { getErrorMessage } from "../../common/errorMessage";
 
 export interface User {
   id: number;
@@ -39,7 +40,7 @@ export async function createUserApi(request: CreateUserRequest): Promise<User> {
     body: JSON.stringify(request),
   });
   if (resp.status >= 400) {
-    throw new Error(await resp.text());
+    throw new Error(await getErrorMessage(resp));
   }
   return await resp.json();
 }
@@ -62,7 +63,7 @@ export async function updateUserApi(request: UpdateUserRequest): Promise<User> {
     body: JSON.stringify(request),
   });
   if (resp.status >= 400) {
-    throw new Error(await resp.text());
+    throw new Error(await getErrorMessage(resp));
   }
   return await resp.json();
 }

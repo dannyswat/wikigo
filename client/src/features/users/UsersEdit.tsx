@@ -35,9 +35,8 @@ export default function UsersEdit() {
             queryClient.removeQueries({ queryKey: ['users'] });
             navigate('/users');
         },
-        onError: (err, ...args) => {
-            alert(err);
-            console.log(args);
+        onError: (err) => {
+            alert(err.message);
         }
     });
 

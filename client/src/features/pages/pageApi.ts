@@ -1,4 +1,5 @@
 import { baseApiUrl } from "../../common/baseApi";
+import { getErrorMessage } from "../../common/errorMessage";
 
 export interface PageRequest {
     id: number;
@@ -77,7 +78,7 @@ export async function searchPages(query: string): Promise<PageMeta[]> {
         credentials: 'include',
     });
     if (res.status >= 400) {
-        throw new Error(await res.text());
+        throw new Error(await getErrorMessage(res));
     }
     return await res.json();
 }
@@ -92,7 +93,7 @@ export async function createPage(page: PageRequest) {
     });
 
     if (res.status >= 400) {
-        throw new Error(await res.text());
+        throw new Error(await getErrorMessage(res));
     }
 
     return await res.json();
@@ -107,7 +108,7 @@ export async function updatePage(page: PageRequest) {
         body: JSON.stringify(page),
     });
     if (res.status >= 400) {
-        throw new Error(await res.text());
+        throw new Error(await getErrorMessage(res));
     }
     return await res.json();
 }
@@ -117,7 +118,7 @@ export async function deletePage(id: number) {
         method: 'DELETE',
     });
     if (res.status >= 400) {
-        throw new Error(await res.text());
+        throw new Error(await getErrorMessage(res));
     }
     return await res.json();
 }
@@ -127,7 +128,7 @@ export async function rebuildSearchIndex() {
         method: 'POST',
     });
     if (res.status >= 400) {
-        throw new Error(await res.text());
+        throw new Error(await getErrorMessage(res));
     }
     return await res.json();
 }

@@ -39,9 +39,9 @@ export default function NewPage() {
       clearCache();
       navigate("/p" + data.url);
     },
-    onError: (err, ...args) => {
-      alert(err);
-      console.log(args);
+    onError: (err) => {
+      console.log(JSON.stringify(err.message));
+      alert(err.message);
     },
   });
 

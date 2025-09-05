@@ -1,5 +1,6 @@
 import { base64, fromBase64 } from "../../common/base64";
 import { baseApiUrl } from "../../common/baseApi";
+import { getErrorMessage } from "../../common/errorMessage";
 
 export interface LoginRequest {
   username: string;
@@ -33,8 +34,7 @@ export async function loginApi(request: LoginRequest): Promise<LoginResponse> {
   });
 
   if (res.status >= 400) {
-    const data = await res.json();
-    throw new Error(data.message ?? data.Message);
+    throw new Error(await getErrorMessage(res));
   }
 
   return await res.json();
@@ -58,7 +58,7 @@ export async function logoutApi() {
     credentials: "include",
   });
   if (resp.status >= 400) {
-    throw new Error(await resp.text());
+    throw new Error(await getErrorMessage(resp));
   }
   return await resp.json();
 }
@@ -96,7 +96,7 @@ export async function changePasswordApi(request: ChangePasswordRequest) {
     }),
   });
   if (resp.status >= 400) {
-    throw new Error(await resp.text());
+    throw new Error(await getErrorMessage(resp));
   }
   return await resp.json();
 }

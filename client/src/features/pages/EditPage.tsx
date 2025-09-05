@@ -76,6 +76,9 @@ export default function EditPage() {
       localStorage.removeItem(localStorageKey);
       navigate("/p" + data.url);
     },
+    onError: (err) => {
+      alert(err.message);
+    }
   });
 
   const deletePageApi = useMutation({
@@ -86,6 +89,9 @@ export default function EditPage() {
       localStorage.removeItem(localStorageKey);
       navigate("/");
     },
+    onError: (err) => {
+      alert(err.message);
+    }
   });
 
   useEffect(() => {
